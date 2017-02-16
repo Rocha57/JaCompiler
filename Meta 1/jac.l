@@ -69,6 +69,8 @@ STRING 				String
 VOID				void
 WHILE 				while
 
+FORM				"\f"
+CARRIAGE			"\r"
 SPACE				" "
 TAB					"\t"
 PARAGRAPH			"\n"
@@ -135,7 +137,7 @@ ENDCOMMENT			"*/"
 {BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext); col += yyleng;}				
 {REALLIT}						{if(erros==0) printf("REALLI(%s)\n", yytext); col += yyleng;}
 {STRLIT}						{if(erros==0) printf("STRLIT(%s)\n", yytext); col += yyleng;}
-{SPACE}|{TAB}					{col += yyleng;}
+{SPACE}|{TAB}|{FORM}|{CARRIAGE}	{col += yyleng;}
 {PARAGRAPH}						{line++; col = 1;}
 {ID}							{if(erros==0) printf("ID(%s)\n", yytext); col += yyleng;}
 {UNSTRLIT}						{printf("Line %d, col %d: unterminated string literal \n", line, col, yytext); col += yyleng;}
