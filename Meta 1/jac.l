@@ -148,8 +148,10 @@ ENDCOMMENT			"*/"
 %%
 int main(int argc, char** argv){
 
-	if ( ( (argc > 1) && ((strcmp(argv[1], "-l") == 0)) ) || (strcmp(argv[1], "-1") == 0))
-		erros = 0;
+	if (argc > 1){
+		if ((strcmp(argv[1], "-l") == 0) || (strcmp(argv[1], "-1") == 0))
+			erros = 0;
+	}
 	else
 		erros = 1;
 	yylex();
