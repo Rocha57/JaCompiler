@@ -17,8 +17,9 @@
 
 ID					[_$a-zA-Z][_$0-9a-zA-Z]*
 DECLIT				0|[1-9]|[1-9][0-9_]*[0-9]
-EXP 				[eE]["+""-"]?{DECLIT}
-REALLIT 			{DECLIT}"."[{DECLIT}{EXP}]?|"."{DECLIT}{EXP}?|{DECLIT}{EXP}
+AUXLIT				[0-9]|[0-9][0-9_]*[0-9]
+EXP 				[eE]["+""-"]?{AUXLIT}
+REALLIT 			{AUXLIT}"."[{AUXLIT}{EXP}]?|"."{AUXLIT}{EXP}?|{AUXLIT}{EXP}
 
 ESCAPE 				\\\"|\\n|\\t|\\r|\\\\|\\f
 STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
@@ -135,7 +136,7 @@ ENDCOMMENT			"*/"
 
 {DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext); col += yyleng;}
 {BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext); col += yyleng;}				
-{REALLIT}						{if(erros==0) printf("REALLI(%s)\n", yytext); col += yyleng;}
+{REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext); col += yyleng;}
 {STRLIT}						{if(erros==0) printf("STRLIT(%s)\n", yytext); col += yyleng;}
 {SPACE}|{TAB}|{FORM}|{CARRIAGE}	{col += yyleng;}
 {PARAGRAPH}						{line++; col = 1;}
