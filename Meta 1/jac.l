@@ -20,9 +20,9 @@ DECLIT				0|[1-9]|[1-9][0-9_]*[0-9]
 EXP 				[eE]["+""-"]?{DECLIT}
 REALLIT 			{DECLIT}"."[{DECLIT}{EXP}]?|"."{DECLIT}{EXP}?|{DECLIT}{EXP}
 
-ESCAPE 				\"|\\n|\\t|\\r|\\\|\\f
+ESCAPE 				\\\"|\\n|\\t|\\r|\\\\|\\f
 STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
-UNSTRLIT			\"([^\\\n\"\r]|{ESCAPE})*
+UNSTRLIT			\"([^\\\n\"\r]|{ESCAPE})*(\\)?
 
 BOOLIT				true|false
 
@@ -138,8 +138,8 @@ ENDCOMMENT			"*/"
 {SPACE}|{TAB}					{col += yyleng;}
 {PARAGRAPH}						{line++; col = 1;}
 {ID}							{if(erros==0) printf("ID(%s)\n", yytext); col += yyleng;}
-.								{printf("Line %d, col %d: illegal character (%s)\n", line, col, yytext); col += yyleng;} //Mas este está certo eheh
 {UNSTRLIT}						{printf("Line %d, col %d: unterminated string literal \n", line, col, yytext); col += yyleng;}
+.								{printf("Line %d, col %d: illegal character (%s)\n", line, col, yytext); col += yyleng;} //Mas este está certo eheh
 
 
 %%
