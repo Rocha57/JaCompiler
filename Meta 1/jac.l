@@ -85,7 +85,7 @@ INITCOMMENT			"/*"
 ENDCOMMENT			"*/"
 
 %X					COMMENT
-%X					TESTE
+%X					STR
 %X					INVALID
 
 
@@ -97,11 +97,11 @@ ENDCOMMENT			"*/"
 <COMMENT>.						{col += yyleng;}
 <COMMENT>{PARAGRAPH}			{col = 1; line++;}
 
-\"								{aux1 = line; aux2 = col; col += yyleng; BEGIN TESTE;} 
-<TESTE>([^\\\n\"]|{ESCAPE})*\"	{printf("STRLIT(\"%s)\n", yytext);col += yyleng; BEGIN 0;}
-<TESTE>\\[^nrft\"\\]			{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+= yyleng; BEGIN INVALID;}
-<TESTE>{PARAGRAPH}				{printf("Line %d, col %d: unterminated string\n", aux1, aux2);col=1; line++; BEGIN 0;}						
-<TESTE>.						{col+=yyleng;}
+\"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;} 
+<STR>([^\\\n\"]|{ESCAPE})*\"	{printf("STRLIT(\"%s)\n", yytext);col += yyleng; BEGIN 0;}
+<STR>\\[^nrft\"\\]				{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+= yyleng; BEGIN INVALID;}
+<STR>{PARAGRAPH}				{printf("Line %d, col %d: unterminated string\n", aux1, aux2);col=1; line++; BEGIN 0;}						
+<STR>.							{col+=yyleng;}
 <INVALID>\\[^nrft\"\\]			{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+= yyleng;}
 <INVALID>\"						{col += yyleng; BEGIN 0;}
 <INVALID>{PARAGRAPH}			{printf("Line %d, col %d: unterminated string\n", aux1, aux2);col=1; line++; BEGIN 0;}
