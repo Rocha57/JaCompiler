@@ -4,7 +4,7 @@
 		clang-3.8 -o jac lex.yy.c
 		./jac -l < ficheiro
 
-		REALLIT NOT FINISHED
+		REALLIT MAYBE FINISHED
 	*/
 	int col = 1;
 	int line = 1;
@@ -17,7 +17,7 @@
 ID					[_$a-zA-Z][_$0-9a-zA-Z]*
 DECLIT				0|[1-9]|[1-9][0-9_]*[0-9]
 EXP 				[eE]["+""-"]?{DECLIT}
-REALLIT 			{DECLIT}"."[{DECLIT}{EXP}]? 
+REALLIT 			{DECLIT}"."[{DECLIT}{EXP}]?|"."{DECLIT}{EXP}?|{DECLIT}{EXP}
 
 BOOLIT				true|false
 
