@@ -19,9 +19,11 @@ DECLIT				0|[1-9]|[1-9][0-9_]*[0-9]
 EXP 				[eE]["+""-"]?{DECLIT}
 REALLIT 			{DECLIT}"."[{DECLIT}{EXP}]?|"."{DECLIT}{EXP}?|{DECLIT}{EXP}
 
+ESCAPE 				\\"|\\n|\\t|\\r|\\|\\f
+STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
+
 BOOLIT				true|false
 
-ESCAPE 				\\"|\\n|\\t|\\r|\\|\\f
 
 CBRACE				"}"
 CCURV				")"
