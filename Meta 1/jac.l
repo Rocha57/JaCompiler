@@ -140,14 +140,14 @@ ENDCOMMENT			"*/"
 {SPACE}|{TAB}|{FORM}|{CARRIAGE}	{col += yyleng;}
 {PARAGRAPH}						{line++; col = 1;}
 {ID}							{if(erros==0) printf("ID(%s)\n", yytext); col += yyleng;}
-{UNSTRLIT}						{printf("Line %d, col %d: unterminated string literal \n", line, col, yytext); col += yyleng;}
+{UNSTRLIT}						{printf("Line %d, col %d: unterminated string literal \n", line, col); col += yyleng;}
 .								{printf("Line %d, col %d: illegal character (%s)\n", line, col, yytext); col += yyleng;} //Mas este está certo eheh
 
 
 %%
 int main(int argc, char** argv){
 
-	if ((argc > 1) && ((strcmp(argv[1], "-l") == 0)) || (strcmp(argv[1], "-1") == 0))
+	if ( ( (argc > 1) && ((strcmp(argv[1], "-l") == 0)) ) || (strcmp(argv[1], "-1") == 0))
 		erros = 0;
 	else
 		erros = 1;
