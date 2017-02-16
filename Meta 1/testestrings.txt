@@ -1,7 +1,7 @@
 teste1
-"teste2"
+"te\s\te\2"
 "teste3
-"teste4"teste4"
+"teste4"teste4"\p\g
 "coisada"" wololo"""" lolo""
 "teste5"teste5"teste5"
 "teste6 teste6""teste6"""

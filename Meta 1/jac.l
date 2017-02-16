@@ -6,6 +6,11 @@
 
 		REALLIT MAYBE FINISHED
 
+		STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
+		UNSTRLIT			\"([^\\\n\"\r]|{ESCAPE})*(\\)?
+
+		{STRLIT}						{if(erros==0) printf("STRLIT(%s)\n", yytext); col += yyleng;}
+		{UNSTRLIT}						{printf("Line %d, col %d: unterminated string literal \n", line, col); col += yyleng;}
 	*/
 	int col = 1;
 	int line = 1;
@@ -22,8 +27,6 @@ EXP 				[eE]["+""-"]?{AUXLIT}
 REALLIT 			{AUXLIT}"."[{AUXLIT}{EXP}]?|"."{AUXLIT}{EXP}?|{AUXLIT}{EXP}
 
 ESCAPE 				\\\"|\\n|\\t|\\r|\\\\|\\f
-STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
-UNSTRLIT			\"([^\\\n\"\r]|{ESCAPE})*(\\)?
 
 BOOLIT				true|false
 
@@ -83,6 +86,7 @@ ENDCOMMENT			"*/"
 
 %X					COMMENT
 %X					TESTE
+%X					INVALID
 
 
 %%
@@ -93,15 +97,15 @@ ENDCOMMENT			"*/"
 <COMMENT>.						{col += yyleng;}
 <COMMENT>{PARAGRAPH}			{col = 1; line++;}
 
-[\"]							{aux1 = line; aux2 = col; col += yyleng; BEGIN TESTE;} 
-<TESTE>[\\\n\"\r]				{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); BEGIN 0;}
-<TESTE><<EOF>>					{printf("Line %d, col %d: unterminated string\n", aux1, aux2); BEGIN 0;}
-<TESTE>[\"]						{col += yyleng; BEGIN 0;}
-<TESTE>.						{col += yyleng;}
-<TESTE>{PARAGRAPH}				{col = 1; line++;}
-
-
-
+\"								{aux1 = line; aux2 = col; col += yyleng; BEGIN TESTE;} 
+<TESTE>([^\\\n\"]|{ESCAPE})*\"	{printf("STRLIT(\"%s)\n", yytext);col += yyleng; BEGIN 0;}
+<TESTE>\\[^nrft\"\\]			{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); BEGIN INVALID;}
+<TESTE>{PARAGRAPH}				{printf("Line %d, col %d: unterminated string\n", aux1, aux2);col=1; line++; BEGIN 0;}						
+<TESTE>.						{col+=yyleng;}
+<INVALID>\\[^nrft\"\\]			{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext);}
+<INVALID>\"						{BEGIN 0;}
+<INVALID>{PARAGRAPH}			{printf("Line %d, col %d: unterminated string\n", aux1, aux2);col=1; line++; BEGIN 0;}
+<INVALID>.						{col+=yyleng;}
 
 {CBRACE}						{if(erros==0) printf("CBRACE\n"); col += yyleng;}
 {CCURV}							{if(erros==0) printf("CCURV\n"); col += yyleng;}
@@ -148,11 +152,9 @@ ENDCOMMENT			"*/"
 {DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext); col += yyleng;}
 {BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext); col += yyleng;}				
 {REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext); col += yyleng;}
-{STRLIT}						{if(erros==0) printf("STRLIT(%s)\n", yytext); col += yyleng;}
 {SPACE}|{TAB}|{FORM}|{CARRIAGE}	{col += yyleng;}
 {PARAGRAPH}						{line++; col = 1;}
 {ID}							{if(erros==0) printf("ID(%s)\n", yytext); col += yyleng;}
-{UNSTRLIT}						{printf("Line %d, col %d: unterminated string literal \n", line, col); col += yyleng;}
 .								{printf("Line %d, col %d: illegal character (%s)\n", line, col, yytext); col += yyleng;} //Mas este está certo eheh
 
 
