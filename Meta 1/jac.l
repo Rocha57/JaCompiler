@@ -5,6 +5,7 @@
 		./jac -l < ficheiro
 
 		REALLIT MAYBE FINISHED
+
 	*/
 	int col = 1;
 	int line = 1;
@@ -19,7 +20,7 @@ DECLIT				0|[1-9]|[1-9][0-9_]*[0-9]
 EXP 				[eE]["+""-"]?{DECLIT}
 REALLIT 			{DECLIT}"."[{DECLIT}{EXP}]?|"."{DECLIT}{EXP}?|{DECLIT}{EXP}
 
-ESCAPE 				\\"|\\n|\\t|\\r|\\|\\f
+ESCAPE 				\"|\\n|\\t|\\r|\\\|\\f
 STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 
 BOOLIT				true|false
@@ -94,48 +95,55 @@ ENDCOMMENT			"*/"
 {OCURV}							{if(erros==0) printf("OCURV\n"); col += yyleng;}
 {OSQUARE}						{if(erros==0) printf("OSQUARE\n"); col += yyleng;}
 
+{AND}							{if(erros==0) printf("AND\n"); col += yyleng;}
 {ASSIGN}						{if(erros==0) printf("ASSIGN\n"); col += yyleng;}
 {BOOL} 							{if(erros==0) printf("BOOL\n"); col += yyleng;}
 {CLASS} 						{if(erros==0) printf("CLASS\n"); col += yyleng;}
 {COMMA}							{if(erros==0) printf("COMMA\n"); col += yyleng;}
+{DIV}							{if(erros==0) printf("DIV\n"); col += yyleng;}
 {DO} 							{if(erros==0) printf("DO\n"); col += yyleng;}
+{DOTLENGTH}						{if(erros==0) printf("DOTLENGTH\n"); col += yyleng;}
+{DOUBLE}						{if(erros==0) printf("DOUBLE\n"); col += yyleng;}
 {ELSE}							{if(erros==0) printf("ELSE\n"); col += yyleng;}
+{EQ}							{if(erros==0) printf("EQ\n"); col += yyleng;}
+{GEQ}							{if(erros==0) printf("GEQ\n"); col += yyleng;}
+{GT}							{if(erros==0) printf("GT\n"); col += yyleng;}
 {IF}							{if(erros==0) printf("IF\n"); col += yyleng;}
 {INT} 							{if(erros==0) printf("INT\n"); col += yyleng;}
+{LEQ}							{if(erros==0) printf("LEQ\n"); col += yyleng;}
+{LT}							{if(erros==0) printf("LT\n"); col += yyleng;}
+{MINUS}							{if(erros==0) printf("MINUS\n"); col += yyleng;}
+{MOD}							{if(erros==0) printf("MOD\n"); col += yyleng;}
+{NEQ}							{if(erros==0) printf("NEQ\n"); col += yyleng;}
 {NEW} 							{if(erros==0) printf("NEW\n"); col += yyleng;}
 {NOT}							{if(erros==0) printf("NOT\n"); col += yyleng;}
+{OR}							{if(erros==0) printf("OR\n"); col += yyleng;}
 {RETURN} 						{if(erros==0) printf("RETURN\n"); col += yyleng;}
 {PARSEINT} 						{if(erros==0) printf("PARSEINT\n"); col += yyleng;}
+{PLUS}							{if(erros==0) printf("PLUS\n"); col += yyleng;}
 {PRINT}							{if(erros==0) printf("PRINT\n"); col += yyleng;}
 {PUBLIC} 						{if(erros==0) printf("PUBLIC\n"); col += yyleng;}
-{SEMI}							{if(erros==0) printf("SEMIC\n"); col += yyleng;}
+{SEMI}							{if(erros==0) printf("SEMI\n"); col += yyleng;}
+{STAR}							{if(erros==0) printf("STAR\n"); col += yyleng;}
 {STATIC} 						{if(erros==0) printf("STATIC\n"); col += yyleng;}
 {STRING} 						{if(erros==0) printf("STRING\n"); col += yyleng;}
 {VOID}							{if(erros==0) printf("VOID\n"); col += yyleng;}
 {WHILE}							{if(erros==0) printf("WHILE\n"); col += yyleng;}
 
-{INTLIT}						{if(erros==0) printf("INTLIT(%s)\n", yytext); col += yyleng;}
 {DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext); col += yyleng;}
 {BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext); col += yyleng;}				
-{OP1}							{if(erros==0) printf("OP1(%s)\n", yytext); col += yyleng;}
-{OP2}							{if(erros==0) printf("OP2(%s)\n", yytext); col += yyleng;}
-{OP3}							{if(erros==0) printf("OP3(%s)\n", yytext); col += yyleng;}
-{OP4}							{if(erros==0) printf("OP4(%s)\n", yytext); col += yyleng;}				
+{REALLIT}						{if(erros==0) printf("REALLI(%s)\n", yytext); col += yyleng;}
+{STRLIT}						{if(erros==0) printf("STRLIT(%s)\n", yytext); col += yyleng;}
 {SPACE}|{TAB}					{col += yyleng;}
 {PARAGRAPH}						{line++; col = 1;}
 {ID}							{if(erros==0) printf("ID(%s)\n", yytext); col += yyleng;}
-								//DAQUI PARA BAIXO ESTÁ DO ANO PASSADO, AINDA NÃO VOU TOCAR ENQUANTO NÃO APARECER O ENUNCIADO
-'({ESCAPE}|[^\\\n']|(\\[^\n']))*' 						{printf("Line %d, col %d: invalid char constant (%s)\n",line, col, yytext); col += yyleng;}
-'({ESCAPE}|[^\\\n']|(\\[^\\\n']))*(\\)? 						{printf("Line %d, col %d: unterminated char constant\n", line, col); col = 1;}
-\"({ESCAPE}|[^\\\n\"]|(\\[^\n\"]))*\"					{printf("Line %d, col %d: invalid string constant (%s)\n",line, col, yytext); col += yyleng;}
-\"({ESCAPE}|[^\\\n\"]|(\\[^\\\n\"]))*(\\)?	 		{printf("Line %d, col %d: unterminated string constant\n", line, col); col = 1;}
 .								{printf("Line %d, col %d: illegal character (%s)\n", line, col, yytext); col += yyleng;} //Mas este está certo eheh
 
 
 %%
 int main(int argc, char** argv){
 
-	if (argc > 1 && ((strcmp(argv[1], "-l") == 0)) || (strcmp(argv[1], "-1") == 0)))
+	if ((argc > 1) && ((strcmp(argv[1], "-l") == 0)) || (strcmp(argv[1], "-1") == 0))
 		erros = 0;
 	else
 		erros = 1;
