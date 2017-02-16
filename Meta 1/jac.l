@@ -4,12 +4,8 @@
 		clang-3.8 -o jac lex.yy.c
 		./jac -l < ficheiro
 
-		NESTA PARTE DE CIMA ESTÁ AQUILO QUE ME LEMBRO DA APRESENTAÇÃO DO PROJECTO E O QUE ESTAVA DO ANO PASSADO QUE SÓ APAGUEI AQUILO QUE TINHA A CERTEZA
-		A PARTE DE BAIXO AINDA TEM QUE SER ALTERADA, AS RESERVED WORDS ACHO QUE JÁ ESTÃO BEM
-
-		A DECLIT NÃO ME LEMBRO SE ERAM SÓ ESTAS 2 FORMAS OU SE AINDA TEM MAIS ALGUMA
+		REALLIT NOT FINISHED
 	*/
-
 	int col = 1;
 	int line = 1;
 	int aux1 = 0;
@@ -19,16 +15,13 @@
 %}
 
 ID					[_$a-zA-Z][_$0-9a-zA-Z]*
-INTLIT				[0-9]+
-DECLIT				0|[1-9][0-9_]*
+DECLIT				0|[1-9]|[1-9][0-9_]*[0-9]
+EXP 				[eE]["+""-"]?{DECLIT}
+REALLIT 			{DECLIT}"."[{DECLIT}{EXP}]? 
+
 BOOLIT				true|false
 
-ESCAPE 				\\"|\\n|\\t|\\r|\\
-
-OP1					"&&"|"||"
-OP2					"<"|">"|"=="|"!="|"<="|">="
-OP3					"+"|"-"
-OP4					"*"|"/"|"%"
+ESCAPE 				\\"|\\n|\\t|\\r|\\|\\f
 
 CBRACE				"}"
 CCURV				")"
@@ -37,21 +30,36 @@ OBRACE				"{"
 OCURV				"("
 OSQUARE				"["
 
+AND 				"&&"
 ASSIGN				"="
 BOOL 				boolean
 CLASS 				class
 COMMA				","
+DIV 				"/"
 DO 					do
+DOTLENGTH			.length
+DOUBLE 				double
 ELSE				else
+EQ 					"=="
+GEQ 				">="
+GT 					">"
 IF					if
 INT 				int
+LEQ 				"<="
+LT 					"<"
+MINUS 				"-"
+MOD 				"%"
+NEQ 				"!="
 NEW 				new
 NOT					"!"
+OR 					"||"
 RETURN 				return
 PARSEINT 			Integer.parseInt
+PLUS 				"+"
 PRINT 				System.out.println
 PUBLIC 				public
-SEMIC				";"
+SEMI				";"
+STAR 				"*"
 STATIC 				static
 STRING 				String
 VOID				void
@@ -61,7 +69,7 @@ SPACE				" "
 TAB					"\t"
 PARAGRAPH			"\n"
 
-RESERVED			null|abstract|assert|break|byte|case|catch|char|const|continue|default|double|enum|extends|final|finally|float|for|goto|implements|instanceof|interface|long|native|package|private|protected|short|strictfp|super|switch|synchronized|this|throws?|transient|try|volatile
+RESERVED			null|abstract|assert|break|byte|case|catch|char|const|continue|default|enum|extends|final|finally|float|for|goto|implements|instanceof|interface|long|native|package|private|protected|short|strictfp|super|switch|synchronized|this|throws?|transient|try|volatile
 
 INITCOMMENT			"/*"
 ENDCOMMENT			"*/"
@@ -98,7 +106,7 @@ ENDCOMMENT			"*/"
 {PARSEINT} 						{if(erros==0) printf("PARSEINT\n"); col += yyleng;}
 {PRINT}							{if(erros==0) printf("PRINT\n"); col += yyleng;}
 {PUBLIC} 						{if(erros==0) printf("PUBLIC\n"); col += yyleng;}
-{SEMIC}							{if(erros==0) printf("SEMIC\n"); col += yyleng;}
+{SEMI}							{if(erros==0) printf("SEMIC\n"); col += yyleng;}
 {STATIC} 						{if(erros==0) printf("STATIC\n"); col += yyleng;}
 {STRING} 						{if(erros==0) printf("STRING\n"); col += yyleng;}
 {VOID}							{if(erros==0) printf("VOID\n"); col += yyleng;}
@@ -125,7 +133,7 @@ ENDCOMMENT			"*/"
 %%
 int main(int argc, char** argv){
 
-	if (argc > 1 && (strcmp(argv[1], "-l") == 0))
+	if (argc > 1 && ((strcmp(argv[1], "-l") == 0)) || (strcmp(argv[1], "-1") == 0)))
 		erros = 0;
 	else
 		erros = 1;
