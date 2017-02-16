@@ -82,6 +82,7 @@ INITCOMMENT			"/*"
 ENDCOMMENT			"*/"
 
 %X					COMMENT
+%X					TESTE
 
 
 %%
@@ -91,6 +92,16 @@ ENDCOMMENT			"*/"
 <COMMENT>{ENDCOMMENT}			{col += yyleng; BEGIN 0;}
 <COMMENT>.						{col += yyleng;}
 <COMMENT>{PARAGRAPH}			{col = 1; line++;}
+
+[\"]							{aux1 = line; aux2 = col; col += yyleng; BEGIN TESTE;} 
+<TESTE>[\\\n\"\r]				{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); BEGIN 0;}
+<TESTE><<EOF>>					{printf("Line %d, col %d: unterminated string\n", aux1, aux2); BEGIN 0;}
+<TESTE>[\"]						{col += yyleng; BEGIN 0;}
+<TESTE>.						{col += yyleng;}
+<TESTE>{PARAGRAPH}				{col = 1; line++;}
+
+
+
 
 {CBRACE}						{if(erros==0) printf("CBRACE\n"); col += yyleng;}
 {CCURV}							{if(erros==0) printf("CCURV\n"); col += yyleng;}

@@ -6,7 +6,7 @@ all:
 	@zip $(FILE_NAME).zip $(FILE_NAME).l
 	@echo "[INFO] Compiled"
 	@echo "[INFO] Testing example"
-	@./$(FILE_NAME) < testestrings.txt
+	@./$(FILE_NAME) -l < testestrings.txt
 
 clean:
 	@rm lex.yy.c $(FILE_NAME) $(FILE_NAME).zip
