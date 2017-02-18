@@ -1,3 +1,5 @@
+""
+"
 teste1
 "te\s\t\e\2"teste2
 "teste3
@@ -7,3 +9,13 @@ teste1
 "teste6 teste6""teste6"""
 "teste7 teste7""teste7""""
 "teste8 teste8""teste8"""""
+"teste9\""
+oaniosa
+"teste10\"
+oi
+"teste11\
+"\p\"
+"\p\
+"\p\s\n
+"\"\a
+"\""
