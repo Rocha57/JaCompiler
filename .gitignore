@@ -3,3 +3,6 @@ Meta 1/lex.yy.c
 
 Meta 1/jac
 *.swp
+*.swn
+Meta 1/.output.txt.swo
+*.swo
