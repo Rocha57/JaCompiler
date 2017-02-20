@@ -1,0 +1,49 @@
+STRLIT("")
+Line 2, col 1: unterminated string literal
+ID(teste1)
+Line 4, col 4: invalid escape sequence (\s)
+Line 4, col 8: invalid escape sequence (\e)
+Line 4, col 10: invalid escape sequence (\2)
+ID(teste2)
+Line 5, col 1: unterminated string literal
+STRLIT("teste4")
+ID(teste4)
+Line 6, col 16: invalid escape sequence (\p)
+Line 6, col 18: invalid escape sequence (\g)
+Line 6, col 15: unterminated string literal
+STRLIT("coisada")
+STRLIT(" wololo")
+STRLIT("")
+STRLIT(" lolo")
+Line 7, col 28: unterminated string literal
+STRLIT("teste5")
+ID(teste5)
+STRLIT("teste5")
+STRLIT("teste6 teste6")
+STRLIT("teste6")
+STRLIT("")
+STRLIT("teste7 teste7")
+STRLIT("teste7")
+STRLIT("")
+Line 10, col 26: unterminated string literal
+STRLIT("teste8 teste8")
+STRLIT("teste8")
+STRLIT("")
+STRLIT("")
+STRLIT("teste9\"")
+ID(oaniosa)
+STRLIT("")
+ID(oi)
+Line 16, col 9: invalid escape sequence (\)
+Line 16, col 1: unterminated string literal
+Line 17, col 2: invalid escape sequence (\p)
+Line 18, col 2: invalid escape sequence (\p)
+Line 18, col 4: invalid escape sequence (\)
+Line 18, col 1: unterminated string literal
+Line 19, col 2: invalid escape sequence (\p)
+Line 19, col 4: invalid escape sequence (\s)
+Line 19, col 1: unterminated string literal
+STRLIT("")
+ID(a)
+STRLIT("\"")
+Line 22, col 1: unterminated string literal

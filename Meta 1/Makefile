@@ -6,8 +6,10 @@ all:
 	@zip $(FILE_NAME).zip $(FILE_NAME).l
 	@echo "[INFO] Compiled"
 	@echo "[INFO] Testing example"
-	@./$(FILE_NAME) -l < testestrings.txt
+	@./$(FILE_NAME) -l < testestrings.txt > output.txt
+	@#vimdiff output.txt expected.txt
 
 clean:
 	@rm lex.yy.c $(FILE_NAME) $(FILE_NAME).zip
+	@rm .expected.txt.swp .output.txt.swp
 	echo "[INFO] Cleaned"
