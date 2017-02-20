@@ -6,11 +6,12 @@
 
 		REALLIT MAYBE FINISHED
 
-		STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 		UNSTRLIT			\"([^\\\n\"\r]|{ESCAPE})*(\\)?
 
 		{STRLIT}						{if(erros==0) printf("STRLIT(%s)\n", yytext); col += yyleng;}
 		{UNSTRLIT}						{printf("Line %d, col %d: unterminated string literal \n", line, col); col += yyleng;}
+
+		<STR>([^\\\n"]|{ESCAPE})*\"		{printf("STRLIT(\"%s)\n", yytext);col += yyleng; BEGIN 0;}
 	*/
 	int col = 1;
 	int line = 1;
@@ -27,6 +28,7 @@ EXP 				[eE]("+"|"-")?{AUXLIT}
 REALLIT 			{AUXLIT}"."({AUXLIT}|{EXP})?|"."{AUXLIT}{EXP}?|{AUXLIT}{EXP}
 
 ESCAPE 				\\\"|\\n|\\t|\\r|\\\\|\\f
+INVALIDSEQ 			\\[^nrft"\\\n]
 
 BOOLIT				true|false
 
@@ -84,7 +86,7 @@ RESERVED			null|abstract|assert|break|byte|case|catch|char|const|continue|defaul
 INITCOMMENT			"/*"
 ENDCOMMENT			"*/"
 
-INVALIDSEQ 			\\[^nrft\"\\\n]
+STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 
 %X					COMMENT
 %X					STR
@@ -100,9 +102,8 @@ INVALIDSEQ 			\\[^nrft\"\\\n]
 <COMMENT>{PARAGRAPH}			{col = 1; line++;}
 
 
-
+{STRLIT} 						{printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0;}
 \"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;} 
-<STR>([^\\\n\"]|{ESCAPE})*\"	{printf("STRLIT(\"%s)\n", yytext);col += yyleng; BEGIN 0;}
 <STR>{INVALIDSEQ}				{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+= yyleng; BEGIN INVALID;}
 <STR>(\\\")?{PARAGRAPH}			{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
 <STR><<EOF>>					{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
