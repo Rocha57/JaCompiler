@@ -60,7 +60,6 @@ LT 					"<"
 MINUS 				"-"
 MOD 				"%"
 NEQ 				"!="
-NEW 				new
 NOT					"!"
 OR 					"||"
 RETURN 				return
@@ -81,7 +80,7 @@ SPACE				" "
 TAB					"\t"
 PARAGRAPH			"\n"
 
-RESERVED			null|abstract|assert|break|byte|case|catch|char|const|continue|default|enum|extends|final|finally|float|for|goto|implements|instanceof|interface|long|native|package|private|protected|short|strictfp|super|switch|synchronized|this|throws?|transient|try|volatile
+RESERVED			null|abstract|assert|break|byte|case|catch|char|const|continue|default|enum|extends|final|finally|float|for|goto|implements|import|instanceof|Integer|interface|long|native|new|package|private|protected|short|strictfp|super|switch|synchronized|System|this|throws?|transient|try|volatile|"++"|"--"
 
 INITCOMMENT			"/*"
 ENDCOMMENT			"*/"
@@ -102,7 +101,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 <COMMENT>{PARAGRAPH}			{col = 1; line++;}
 
 
-{STRLIT} 						{printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0;}
+{STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0;}
 \"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;} 
 <STR>{INVALIDSEQ}				{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+= yyleng; BEGIN INVALID;}
 <STR>(\\\")?{PARAGRAPH}			{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
@@ -142,7 +141,6 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 {MINUS}							{if(erros==0) printf("MINUS\n"); col += yyleng;}
 {MOD}							{if(erros==0) printf("MOD\n"); col += yyleng;}
 {NEQ}							{if(erros==0) printf("NEQ\n"); col += yyleng;}
-{NEW} 							{if(erros==0) printf("NEW\n"); col += yyleng;}
 {NOT}							{if(erros==0) printf("NOT\n"); col += yyleng;}
 {OR}							{if(erros==0) printf("OR\n"); col += yyleng;}
 {RETURN} 						{if(erros==0) printf("RETURN\n"); col += yyleng;}
@@ -160,8 +158,9 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 {REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext); col += yyleng;}
 {DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext); col += yyleng;}
 {BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext); col += yyleng;}				
-{SPACE}|{TAB}|{FORM}|{CARRIAGE}	{col += yyleng;}
-{PARAGRAPH}						{line++; col = 1;}
+{SPACE}|{TAB}|{FORM}			{col += yyleng;}
+{PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH}	{line++; col = 1;}
+{RESERVED}						{if(erros==0) printf("RESERVED(%s)\n", yytext); col += yyleng;}
 {ID}							{if(erros==0) printf("ID(%s)\n", yytext); col += yyleng;}
 .								{printf("Line %d, col %d: illegal character (%s)\n", line, col, yytext); col += yyleng;} //Mas este está certo eheh
 
