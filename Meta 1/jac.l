@@ -47,7 +47,7 @@ CLASS 				class
 COMMA				","
 DIV 				"/"
 DO 					do
-DOTLENGTH			.length
+DOTLENGTH			".length"
 DOUBLE 				double
 ELSE				else
 EQ 					"=="
@@ -63,9 +63,9 @@ NEQ 				"!="
 NOT					"!"
 OR 					"||"
 RETURN 				return
-PARSEINT 			Integer.parseInt
+PARSEINT 			"Integer.parseInt"
 PLUS 				"+"
-PRINT 				System.out.println
+PRINT 				"System.out.println"
 PUBLIC 				public
 SEMI				";"
 STAR 				"*"
@@ -109,8 +109,8 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 <STR>.							{col+=yyleng;}
 <INVALID>{INVALIDSEQ}			{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+= yyleng;}
 <INVALID>\"						{col += yyleng; BEGIN 0;}
-<INVALID>(\\\")?{PARAGRAPH}			{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
-<INVALID><<EOF>>					{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
+<INVALID>(\\\")?{PARAGRAPH}		{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
+<INVALID><<EOF>>				{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
 <INVALID>.						{col+=yyleng;}
 
 
