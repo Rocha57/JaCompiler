@@ -93,12 +93,12 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 
 
 %%
-"//".*							//if IT catches a // ignores everything until a \n
+"//"([^\n\r])*							//if IT catches a // ignores everything until a \n
 {INITCOMMENT}					{aux1 = line; aux2 = col; col += yyleng; BEGIN COMMENT;}
 <COMMENT><<EOF>>				{printf("Line %d, col %d: unterminated comment\n", aux1, aux2); BEGIN 0;}
 <COMMENT>{ENDCOMMENT}			{col += yyleng; BEGIN 0;}
 <COMMENT>.						{col += yyleng;}
-<COMMENT>{PARAGRAPH}			{col = 1; line++;}
+<COMMENT>({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})			{col = 1; line++;}
 
 
 {STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0;}
