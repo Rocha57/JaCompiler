@@ -25,7 +25,7 @@ ID					[_$a-zA-Z][_$0-9a-zA-Z]*
 DECLIT				0|[1-9]|[1-9][0-9_]*[0-9]
 AUXLIT				[0-9]|[0-9][0-9_]*[0-9]
 EXP 				[eE]("+"|"-")?{AUXLIT}
-REALLIT 			{AUXLIT}"."({AUXLIT}|{EXP})?|"."{AUXLIT}{EXP}?|{AUXLIT}{EXP}
+REALLIT 			{AUXLIT}"."({AUXLIT}|{EXP})?|"."{AUXLIT}{EXP}?|{AUXLIT}{EXP}|{AUXLIT}"."{AUXLIT}{EXP}
 
 ESCAPE 				\\\"|\\n|\\t|\\r|\\\\|\\f
 INVALIDSEQ 			\\[^nrft"\\\n]
@@ -104,12 +104,12 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 {STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0;}
 \"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;} 
 <STR>{INVALIDSEQ}				{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+= yyleng; BEGIN INVALID;}
-<STR>(\\\")?{PARAGRAPH}			{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
+<STR>(\\\")?({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})			{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
 <STR><<EOF>>					{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
 <STR>.							{col+=yyleng;}
 <INVALID>{INVALIDSEQ}			{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+= yyleng;}
 <INVALID>\"						{col += yyleng; BEGIN 0;}
-<INVALID>(\\\")?{PARAGRAPH}		{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
+<INVALID>(\\\")?({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})		{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
 <INVALID><<EOF>>				{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
 <INVALID>.						{col+=yyleng;}
 
