@@ -1,17 +1,6 @@
 %{
 	/*
-		flex jac.l
-		clang-3.8 -o jac lex.yy.c
-		./jac -l < ficheiro
-
-		REALLIT MAYBE FINISHED
-
-		UNSTRLIT			\"([^\\\n\"\r]|{ESCAPE})*(\\)?
-
-		{STRLIT}						{if(erros==0) printf("STRLIT(%s)\n", yytext); col += yyleng;}
-		{UNSTRLIT}						{printf("Line %d, col %d: unterminated string literal \n", line, col); col += yyleng;}
-
-		<STR>([^\\\n"]|{ESCAPE})*\"		{printf("STRLIT(\"%s)\n", yytext);col += yyleng; BEGIN 0;}
+		({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH}) -> Line terminator
 	*/
 	int col = 1;
 	int line = 1;
@@ -28,7 +17,6 @@ EXP 				[eE]("+"|"-")?{AUXLIT}
 REALLIT 			{AUXLIT}"."({AUXLIT}|{EXP})?|"."{AUXLIT}{EXP}?|{AUXLIT}{EXP}|{AUXLIT}"."{AUXLIT}{EXP}
 
 ESCAPE 				\\\"|\\n|\\t|\\r|\\\\|\\f
-INVALIDSEQ 			\\[^nrft"\\\n]
 
 BOOLIT				true|false
 
@@ -89,11 +77,10 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 
 %X					COMMENT
 %X					STR
-%X					INVALID
 
 
 %%
-"//"([^\n\r])*							//if IT catches a // ignores everything until a \n
+"//"([^\n\r])*					//if it catches a // ignores everything until a \n|\r
 {INITCOMMENT}					{aux1 = line; aux2 = col; col += yyleng; BEGIN COMMENT;}
 <COMMENT><<EOF>>				{printf("Line %d, col %d: unterminated comment\n", aux1, aux2); return 0;}
 <COMMENT>{ENDCOMMENT}			{col += yyleng; BEGIN 0;}
@@ -107,7 +94,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 <STR>\"							{col += yyleng; BEGIN 0;}
 <STR>({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})			    {printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
 <STR><<EOF>>					{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2); return 0;}
-<STR>\\.?						{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+=yyleng;}
+<STR>\\.?						{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+=yyleng;} //If it catches a \ with somthing other than a escape sequence, or nothing at all, prints this error
 <STR>.							{col+=yyleng;}
 
 

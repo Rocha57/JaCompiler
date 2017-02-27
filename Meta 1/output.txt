@@ -34,10 +34,12 @@ STRLIT("teste9\"")
 ID(oaniosa)
 Line 14, col 1: unterminated string literal
 ID(oi)
+Line 16, col 9: invalid escape sequence (\)
 Line 16, col 1: unterminated string literal
 Line 17, col 2: invalid escape sequence (\p)
 Line 17, col 1: unterminated string literal
 Line 18, col 2: invalid escape sequence (\p)
+Line 18, col 4: invalid escape sequence (\)
 Line 18, col 1: unterminated string literal
 Line 19, col 2: invalid escape sequence (\p)
 Line 19, col 4: invalid escape sequence (\s)
@@ -50,3 +52,7 @@ Line 22, col 6: invalid escape sequence (\a)
 Line 22, col 1: unterminated string literal
 Line 23, col 1: unterminated string literal
 Line 24, col 1: unterminated string literal
+Line 25, col 4: invalid escape sequence (\)
+Line 25, col 1: unterminated string literal
+Line 26, col 7: invalid escape sequence (\)
+Line 26, col 1: unterminated string literal
