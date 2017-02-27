@@ -95,23 +95,20 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 %%
 "//"([^\n\r])*							//if IT catches a // ignores everything until a \n
 {INITCOMMENT}					{aux1 = line; aux2 = col; col += yyleng; BEGIN COMMENT;}
-<COMMENT><<EOF>>				{printf("Line %d, col %d: unterminated comment\n", aux1, aux2); BEGIN 0;}
+<COMMENT><<EOF>>				{printf("Line %d, col %d: unterminated comment\n", aux1, aux2); return 0;}
 <COMMENT>{ENDCOMMENT}			{col += yyleng; BEGIN 0;}
-<COMMENT>.						{col += yyleng;}
 <COMMENT>({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})			{col = 1; line++;}
+<COMMENT>.						{col += yyleng;}
 
 
 {STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0;}
 \"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;} 
-<STR>{INVALIDSEQ}				{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+= yyleng; BEGIN INVALID;}
-<STR>(\\\")?({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})			{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
-<STR><<EOF>>					{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
+<STR>{ESCAPE}					{ col+= yyleng; }
+<STR>\"							{col += yyleng; BEGIN 0;}
+<STR>({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})			    {printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
+<STR><<EOF>>					{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2); return 0;}
+<STR>\\.?						{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+=yyleng;}
 <STR>.							{col+=yyleng;}
-<INVALID>{INVALIDSEQ}			{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+= yyleng;}
-<INVALID>\"						{col += yyleng; BEGIN 0;}
-<INVALID>(\\\")?({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})		{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
-<INVALID><<EOF>>				{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
-<INVALID>.						{col+=yyleng;}
 
 
 {CBRACE}						{if(erros==0) printf("CBRACE\n"); col += yyleng;}
