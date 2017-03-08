@@ -17,7 +17,6 @@
     
 }
 
-/*falta mudar isto*/
 %token CBRACE
 %token CCURV
 %token CSQUARE
@@ -90,9 +89,6 @@
 
 %start Program
  
-%nonassoc CCURV
-%nonassoc ELSE 
-
 %left COMMA
 %right ASSIGN 
 %left OR
@@ -102,7 +98,8 @@
 %left PLUS MINUS
 %left STAR DIV MOD
 %right NOT
-%left OCURV OSQUARE
+%left OCURV OSQUARE CCURV CSQUARE
+%nonassoc ELSE 
 
 
  
