@@ -5,20 +5,22 @@
 #include <string.h>
 #include <stdlib.h>
 
-/*estas duas tabelas vão ser mudadas*/
 
-typedef enum{	Program, Declaration, ArrayDeclaration, FuncDeclaration, FuncDefinition, ParamList, FuncBody, ParamDeclaration, StatList, If,
- 				For,  	Return, 	Or, 				And, 			Eq, 				Ne, 		Lt, 	Gt, 			Le, 	  Ge,
- 				Add, 	Sub, 		Mul, 				Div, 			Mod, 				Not, 		Minus, 	Plus, 			Addr, 	  Deref, 
- 				Store, 	Comma, 		Call, 				Char, 			ChrLit,				Id, 		IntLit, Pointer, 		StrLit,   Void,
- 				Null, 	Int
+typedef enum{	Program, 	FieldDecl, 	VarDecl, 	MethodDecl, 	MethodHeader, 	MethodParams, 	ParamDecl, 
+				MethodBody, Block, 		DoWhile,	If,  	 		Print, 			Return,  		While, 	 
+				Assign,		Call, 		ParseArgs, 	Or, 			And,   			Eq, 			Neq,
+				Lt, 		Leq, 	 	Geq, 		Add, 		   	Mul, 		 	Div, 			Mod, 		
+				Not,   		Minus, 		Plus, 	 	Length, 		Bool, 	 		BoolLit, 	 	Double,	   
+				DecLit, 	Id, 		Int, 		RealLit,   		StrLit,			Void, 			Null
 }tag;
 
-char* tipos[] = {"Program", "Declaration", "ArrayDeclaration",  "FuncDeclaration", "FuncDefinition", "ParamList", "FuncBody", "ParamDeclaration", "StatList", "If",
- 				"For",  	"Return", 	   "Or", 				"And", 			   "Eq", 			 "Ne", 		  "Lt", 	  "Gt", 			  "Le", 	  "Ge",
- 				"Add", 		"Sub", 		   "Mul", 				"Div", 			   "Mod", 			 "Not", 	  "Minus", 	  "Plus", 			  "Addr", 	  "Deref", 
- 				"Store", 	"Comma", 	   "Call", 				"Char", 		   "ChrLit",		 "Id", 		  "IntLit",   "Pointer", 		  "StrLit",   "Void",
- 				"Null",  "Int" };
+char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeader",		"MethodParams", 	"ParamDecl", 
+				"MethodBody", 	"Block", 		"DoWhile",	"If",  	 		"Print", 			"Return",  			"While", 	 
+				"Assign",		"Call", 		"ParseArgs","Or", 			"And",   			"Eq", 				"Neq",
+				"Lt", 			"Leq", 	 		"Geq", 		"Add", 		   	"Mul", 		 		"Div", 				"Mod", 		
+				"Not",   		"Minus", 		"Plus", 	"Length", 		"Bool", 	 		"BoolLit", 	 		"Double",	   
+				"DecLit", 		"Id", 			"Int", 		"RealLit",   	"StrLit",			"Void", 			"Null"
+};
 
 
 typedef struct _Node Node;
