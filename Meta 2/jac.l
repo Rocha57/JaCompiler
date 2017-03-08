@@ -2,6 +2,7 @@
 	/*
 		({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH}) -> Line terminator
 	*/
+	#include "y.tab.h"
 	int col = 1;
 	int line = 1;
 	int aux1 = 0;
@@ -90,7 +91,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 <COMMENT>.						{col += yyleng;}
 
 
-{STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);auxline = line; auxcol = col;col += yyleng; BEGIN 0; yylval.token = strdup(yytext); return STRLIT;}
+{STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);auxline = line; auxcol = col;col += yyleng; BEGIN 0; yylval.yylval = strdup(yytext); return STRLIT;}
 \"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;} 
 <STR>{ESCAPE}					{ col+= yyleng; }
 <STR>\"							{col += yyleng; BEGIN 0;}
@@ -141,13 +142,13 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 {VOID}							{if(erros==0) printf("VOID\n");auxline = line; auxcol = col; col += yyleng; return VOID;}
 {WHILE}							{if(erros==0) printf("WHILE\n");auxline = line; auxcol = col; col += yyleng; return WHILE;}
 
-{REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext);auxline = line; auxcol = col; col += yyleng; yylval.token = strdup(yytext); return STRLIT;}
-{DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext);auxline = line; auxcol = col; col += yyleng; yylval.token = strdup(yytext); return DECLIT;}
-{BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext);auxline = line; auxcol = col; col += yyleng; yylval.token = strdup(yytext); return BOOLLIT;}				
+{REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext);auxline = line; auxcol = col; col += yyleng; yylval.yylval = strdup(yytext); return STRLIT;}
+{DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext);auxline = line; auxcol = col; col += yyleng; yylval.yylval = strdup(yytext); return DECLIT;}
+{BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext);auxline = line; auxcol = col; col += yyleng; yylval.yylval = strdup(yytext); return BOOLLIT;}				
 {SPACE}|{TAB}|{FORM}			{auxline = line; auxcol = col;col += yyleng;}
 {PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH}	{auxline = line; auxcol = col; line++; col = 1;}
-{RESERVED}						{if(erros==0) printf("RESERVED(%s)\n", yytext);auxline = line; auxcol = col; col += yyleng; yylval.token = strdup(yytext); return RESERVED;}
-{ID}							{if(erros==0) printf("ID(%s)\n", yytext);auxline = line; auxcol = col; col += yyleng; yylval.token = strdup(yytext); return ID;}
+{RESERVED}						{if(erros==0) printf("RESERVED(%s)\n", yytext);auxline = line; auxcol = col; col += yyleng; yylval.yylval = strdup(yytext); return RESERVED;}
+{ID}							{if(erros==0) printf("ID(%s)\n", yytext);auxline = line; auxcol = col; col += yyleng; yylval.yylval = strdup(yytext); return ID;}
 <<EOF>>							{auxcol = col; col = 1; return yytext[0];}
 .								{printf("Line %d, col %d: illegal character (%s)\n", line, col, yytext);auxline = line; auxcol = col; col += yyleng;}
 
@@ -166,9 +167,9 @@ int main(int argc, char** argv){
 		}
 		else if (strcmp(argv[1], "-t") == 0){
 			yyparse();
-			if (erros_sintax==0)
+			if (erros_sintax==0){
 				//printTree
-
+			}
 		}
 	}
 	else{
@@ -180,10 +181,8 @@ int main(int argc, char** argv){
 }
 
 void yyerror (char *s){
-	if (sintax == 0){
-		printf ("Line %d, col %d: %s: %s\n", auxline, auxcol, s, yytext);
-		erros_sintax = 1;
-	}
+	printf ("Line %d, col %d: %s: %s\n", auxline, auxcol, s, yytext);
+	erros_sintax = 1;
 }
 
 int yywrap(){
