@@ -169,7 +169,7 @@ MethodInvocation: ID OCURV ExprList CCURV                                   {;}
                 | ID OCURV CCURV                                            {;}
                 | ID OCURV error CCURV                                      {;}
 
-ExprList: ExprList Expr                                                     {;}
+ExprList: ExprList COMMA Expr                                               {;}
         | Expr                                                              {;}
 
 ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV                     {;}
