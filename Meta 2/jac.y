@@ -1,12 +1,12 @@
 %{
-    //#include "structures.h"
+    #include "structures.h"
     
     
     extern void yyerror( char *s);
     int yylex(void);
-    /*Node* raiz;
+    Node* raiz;
     Node* temp;
-    Node* temp1;*/
+    Node* temp1;
     /*int yydebug=1;
     */
 %}

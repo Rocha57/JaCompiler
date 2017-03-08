@@ -80,7 +80,7 @@ Node* reverse(Node* root) {
 void printTree(Node* root,int altura){ 
 	int i; 
 	if(root != NULL){
-		if(root->tipo == Id || root->tipo == IntLit || root->tipo == ChrLit || root->tipo == StrLit){
+		if(root->tipo == Id || root->tipo == BoolLit || root->tipo == DecLit || root->tipo == StrLit || root->tipo == RealLit){
 			for(i=0; i < altura;i++){
 				printf(".");
 			}
