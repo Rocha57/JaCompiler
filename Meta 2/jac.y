@@ -101,7 +101,7 @@
 %left GEQ LEQ GT LT
 %left PLUS MINUS
 %left STAR DIV MOD
-%left NOT
+%right NOT
 %left OCURV OSQUARE
 
 
@@ -191,11 +191,11 @@ Expr: Assignment                                                            {;}
     | Expr STAR Expr                                                        {;}
     | Expr DIV Expr                                                         {;}
     | Expr MOD Expr                                                         {;}
-    | PLUS Expr                                                             {;}
-    | MINUS Expr                                                            {;}
+    | PLUS Expr  %prec NOT                                                  {;}
+    | MINUS Expr %prec NOT                                                  {;}
     | NOT Expr                                                              {;}
-    | ID                                                                    {;}
     | ID DOTLENGTH                                                          {;}
+    | ID                                                                    {;}
     | OCURV Expr CCURV                                                      {;}
     | BOOLLIT                                                               {;}
     | DECLIT                                                                {;}
