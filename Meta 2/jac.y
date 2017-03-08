@@ -1,12 +1,12 @@
 %{
-    #include "structures.h"
+    //#include "structures.h"
     
     
     extern void yyerror( char *s);
     int yylex(void);
-    Node* raiz;
+    /*Node* raiz;
     Node* temp;
-    Node* temp1;
+    Node* temp1;*/
     /*int yydebug=1;
     */
 %}
@@ -59,7 +59,7 @@
 %token VOID 
 %token WHILE
 
-%token RESERVED
+%token <yylval> RESERVED
 %token <yylval> ID
 %token <yylval> BOOLLIT
 %token <yylval> REALLIT
@@ -67,16 +67,22 @@
 %token <yylval> STRLIT
 
 %type <node> Program
+%type <node> ProgramList
 %type <node> FieldDecl
 %type <node> MethodDecl
 %type <node> MethodHeader
 %type <node> MethodBody
+%type <node> MethodBodyList
 %type <node> FormalParams
+%type <node> FormalParamsList
 %type <node> VarDecl
+%type <node> IdList
 %type <node> Type
 %type <node> Statement
+%type <node> StatementList
 %type <node> Assignment
 %type <node> MethodInvocation
+%type <node> ExprList
 %type <node> ParseArgs
 %type <node> Expr
 
@@ -101,52 +107,99 @@
 
  
 %%
-/*Gramatica definida como no enunciado*/ 
-Program: CLASS ID OBRACE {FieldDecl | MethodDecl | SEMI} CBRACE             {;}
+Program: CLASS ID OBRACE ProgramList CBRACE                                 {;}
 
-FieldDecl: PUBLIC STATIC Type ID {COMMA ID} SEMI                            {;}
+ProgramList: ProgramList FieldDecl                                          {;}
+           | ProgramList MethodDecl                                         {;}
+           | ProgramList SEMI                                               {;}
+           |                                                                {;}
+
+FieldDecl: PUBLIC STATIC Type ID IdList SEMI                                {;}
          | error SEMI                                                       {;}
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody                           {;}
 
-MethodHeader: (Type | VOID) ID OCURV [FormalParams] CCURV                   {;}
+MethodHeader: Type ID OCURV CCURV                                           {;}
+            | Type ID OCURV FormalParams CCURV                              {;}
+            | VOID ID OCURV CCURV                                           {;}
+            | VOID ID OCURV FormalParams CCURV                              {;}
 
-MethodBody: OBRACE {VarDecl | Statement} CBRACE                            {;}
+MethodBody: OBRACE MethodBodyList CBRACE                                    {;}
 
-FormalParams: Type ID {COMMA Type ID}                                       {;}
+MethodBodyList: MethodBodyList VarDecl                                      {;}
+              | MethodBodyList Statement                                    {;}
+              |                                                             {;}
+
+FormalParams: Type ID FormalParamsList                                      {;}
             | STRING OSQUARE CSQUARE ID                                     {;}
 
-VarDecl: Type ID {COMMA ID} SEMI                                            {;}
+FormalParamsList: FormalParamsList COMMA Type ID                            {;}
+                |                                                           {;}
+
+VarDecl: Type ID IdList SEMI                                                {;}
+
+IdList: IdList COMMA ID                                                     {;}
+      |                                                                     {;}
 
 Type: BOOL                                                                  {;}
     | INT                                                                   {;}
     | DOUBLE                                                                {;}
 
-Statement: OBRACE {Statement} CBRACE                                        {;}
-         | IF OCURV Expr CCURV Statement [ELSE Statement]                   {;} 
+Statement: OBRACE StatementList CBRACE                                      {;}
+         | IF OCURV Expr CCURV Statement ELSE Statement                     {;}
+         | IF OCURV Expr CCURV Statement                                    {;}
          | WHILE OCURV Expr CCURV Statement                                 {;}
          | DO Statement WHILE OCURV Expr CCURV SEMI                         {;}
-         | PRINT OCURV (Expr | STRLIT) CCURV SEMI                           {;}
-         | [(Assignment | MethodInvocation | ParseArgs)] SEMI               {;}
-         | RETURN [Expr] SEMI                                               {;}
+         | PRINT OCURV Expr CCURV SEMI                                      {;}
+         | PRINT OCURV STRLIT CCURV SEMI                                    {;}         
+         | SEMI                                                             {;}
+         | Assignment SEMI                                                  {;}
+         | MethodInvocation SEMI                                            {;}
+         | ParseArgs SEMI                                                   {;}
+         | RETURN Expr SEMI                                                 {;}
+         | RETURN SEMI                                                      {;}
          | error SEMI                                                       {;}
+
+StatementList: StatementList Statement                                      {;}
+             |                                                              {;}
 
 Assignment: ID ASSIGN Expr                                                  {;}
 
-MethodInvocation: ID OCURV [Expr {COMMA Expr}] CCURV                        {;}
+MethodInvocation: ID OCURV ExprList CCURV                                   {;}
+                | ID OCURV CCURV                                            {;}
                 | ID OCURV error CCURV                                      {;}
+
+ExprList: ExprList Expr                                                     {;}
+        | Expr                                                              {;}
 
 ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV                     {;}
          | PARSEINT OCURV error CCURV                                       {;}
 
-Expr: Assignment | MethodInvocation | ParseArgs                             {;}
-    | Expr (AND | OR) Expr                                                  {;}
-    | Expr (EQ | GEQ | GT | LEQ | LT | NEQ) Expr                            {;}
-    | Expr (PLUS | MINUS | STAR | DIV | MOD) Expr                           {;}
-    | (PLUS | MINUS | NOT) Expr                                             {;}
-    | ID [DOTLENGTH]                                                        {;}
+Expr: Assignment                                                            {;}
+    | MethodInvocation                                                      {;}
+    | ParseArgs                                                             {;}
+    | Expr AND Expr                                                         {;}
+    | Expr OR Expr                                                          {;}
+    | Expr EQ Expr                                                          {;}
+    | Expr GEQ Expr                                                         {;}
+    | Expr GT Expr                                                          {;}
+    | Expr LEQ Expr                                                         {;}
+    | Expr LT Expr                                                          {;}
+    | Expr NEQ Expr                                                         {;}
+    | Expr PLUS Expr                                                        {;}
+    | Expr MINUS Expr                                                       {;}
+    | Expr STAR Expr                                                        {;}
+    | Expr DIV Expr                                                         {;}
+    | Expr MOD Expr                                                         {;}
+    | PLUS Expr                                                             {;}
+    | MINUS Expr                                                            {;}
+    | NOT Expr                                                              {;}
+    | ID                                                                    {;}
+    | ID DOTLENGTH                                                          {;}
     | OCURV Expr CCURV                                                      {;}
-    | BOOLLIT | DECLIT | REALLIT                                            {;}
+    | BOOLLIT                                                               {;}
+    | DECLIT                                                                {;}
+    | REALLIT                                                               {;}
     | OCURV error CCURV                                                     {;}
 
 
