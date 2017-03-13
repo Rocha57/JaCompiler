@@ -4,7 +4,7 @@
     
     extern void yyerror( char *s);
     int yylex(void);
-    Node* raiz;
+    extern Node* raiz;
     Node* temp;
     Node* temp1;
     /*int yydebug=1;
@@ -109,43 +109,56 @@
 
  
 %%
-Program: CLASS ID OBRACE ProgramList CBRACE                                 {;}
+Program: CLASS ID OBRACE ProgramList CBRACE                                 {temp = createNode(Id,$2,NULL,$4);                                                                             
+                                                                             raiz=createNode(Program,NULL,temp1,NULL);}
 
-ProgramList: ProgramList FieldDecl                                          {;}
-           | ProgramList MethodDecl                                         {;}
-           | ProgramList SEMI                                               {;}
-           |                                                                {;}
+ProgramList: ProgramList FieldDecl                                           {$$=$1; joinIrmao($$,createNode(FieldDecl,NULL,$2,NULL));}
+           | ProgramList MethodDecl                                          {$$=$1; joinIrmao($$,$2);}
+           | ProgramList SEMI                                               {$$=$1;}
+           | %empty                                                         {;}
+           ;
 
-FieldDecl: PUBLIC STATIC Type ID IdList SEMI                                {;}
+FieldDecl: PUBLIC STATIC Type ID IdList SEMI                                {$$=$3;
+                                                                             joinIrmao($$,createNode(Id,$4,NULL,$5));}
          | error SEMI                                                       {;}
+         ;
 
-MethodDecl: PUBLIC STATIC MethodHeader MethodBody                           {;}
+MethodDecl: PUBLIC STATIC MethodHeader MethodBody                           {temp = createNode(MethodHeader,NULL,$3,NULL);
+                                                                            temp1 = createNode(MethodBody, NULL, $4, NULL);
+                                                                            joinIrmao(temp,temp1);
+                                                                             $$ = createNode(MethodDecl,NULL,temp,NULL);}
 
 MethodHeader: Type ID OCURV CCURV                                           {;}
             | Type ID OCURV FormalParams CCURV                              {;}
             | VOID ID OCURV CCURV                                           {;}
             | VOID ID OCURV FormalParams CCURV                              {;}
+            ;
 
 MethodBody: OBRACE MethodBodyList CBRACE                                    {;}
 
-MethodBodyList: MethodBodyList VarDecl                                      {;}
-              | MethodBodyList Statement                                    {;}
-              |                                                             {;}
+MethodBodyList: MethodBodyList VarDecl                                       {;}
+              | MethodBodyList Statement                                     {;}
+              | %empty                                                      {;}
+              ;
 
 FormalParams: Type ID FormalParamsList                                      {;}
             | STRING OSQUARE CSQUARE ID                                     {;}
+            ;
 
-FormalParamsList: FormalParamsList COMMA Type ID                            {;}
-                |                                                           {;}
+FormalParamsList: FormalParamsList COMMA Type ID                             {;}
+                | %empty                                                          {;}
+                ;
 
 VarDecl: Type ID IdList SEMI                                                {;}
 
-IdList: IdList COMMA ID                                                     {;}
-      |                                                                     {;}
+IdList: IdList COMMA ID                                                      {;}
+      | %empty                                                                    {;}
+      ;
 
-Type: BOOL                                                                  {;}
-    | INT                                                                   {;}
-    | DOUBLE                                                                {;}
+Type: BOOL                                                                  {$$ = createNode(Bool,NULL,NULL,NULL);}
+    | INT                                                                   {$$ = createNode(Int,NULL,NULL,NULL);}
+    | DOUBLE                                                                {$$ = createNode(Double,NULL,NULL,NULL);}
+    ;
 
 Statement: OBRACE StatementList CBRACE                                      {;}
          | IF OCURV Expr CCURV Statement ELSE Statement                     {;}
@@ -161,21 +174,26 @@ Statement: OBRACE StatementList CBRACE                                      {;}
          | RETURN Expr SEMI                                                 {;}
          | RETURN SEMI                                                      {;}
          | error SEMI                                                       {;}
+         ;
 
 StatementList: StatementList Statement                                      {;}
-             |                                                              {;}
+             | %empty                                                             {;}
+             ;
 
 Assignment: ID ASSIGN Expr                                                  {;}
 
 MethodInvocation: ID OCURV ExprList CCURV                                   {;}
                 | ID OCURV CCURV                                            {;}
                 | ID OCURV error CCURV                                      {;}
+                ;
 
-ExprList: ExprList COMMA Expr                                               {;}
-        | Expr                                                              {;}
+ExprList: ExprList COMMA Expr                                                {;}
+        | Expr                                                              {$$=$1;}
+        ;
 
 ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV                     {;}
          | PARSEINT OCURV error CCURV                                       {;}
+         ;
 
 Expr: Assignment                                                            {;}
     | MethodInvocation                                                      {;}
@@ -203,6 +221,7 @@ Expr: Assignment                                                            {;}
     | DECLIT                                                                {;}
     | REALLIT                                                               {;}
     | OCURV error CCURV                                                     {;}
+    ;
 
 
 %%

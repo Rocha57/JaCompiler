@@ -12,6 +12,8 @@
 	int erros = 0;
 	int erros_sintax = 0;
 	int sintax = 0;
+
+	struct Node* raiz;
 %}
 
 ID					[_$a-zA-Z][_$0-9a-zA-Z]*
@@ -171,7 +173,7 @@ int main(int argc, char** argv){
 			erros = 1;
 			yyparse();
 			if (erros_sintax==0){
-				//printTree
+				printTree(raiz,0);
 			}
 		}
 	}
