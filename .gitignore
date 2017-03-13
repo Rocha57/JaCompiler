@@ -7,3 +7,15 @@ Meta 1/jac
 Meta 1/.output.txt.swo
 *.swo
 *.swm
+
+Meta 2/jac.zip
+
+Meta 2/lex.yy.c
+
+Meta 2/y.output
+
+Meta 2/y.tab.c
+
+Meta 2/jac
+
+Meta 2/y.tab.h
