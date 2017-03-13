@@ -9,6 +9,10 @@
     Node* temp1;
     /*int yydebug=1;
     */
+
+    /*
+    IF ELSE AMBIGUITY - http://epaperpress.com/lexandyacc/if.html
+    */
 %}
 
 %union{
@@ -99,6 +103,7 @@
 %left STAR DIV MOD
 %right NOT
 %left OCURV OSQUARE CCURV CSQUARE
+%nonassoc IFX
 %nonassoc ELSE 
 
 
@@ -144,7 +149,7 @@ Type: BOOL                                                                  {;}
 
 Statement: OBRACE StatementList CBRACE                                      {;}
          | IF OCURV Expr CCURV Statement ELSE Statement                     {;}
-         | IF OCURV Expr CCURV Statement                                    {;}
+         | IF OCURV Expr CCURV Statement %prec IFX                          {;}
          | WHILE OCURV Expr CCURV Statement                                 {;}
          | DO Statement WHILE OCURV Expr CCURV SEMI                         {;}
          | PRINT OCURV Expr CCURV SEMI                                      {;}
