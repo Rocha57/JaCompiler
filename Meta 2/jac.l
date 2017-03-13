@@ -14,6 +14,7 @@
 	int sintax = 0;
 
 	struct Node* raiz;
+	void printTree(struct Node* root,int altura);
 %}
 
 ID					[_$a-zA-Z][_$0-9a-zA-Z]*

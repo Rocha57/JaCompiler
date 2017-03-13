@@ -11,7 +11,8 @@ typedef enum{	Program, 	FieldDecl, 	VarDecl, 	MethodDecl, 	MethodHeader, 	Method
 				Assign,		Call, 		ParseArgs, 	Or, 			And,   			Eq, 			Neq,
 				Lt, 		Leq, 	 	Geq, 		Add, 		   	Mul, 		 	Div, 			Mod, 		
 				Not,   		Minus, 		Plus, 	 	Length, 		Bool, 	 		BoolLit, 	 	Double,	   
-				DecLit, 	Id, 		Int, 		RealLit,   		StrLit,			Void, 			Null
+				DecLit, 	Id, 		Int, 		RealLit,   		StrLit,			Void, 			Null,
+				StringArray
 }tag;
 
 char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeader",		"MethodParams", 	"ParamDecl", 
@@ -19,7 +20,8 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 				"Assign",		"Call", 		"ParseArgs","Or", 			"And",   			"Eq", 				"Neq",
 				"Lt", 			"Leq", 	 		"Geq", 		"Add", 		   	"Mul", 		 		"Div", 				"Mod", 		
 				"Not",   		"Minus", 		"Plus", 	"Length", 		"Bool", 	 		"BoolLit", 	 		"Double",	   
-				"DecLit", 		"Id", 			"Int", 		"RealLit",   	"StrLit",			"Void", 			"Null"
+				"DecLit", 		"Id", 			"Int", 		"RealLit",   	"StrLit",			"Void", 			"Null",
+				"StringArray"
 };
 
 
