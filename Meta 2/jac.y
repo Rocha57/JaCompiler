@@ -7,6 +7,8 @@
     extern Node* raiz;
     Node* temp;
     Node* temp1;
+    Node* temp2;
+    tag tipo;
     /*int yydebug=1;
     */
 
@@ -79,7 +81,8 @@
 %type <node> FormalParams
 %type <node> FormalParamsList
 %type <node> VarDecl
-%type <node> IdList
+%type <node> FieldIdList
+%type <node> VarIdList
 %type <node> Type
 %type <node> Statement
 %type <node> StatementList
@@ -93,7 +96,6 @@
 
 %start Program
  
-%left COMMA
 %right ASSIGN 
 %left OR
 %left AND
@@ -112,114 +114,181 @@
 Program: CLASS ID OBRACE ProgramList CBRACE                                 {temp = createNode(Id,$2,NULL,$4); 
                                                                             raiz = createNode(Program,NULL,temp,NULL);}
 
-ProgramList: ProgramList FieldDecl                                          {$$ = $1; joinIrmao($$,createNode(FieldDecl,NULL,$2,NULL));}
-           | ProgramList MethodDecl                                         {$$ = $1; joinIrmao($$,$2);}
+ProgramList: ProgramList FieldDecl                                          {joinIrmao($1,$2); $$ = $1;}
+
+           | ProgramList MethodDecl                                         {joinIrmao($1,$2); $$ = $1;}
+
            | ProgramList SEMI                                               {$$ = $1;}
-           | %empty                                                         {;}
+
+           | %empty                                                         {$$ = createNode(Null, NULL, NULL, NULL);}
            ;
 
-FieldDecl: PUBLIC STATIC Type ID IdList SEMI                                {$$ = $3;
-                                                                            joinIrmao($$,createNode(Id,$4,NULL,$5));}
+FieldDecl: PUBLIC STATIC Type ID FieldIdList SEMI                           {joinIrmao($3,createNode(Id,$4,NULL, NULL));
+                                                                            $$ = createNode(FieldDecl, NULL, $3, $5);}
+
          | error SEMI                                                       {;}
          ;
 
-MethodDecl: PUBLIC STATIC MethodHeader MethodBody                           {temp = createNode(MethodHeader,NULL,$3,NULL);
-                                                                            temp1 = createNode(MethodBody, NULL, $4, NULL);
-                                                                            joinIrmao(temp,temp1);
-                                                                            $$ = createNode(MethodDecl,NULL,temp,NULL);}
+FieldIdList: FieldIdList COMMA ID                                           {temp = createNode(Id,$3,NULL,NULL); joinIrmao($1,temp); $$ = createNode(FieldDecl,NULL,$1,NULL);}
 
-MethodHeader: Type ID OCURV CCURV                                           {;}
-            | Type ID OCURV FormalParams CCURV                              {;}
-            | VOID ID OCURV CCURV                                           {;}
-            | VOID ID OCURV FormalParams CCURV                              {;}
+      | %empty                                                              {$$ = createNode(Null, NULL, NULL, NULL);}
+
+MethodDecl: PUBLIC STATIC MethodHeader MethodBody                           {joinIrmao($3,$4); $$ = createNode(MethodDecl, NULL, $3, NULL);}
+
+MethodHeader: Type ID OCURV CCURV                                           {joinIrmao($1,createNode(Id, $2, NULL, createNode(MethodParams, NULL,NULL,NULL))); 
+                                                                            $$ = createNode(MethodHeader, NULL, $1,NULL);}
+
+            | Type ID OCURV FormalParams CCURV                              {joinIrmao($1,createNode(Id, $2, NULL, createNode(MethodParams, NULL,$4,NULL))); 
+                                                                            $$ = createNode(MethodHeader, NULL, $1,NULL);}
+
+            | VOID ID OCURV CCURV                                           {temp = createNode(Void,NULL,NULL,NULL); 
+                                                                            joinIrmao(temp,createNode(Id, $2, NULL, createNode(MethodParams, NULL,NULL,NULL))); 
+                                                                            $$ = createNode(MethodHeader, NULL, temp,NULL);}
+
+            | VOID ID OCURV FormalParams CCURV                              {temp = createNode(Void,NULL,NULL,NULL); 
+                                                                            joinIrmao(temp,createNode(Id, $2, NULL, createNode(MethodParams, NULL,$4,NULL))); 
+                                                                            $$ = createNode(MethodHeader, NULL, temp,NULL);}
             ;
 
-MethodBody: OBRACE MethodBodyList CBRACE                                    {;}
+MethodBody: OBRACE MethodBodyList CBRACE                                    {$$ = createNode(MethodBody, NULL, $2, NULL);}
 
-MethodBodyList: MethodBodyList VarDecl                                       {;}
-              | MethodBodyList Statement                                     {;}
-              | %empty                                                      {;}
+MethodBodyList: MethodBodyList VarDecl                                      {joinIrmao($1,$2); $$ = $1;}
+
+              | MethodBodyList Statement                                    {joinIrmao($1,$2); $$ = $1;}
+
+              | %empty                                                      {$$ = createNode(Null,NULL,NULL,NULL);}
               ;
 
-FormalParams: Type ID FormalParamsList                                      {;}
-            | STRING OSQUARE CSQUARE ID                                     {;}
+FormalParams: Type ID FormalParamsList                                      {joinIrmao($1, createNode(Id, $2, NULL, NULL)); $$ = createNode(ParamDecl, NULL, $1,$3);}
+
+            | STRING OSQUARE CSQUARE ID                                     {$$ = createNode(ParamDecl, NULL, createNode(StringArray, NULL,NULL,createNode(Id, $4,NULL,NULL)), NULL);}
             ;
 
-FormalParamsList: FormalParamsList COMMA Type ID                             {;}
-                | %empty                                                          {;}
+FormalParamsList: FormalParamsList COMMA Type ID                            {joinIrmao($3,createNode(Id, $4,NULL,NULL)); joinIrmao($1, $3), $$ = createNode(ParamDecl, NULL, $1,NULL);}
+
+                | %empty                                                    {$$ = createNode(Null, NULL, NULL, NULL);}
                 ;
 
-VarDecl: Type ID IdList SEMI                                                {;}
+VarDecl: Type ID VarIdList SEMI                                             {joinIrmao($1,createNode(Id,$2,NULL, NULL)); $$ = createNode(VarDecl, NULL, $1, $3);}
 
-IdList: IdList COMMA ID                                                      {;}
-      | %empty                                                                    {;}
+VarIdList: VarIdList COMMA ID                                               {temp = createNode(Id,$3,NULL,NULL); joinIrmao($1,temp), $$ = createNode(VarDecl,NULL,$1,NULL);}
+
+      | %empty                                                              {$$ = createNode(Null, NULL, NULL, NULL);}
       ;
 
 Type: BOOL                                                                  {$$ = createNode(Bool,NULL,NULL,NULL);}
+
     | INT                                                                   {$$ = createNode(Int,NULL,NULL,NULL);}
+
     | DOUBLE                                                                {$$ = createNode(Double,NULL,NULL,NULL);}
     ;
 
-Statement: OBRACE StatementList CBRACE                                      {;}
-         | IF OCURV Expr CCURV Statement ELSE Statement                     {;}
-         | IF OCURV Expr CCURV Statement %prec IFX                          {;}
-         | WHILE OCURV Expr CCURV Statement                                 {;}
-         | DO Statement WHILE OCURV Expr CCURV SEMI                         {;}
-         | PRINT OCURV Expr CCURV SEMI                                      {;}
-         | PRINT OCURV STRLIT CCURV SEMI                                    {;}         
-         | SEMI                                                             {;}
-         | Assignment SEMI                                                  {;}
-         | MethodInvocation SEMI                                            {;}
-         | ParseArgs SEMI                                                   {;}
-         | RETURN Expr SEMI                                                 {;}
-         | RETURN SEMI                                                      {;}
+Statement: OBRACE StatementList CBRACE                                      {if ($2->irmao->tipo == Null) $$ = createNode(Block, NULL, $2, NULL); 
+                                                                            else if ($2->irmao->irmao == NULL) $$ = $2; 
+                                                                            else $$ = createNode(Block, NULL, $2, NULL);}
+
+         | IF OCURV Expr CCURV Statement ELSE Statement                     {joinIrmao($5, $7); joinIrmao($3,$5); $$ = createNode(If,NULL,$3,NULL);}
+
+         | IF OCURV Expr CCURV Statement %prec IFX                          {joinIrmao($3,$5); $$ = createNode(If,NULL,$3,NULL);}
+
+         | WHILE OCURV Expr CCURV Statement                                 {joinIrmao($3,$5); $$ = createNode(While,NULL,$3,NULL);}
+
+         | DO Statement WHILE OCURV Expr CCURV SEMI                         {joinIrmao($2,$5); $$ = createNode(DoWhile,NULL,$2,NULL);}
+
+         | PRINT OCURV Expr CCURV SEMI                                      {$$ = createNode(Print,NULL, $3,NULL);}
+
+         | PRINT OCURV STRLIT CCURV SEMI                                    {$$ = createNode(Print, NULL, createNode(StrLit,$3,NULL,NULL), NULL);}
+
+         | SEMI                                                             {$$ = createNode(Null,NULL,NULL,NULL);}
+
+         | Assignment SEMI                                                  {$$ = $1;}
+
+         | MethodInvocation SEMI                                            {$$ = $1;}
+
+         | ParseArgs SEMI                                                   {$$ = $1;}
+
+         | RETURN Expr SEMI                                                 {$$ = createNode(Return, NULL, $2, NULL);}
+
+         | RETURN SEMI                                                      {$$ = createNode(Return, NULL, NULL, NULL);}
+
          | error SEMI                                                       {;}
          ;
 
-StatementList: StatementList Statement                                      {;}
-             | %empty                                                             {;}
+StatementList: StatementList Statement                                      {joinIrmao($1,$2); $$ = $1;}
+
+             | %empty                                                       {$$ = createNode(Null,NULL,NULL,NULL);}
              ;
 
-Assignment: ID ASSIGN Expr                                                  {;}
+Assignment: ID ASSIGN Expr                                                  {temp = createNode(Id, $1, NULL, $3); 
+                                                                            $$ = createNode(Assign, NULL, temp, NULL);}
 
-MethodInvocation: ID OCURV ExprList CCURV                                   {;}
-                | ID OCURV CCURV                                            {;}
+MethodInvocation: ID OCURV ExprList CCURV                                   {$$ = createNode(Id,$1,NULL,$3);}
+
+                | ID OCURV CCURV                                            {$$ = createNode(Id,$1,NULL,NULL);}
+
                 | ID OCURV error CCURV                                      {;}
                 ;
 
-ExprList: ExprList COMMA Expr                                                {;}
+ExprList: ExprList COMMA Expr                                               {joinIrmao($1,$3); $$ = $1;}
+
         | Expr                                                              {$$ = $1;}
         ;
 
-ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV                     {;}
+ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV                     {temp = createNode(Id, $3, NULL, $5); $$ = createNode(ParseArgs, NULL, temp, NULL);}
+
          | PARSEINT OCURV error CCURV                                       {;}
          ;
 
-Expr: Assignment                                                            {;}
-    | MethodInvocation                                                      {;}
-    | ParseArgs                                                             {;}
-    | Expr AND Expr                                                         {;}
-    | Expr OR Expr                                                          {;}
-    | Expr EQ Expr                                                          {;}
-    | Expr GEQ Expr                                                         {;}
-    | Expr GT Expr                                                          {;}
-    | Expr LEQ Expr                                                         {;}
-    | Expr LT Expr                                                          {;}
-    | Expr NEQ Expr                                                         {;}
-    | Expr PLUS Expr                                                        {;}
-    | Expr MINUS Expr                                                       {;}
-    | Expr STAR Expr                                                        {;}
-    | Expr DIV Expr                                                         {;}
-    | Expr MOD Expr                                                         {;}
-    | PLUS Expr  %prec NOT                                                  {;}
-    | MINUS Expr %prec NOT                                                  {;}
-    | NOT Expr                                                              {;}
-    | ID DOTLENGTH                                                          {;}
-    | ID                                                                    {;}
-    | OCURV Expr CCURV                                                      {;}
-    | BOOLLIT                                                               {;}
-    | DECLIT                                                                {;}
-    | REALLIT                                                               {;}
+Expr: Assignment                                                            {$$ = $1;}
+
+    | MethodInvocation                                                      {$$ = $1;}
+
+    | ParseArgs                                                             {$$ = $1;}
+
+    | Expr AND Expr                                                         {joinIrmao($1,$3); $$ = createNode(And,NULL,$1,NULL);}
+
+    | Expr OR Expr                                                          {joinIrmao($1,$3); $$ = createNode(Or,NULL,$1,NULL);}
+
+    | Expr EQ Expr                                                          {joinIrmao($1,$3); $$ = createNode(Eq,NULL,$1,NULL);}
+
+    | Expr GEQ Expr                                                         {joinIrmao($1,$3); $$ = createNode(Geq,NULL,$1,NULL);}
+
+    | Expr GT Expr                                                          {joinIrmao($1,$3); $$ = createNode(Gt,NULL,$1,NULL);}
+
+    | Expr LEQ Expr                                                         {joinIrmao($1,$3); $$ = createNode(Leq,NULL,$1,NULL);}
+
+    | Expr LT Expr                                                          {joinIrmao($1,$3); $$ = createNode(Lt,NULL,$1,NULL);}
+
+    | Expr NEQ Expr                                                         {joinIrmao($1,$3); $$ = createNode(Neq,NULL,$1,NULL);}
+
+    | Expr PLUS Expr                                                        {joinIrmao($1,$3); $$ = createNode(Add,NULL,$1,NULL);}
+
+    | Expr MINUS Expr                                                       {joinIrmao($1,$3); $$ = createNode(Sub,NULL,$1,NULL);}
+
+    | Expr STAR Expr                                                        {joinIrmao($1,$3); $$ = createNode(Mul,NULL,$1,NULL);}
+
+    | Expr DIV Expr                                                         {joinIrmao($1,$3); $$ = createNode(Div,NULL,$1,NULL);}
+
+    | Expr MOD Expr                                                         {joinIrmao($1,$3); $$ = createNode(Mod,NULL,$1,NULL);}
+
+    | PLUS Expr  %prec NOT                                                  {$$ = createNode(Plus,NULL,$2,NULL);}
+
+    | MINUS Expr %prec NOT                                                  {$$ = createNode(Minus,NULL,$2,NULL);}
+
+    | NOT Expr                                                              {$$ = createNode(Not,NULL,$2,NULL);}
+
+    | ID DOTLENGTH                                                          {$$ = createNode(Length,NULL,createNode(Id, $1, NULL, NULL),NULL);}
+
+    | ID                                                                    {$$ = createNode(Id,$1,NULL,NULL);}
+
+    | OCURV Expr CCURV                                                      {$$ = $2;}
+
+    | BOOLLIT                                                               {$$ = createNode(BoolLit,$1, NULL,NULL);}
+
+    | DECLIT                                                                {$$ = createNode(DecLit,$1, NULL,NULL);}
+
+    | REALLIT                                                               {$$ = createNode(RealLit,$1, NULL,NULL);}
+
     | OCURV error CCURV                                                     {;}
     ;
 

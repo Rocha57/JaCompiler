@@ -12,7 +12,7 @@ typedef enum{	Program, 	FieldDecl, 	VarDecl, 	MethodDecl, 	MethodHeader, 	Method
 				Lt, 		Leq, 	 	Geq, 		Add, 		   	Mul, 		 	Div, 			Mod, 		
 				Not,   		Minus, 		Plus, 	 	Length, 		Bool, 	 		BoolLit, 	 	Double,	   
 				DecLit, 	Id, 		Int, 		RealLit,   		StrLit,			Void, 			Null,
-				StringArray
+				StringArray,Sub, 		Gt
 }tag;
 
 char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeader",		"MethodParams", 	"ParamDecl", 
@@ -21,7 +21,7 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 				"Lt", 			"Leq", 	 		"Geq", 		"Add", 		   	"Mul", 		 		"Div", 				"Mod", 		
 				"Not",   		"Minus", 		"Plus", 	"Length", 		"Bool", 	 		"BoolLit", 	 		"Double",	   
 				"DecLit", 		"Id", 			"Int", 		"RealLit",   	"StrLit",			"Void", 			"Null",
-				"StringArray"
+				"StringArray", 	"Sub", 			"Gt"
 };
 
 
@@ -88,12 +88,14 @@ void printTree(Node* root,int altura){
 			}
 			printf("%s(%s)\n",getTipo(root->tipo),root->token );
 		}else{
-			for(i=0; i < altura;i++){
-					printf(".");
-			}
-			printf("%s\n",getTipo(root->tipo) );
-			if(root->irmao != NULL){
+			if (root->tipo != Null){
+				for(i=0; i < altura;i++){
+						printf(".");
+				}
 				printf("%s\n",getTipo(root->tipo) );
+				/*if(root->irmao != NULL){
+					printf("irmao: %s\n",getTipo(root->irmao->tipo) );
+				}*/
 			}
 			
 		}
@@ -138,6 +140,28 @@ void typeFunc(Node* typeSpec, Node* original){
 		aux = aux->irmao;
 	}
 }
+
+/* 1 das 500921873821 tentativas de arranjar os ciclos
+Node* multipleDecl(int tipo, char* token, Node* IdList){
+	Node* fD = NULL;
+	if (IdList->irmao != NULL){
+		do{	
+			fD = createNode(FieldDecl,NULL, NULL,NULL);
+			if (IdList->irmao->irmao != NULL){
+				Node* fDBrother = createNode(FieldDecl,NULL, NULL,NULL);
+				fD->irmao = fDBrother;
+			}
+			Node* type = createNode(tipo, token, NULL,NULL);
+			fD->filho = type; 
+			type->irmao = IdList->irmao;
+			IdList = IdList->irmao;
+			printf("%s\n", getTipo(fD->tipo));
+			printf("%s\n", getTipo(fD->filho->tipo));
+			printf("%s %s\n", getTipo(fD->filho->irmao->tipo), fD->filho->irmao->token);
+		} while (IdList->irmao != NULL);
+	}
+	return fD;
+}*/
 
 
 
