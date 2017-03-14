@@ -222,9 +222,9 @@ StatementList: StatementList Statement                                      {joi
 Assignment: ID ASSIGN Expr                                                  {temp = createNode(Id, $1, NULL, $3); 
                                                                             $$ = createNode(Assign, NULL, temp, NULL);}
 
-MethodInvocation: ID OCURV ExprList CCURV                                   {$$ = createNode(Id,$1,NULL,$3);}
+MethodInvocation: ID OCURV ExprList CCURV                                   {temp = createNode(Id, $1, NULL, $3); $$ = createNode(Call, NULL, temp, NULL);}
 
-                | ID OCURV CCURV                                            {$$ = createNode(Id,$1,NULL,NULL);}
+                | ID OCURV CCURV                                            {$$ = createNode(Call,NULL,createNode(Id,$1,NULL,NULL),NULL);}
 
                 | ID OCURV error CCURV                                      {;}
                 ;
