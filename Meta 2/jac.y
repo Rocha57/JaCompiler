@@ -7,8 +7,6 @@
     extern Node* raiz;
     Node* temp;
     Node* temp1;
-    Node* temp2;
-    tag tipo;
     /*int yydebug=1;
     */
 
@@ -125,7 +123,7 @@ ProgramList: ProgramList FieldDecl                                          {joi
 
 FieldDecl: PUBLIC STATIC FieldIdList SEMI                                   {$$ = $3;}
 
-         | error SEMI                                                       {;}
+         | error SEMI                                                       {$$ = createNode(Null, NULL,NULL,NULL);}
          ;
 
 FieldIdList: FieldIdList COMMA ID                                           {temp = createNode(Id, $3, NULL,NULL); temp1 = createNode($1->filho->tipo, NULL, NULL, temp); joinIrmao($1,createNode(FieldDecl,NULL,temp1,NULL)); $$ = $1;}
@@ -210,7 +208,7 @@ Statement: OBRACE StatementList CBRACE                                      {if 
 
          | RETURN SEMI                                                      {$$ = createNode(Return, NULL, NULL, NULL);}
 
-         | error SEMI                                                       {;}
+         | error SEMI                                                       {$$ = createNode(Null, NULL,NULL,NULL);}
          ;
 
 StatementList: StatementList Statement                                      {joinIrmao($1,$2); $$ = $1;}
@@ -225,7 +223,7 @@ MethodInvocation: ID OCURV ExprList CCURV                                   {tem
 
                 | ID OCURV CCURV                                            {$$ = createNode(Call,NULL,createNode(Id,$1,NULL,NULL),NULL);}
 
-                | ID OCURV error CCURV                                      {;}
+                | ID OCURV error CCURV                                      {$$ = createNode(Null, NULL,NULL,NULL);}
                 ;
 
 ExprList: ExprList COMMA Expr                                               {joinIrmao($1,$3); $$ = $1;}
@@ -235,7 +233,7 @@ ExprList: ExprList COMMA Expr                                               {joi
 
 ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV                     {temp = createNode(Id, $3, NULL, $5); $$ = createNode(ParseArgs, NULL, temp, NULL);}
 
-         | PARSEINT OCURV error CCURV                                       {;}
+         | PARSEINT OCURV error CCURV                                       {$$ = createNode(Null, NULL,NULL,NULL);}
          ;
 
 Expr: Assignment                                                            {$$ = $1;}
@@ -288,7 +286,7 @@ Expr: Assignment                                                            {$$ 
 
     | REALLIT                                                               {$$ = createNode(RealLit,$1, NULL,NULL);}
 
-    | OCURV error CCURV                                                     {;}
+    | OCURV error CCURV                                                     {$$ = createNode(Null, NULL,NULL,NULL);}
     ;
 
 

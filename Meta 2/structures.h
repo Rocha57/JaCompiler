@@ -34,15 +34,11 @@ struct _Node{
 };
 
 Node* createNode(tag tipo,char* token,Node* filho,Node* irmao );
-void printTree(Node* root,int altura);
-void printEspacos( int altura);
-void elimina(Node* root);
-
-
-char* getTipo(tag etag);
-int countBro(Node* root);
 void joinIrmao(Node* eu, Node* irmao);
-Node* reverse(Node* root);
+void printTree(Node* root,int altura);
+void elimina(Node* root);
+char* getTipo(tag etag);
+
 
 Node* createNode(tag tipo,char* token,Node* filho,Node* irmao ){
 	Node* no = malloc(sizeof(Node));
@@ -68,17 +64,6 @@ void joinIrmao(Node* eu, Node* irmao){
 	}
 }
 
-Node* reverse(Node* root) {
-  Node* new_root = 0;
-  while (root) {
-    Node* irmao = root->irmao;
-    root->irmao = new_root;
-    new_root = root;
-    root = irmao;
-  } 
-  return new_root;
-}
-
 void printTree(Node* root,int altura){ 
 	int i; 
 	if(root != NULL){
@@ -97,18 +82,8 @@ void printTree(Node* root,int altura){
 			
 		}
 
-	
-
 		printTree(root->filho,altura+2);
 		printTree(root->irmao,altura);
-	}
-}
-
-void printEspacos(int altura){
-	int i;
-	
-	for(i=0; i < altura;i++){
-		printf("%c",'.');
 	}
 }
 
