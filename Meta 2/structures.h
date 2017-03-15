@@ -53,10 +53,9 @@ Node* createNode(tag tipo,char* token,Node* filho,Node* irmao ){
 }
 
 void joinIrmao(Node* eu, Node* irmao){
-	if(eu == NULL){
-	
-	}
-	if( eu != NULL){
+	if(eu == NULL)
+		return;
+	else{
 		while(eu->irmao != NULL){
 			eu= eu->irmao;
 		}

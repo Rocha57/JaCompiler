@@ -4,7 +4,7 @@ all:
 	@lex $(FILE_NAME).l
 	@yacc -d -v $(FILE_NAME).y
 	@clang-3.8 -o $(FILE_NAME) lex.yy.c y.tab.c -ll -ly 
-	@zip $(FILE_NAME).zip $(FILE_NAME).l $(FILE_NAME).y
+	@zip $(FILE_NAME).zip $(FILE_NAME).l $(FILE_NAME).y structures.h
 	@echo "[INFO] Compiled"
 
 clean:
