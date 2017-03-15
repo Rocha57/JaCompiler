@@ -15,6 +15,7 @@
 
 	struct Node* raiz;
 	void printTree(struct Node* root,int altura);
+	void elimina(struct Node* root);
 %}
 
 ID					[_$a-zA-Z][_$0-9a-zA-Z]*
@@ -176,12 +177,14 @@ int main(int argc, char** argv){
 			if (erros_sintax==0){
 				printTree(raiz,0);
 			}
+			elimina(raiz);
 		}
 	}
 	else{
 		sintax = 1;
 		erros = 1;
 		yyparse();
+		elimina(raiz);
 	}
 
 	return 0;

@@ -58,7 +58,7 @@ Node* createNode(tag tipo,char* token,Node* filho,Node* irmao ){
 
 void joinIrmao(Node* eu, Node* irmao){
 	if(eu == NULL){
-		/*printf("NULO");*/
+	
 	}
 	if( eu != NULL){
 		while(eu->irmao != NULL){
@@ -93,9 +93,6 @@ void printTree(Node* root,int altura){
 						printf(".");
 				}
 				printf("%s\n",getTipo(root->tipo) );
-				/*if(root->irmao != NULL){
-					printf("irmao: %s\n",getTipo(root->irmao->tipo) );
-				}*/
 			}
 			
 		}
@@ -128,43 +125,6 @@ void elimina(Node* root){
 	if(root->irmao != NULL)
 		free(root->irmao);
 }
-
-/*isto foi necessário o ano passado para fazer uma passagem estranha*/
-void typeFunc(Node* typeSpec, Node* original){
-	Node* aux = original;
-	Node* aux2;
-	while(aux!=NULL){
-		aux2 = createNode(typeSpec->tipo,NULL,NULL,NULL);
-		aux2->irmao = aux->filho;
-		aux->filho = aux2;
-		aux = aux->irmao;
-	}
-}
-
-/* 1 das 500921873821 tentativas de arranjar os ciclos
-Node* multipleDecl(int tipo, char* token, Node* IdList){
-	Node* fD = NULL;
-	if (IdList->irmao != NULL){
-		do{	
-			fD = createNode(FieldDecl,NULL, NULL,NULL);
-			if (IdList->irmao->irmao != NULL){
-				Node* fDBrother = createNode(FieldDecl,NULL, NULL,NULL);
-				fD->irmao = fDBrother;
-			}
-			Node* type = createNode(tipo, token, NULL,NULL);
-			fD->filho = type; 
-			type->irmao = IdList->irmao;
-			IdList = IdList->irmao;
-			printf("%s\n", getTipo(fD->tipo));
-			printf("%s\n", getTipo(fD->filho->tipo));
-			printf("%s %s\n", getTipo(fD->filho->irmao->tipo), fD->filho->irmao->token);
-		} while (IdList->irmao != NULL);
-	}
-	return fD;
-}*/
-
-
-
 
 char* getTipo(tag etag){ //Vir aqui buscar token para imprimir
 	return tipos[etag];

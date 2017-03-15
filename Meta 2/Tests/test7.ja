@@ -1,5 +1,5 @@
 class x {
-	public static int a,b,c;
+	public static int a,b,c,d,e,f;
 	public static int x(){};
 	public static int d,e;
 	public static double d2;
