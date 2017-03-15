@@ -123,15 +123,14 @@ ProgramList: ProgramList FieldDecl                                          {joi
            | %empty                                                         {$$ = createNode(Null, NULL, NULL, NULL);}
            ;
 
-FieldDecl: PUBLIC STATIC Type ID FieldIdList SEMI                           {joinIrmao($3,createNode(Id,$4,NULL, NULL));
-                                                                            $$ = createNode(FieldDecl, NULL, $3, $5);}
+FieldDecl: PUBLIC STATIC FieldIdList SEMI                                   {$$ = $3;}
 
          | error SEMI                                                       {;}
          ;
 
-FieldIdList: FieldIdList COMMA ID                                           {temp = createNode(Id,$3,NULL,NULL); joinIrmao($1,temp); $$ = createNode(FieldDecl,NULL,$1,NULL);}
+FieldIdList: FieldIdList COMMA ID                                           {temp = createNode(Id, $3, NULL,NULL); temp1 = createNode($1->filho->tipo, NULL, NULL, temp); joinIrmao($1,createNode(FieldDecl,NULL,temp1,NULL)); $$ = $1;}
 
-      | %empty                                                              {$$ = createNode(Null, NULL, NULL, NULL);}
+      | Type ID                                                             {temp = createNode(Id, $2, NULL,NULL); joinIrmao($1, temp); $$ = createNode(FieldDecl, NULL, $1, NULL);}
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody                           {joinIrmao($3,$4); $$ = createNode(MethodDecl, NULL, $3, NULL);}
 
@@ -159,21 +158,21 @@ MethodBodyList: MethodBodyList VarDecl                                      {joi
               | %empty                                                      {$$ = createNode(Null,NULL,NULL,NULL);}
               ;
 
-FormalParams: Type ID FormalParamsList                                      {joinIrmao($1, createNode(Id, $2, NULL, NULL)); $$ = createNode(ParamDecl, NULL, $1,$3);}
+FormalParams: FormalParamsList                                              {$$ = $1;}
 
             | STRING OSQUARE CSQUARE ID                                     {$$ = createNode(ParamDecl, NULL, createNode(StringArray, NULL,NULL,createNode(Id, $4,NULL,NULL)), NULL);}
             ;
 
-FormalParamsList: FormalParamsList COMMA Type ID                            {joinIrmao($3,createNode(Id, $4,NULL,NULL)); joinIrmao($1, $3), $$ = createNode(ParamDecl, NULL, $1,NULL);}
+FormalParamsList: FormalParamsList COMMA Type ID                            {temp = createNode(Id, $4, NULL,NULL); joinIrmao($3,temp); joinIrmao($1,createNode(ParamDecl,NULL,$3,NULL)); $$ = $1;}
 
-                | %empty                                                    {$$ = createNode(Null, NULL, NULL, NULL);}
+                | Type ID                                                    {temp = createNode(Id, $2, NULL,NULL); joinIrmao($1, temp); $$ = createNode(ParamDecl, NULL, $1, NULL);}
                 ;
 
-VarDecl: Type ID VarIdList SEMI                                             {joinIrmao($1,createNode(Id,$2,NULL, NULL)); $$ = createNode(VarDecl, NULL, $1, $3);}
+VarDecl: VarIdList SEMI                                                     {$$ = $1;}
 
-VarIdList: VarIdList COMMA ID                                               {temp = createNode(Id,$3,NULL,NULL); joinIrmao($1,temp), $$ = createNode(VarDecl,NULL,$1,NULL);}
+VarIdList: VarIdList COMMA ID                                               {temp = createNode(Id, $3, NULL,NULL); temp1 = createNode($1->filho->tipo, NULL, NULL, temp); joinIrmao($1,createNode(VarDecl,NULL,temp1,NULL)); $$ = $1;}
 
-      | %empty                                                              {$$ = createNode(Null, NULL, NULL, NULL);}
+      | Type ID                                                             {temp = createNode(Id, $2, NULL,NULL); joinIrmao($1, temp); $$ = createNode(VarDecl, NULL, $1, NULL);}
       ;
 
 Type: BOOL                                                                  {$$ = createNode(Bool,NULL,NULL,NULL);}

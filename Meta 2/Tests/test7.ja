@@ -1,5 +1,5 @@
 class x {
-	public static int a,b;
+	public static int a,b,c;
 	public static int x(){};
 	public static int d,e;
 	public static double d2;
@@ -8,7 +8,7 @@ class x {
 	};
 	public static boolean lindo;
 	;
-	public static void v(int paam, int sopa){
+	public static void v(int paam, double sopa, boolean artur){
 	System.out.println(a);
 	System.out.println(b);
 	return (1*2+3);
