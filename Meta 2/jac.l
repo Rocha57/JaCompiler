@@ -190,7 +190,7 @@ int main(int argc, char** argv){
 	return 0;
 }
 
-void yyerror (char *s){
+void yyerror (const char *s){
 	if (sintax == 1){
 		printf ("Line %d, col %d: %s: %s\n", auxline, auxcol, s, yytext);
 		erros_sintax = 1;
