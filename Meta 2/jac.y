@@ -163,7 +163,7 @@ FormalParams: FormalParamsList                                              {$$ 
 
 FormalParamsList: FormalParamsList COMMA Type ID                            {temp = createNode(Id, $4, NULL,NULL); joinIrmao($3,temp); joinIrmao($1,createNode(ParamDecl,NULL,$3,NULL)); $$ = $1;}
 
-                | Type ID                                                    {temp = createNode(Id, $2, NULL,NULL); joinIrmao($1, temp); $$ = createNode(ParamDecl, NULL, $1, NULL);}
+                | Type ID                                                   {temp = createNode(Id, $2, NULL,NULL); joinIrmao($1, temp); $$ = createNode(ParamDecl, NULL, $1, NULL);}
                 ;
 
 VarDecl: VarIdList SEMI                                                     {$$ = $1;}
@@ -180,7 +180,8 @@ Type: BOOL                                                                  {$$ 
     | DOUBLE                                                                {$$ = createNode(Double,NULL,NULL,NULL);}
     ;
 
-Statement: OBRACE StatementList CBRACE                                      {if ($2->irmao->tipo == Null) $$ = createNode(Block, NULL, $2, NULL); 
+Statement: OBRACE StatementList CBRACE                                      {if ($2->tipo == Null && $2->irmao == NULL) $$ = createNode(Block, NULL, $2, NULL);
+                                                                            //else if ($2->irmao->tipo == Null) $$ = createNode(Block, NULL, $2, NULL); 
                                                                             else if ($2->irmao->irmao == NULL) $$ = $2; 
                                                                             else $$ = createNode(Block, NULL, $2, NULL);}
 

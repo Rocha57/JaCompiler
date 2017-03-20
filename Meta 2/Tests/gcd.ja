@@ -12,6 +12,7 @@ class gcd {
 				else
 					b = b-a;
 			System.out.println(a);
+			;
 		}
 	}
 }
