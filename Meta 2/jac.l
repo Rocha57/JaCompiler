@@ -7,7 +7,6 @@
 	int line = 1;
 	int aux1 = 0;
 	int aux2 = 0;
-	int auxline, auxcol = 0;
 
 	int erros = 0;
 	int erros_sintax = 0;
@@ -96,7 +95,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 <COMMENT>.						{col += yyleng;}
 
 
-{STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);auxline = line; auxcol = col;col += yyleng; BEGIN 0; yylval.yylval = strdup(yytext); if (sintax==1)return STRLIT;}
+{STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0; yylval.yylval = strdup(yytext); if (sintax==1)return STRLIT;}
 \"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;} 
 <STR>{ESCAPE}					{ col+= yyleng; }
 <STR>\"							{col += yyleng; BEGIN 0;}
