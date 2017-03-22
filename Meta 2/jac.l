@@ -89,7 +89,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 %%
 "//"([^\n\r])*					//if it catches a // ignores everything until a \n|\r
 {INITCOMMENT}					{aux1 = line; aux2 = col; col += yyleng; BEGIN COMMENT;}
-<COMMENT><<EOF>>				{printf("Line %d, col %d: unterminated comment\n", aux1, aux2); return 0;}
+<COMMENT><<EOF>>				{printf("Line %d, col %d: unterminated comment\n", aux1, aux2); col += yyleng; return 0;}
 <COMMENT>{ENDCOMMENT}			{col += yyleng; BEGIN 0;}
 <COMMENT>({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})			{col = 1; line++;}
 <COMMENT>.						{col += yyleng;}
@@ -98,7 +98,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 {STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0; yylval.yylval = strdup(yytext); if (sintax==1)return STRLIT;}
 \"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;} 
 <STR>{ESCAPE}					{ col+= yyleng; }
-<STR>\"							{col += yyleng; BEGIN 0;}
+<STR>\"							{col += yyleng; col+= yyleng; BEGIN 0;}
 <STR>({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})			    {printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
 <STR><<EOF>>					{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2); return 0;}
 <STR>\\.?						{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+=yyleng;} //If it catches a \ with somthing other than a escape sequence, or nothing at all, prints this error
