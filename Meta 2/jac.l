@@ -97,12 +97,12 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 
 {STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0; yylval.yylval = strdup(yytext); if (sintax==1)return STRLIT;}
 \"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;} 
-<STR>{ESCAPE}					{ col+= yyleng; }
-<STR>\"							{col += yyleng; col+= yyleng; BEGIN 0;}
+<STR>{ESCAPE}					{ col += yyleng; }
+<STR>\"							{col += yyleng; BEGIN 0;}
 <STR>({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})			    {printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
-<STR><<EOF>>					{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2); return 0;}
-<STR>\\.?						{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col+=yyleng;} //If it catches a \ with somthing other than a escape sequence, or nothing at all, prints this error
-<STR>.							{col+=yyleng;}
+<STR><<EOF>>					{printf("Line %d, col %d: unterminated string literal\n", aux1, aux2); col += yyleng; return 0;}
+<STR>\\.?						{printf("Line %d, col %d: invalid escape sequence (%s)\n", line, col,yytext); col += yyleng;} //If it catches a \ with somthing other than a escape sequence, or nothing at all, prints this error
+<STR>.							{col += yyleng;}
 
 
 {CBRACE}						{if(erros==0) printf("CBRACE\n"); col += yyleng; if (sintax==1)return CBRACE;}
@@ -146,7 +146,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 {VOID}							{if(erros==0) printf("VOID\n"); col += yyleng; if (sintax==1)return VOID;}
 {WHILE}							{if(erros==0) printf("WHILE\n"); col += yyleng; if (sintax==1)return WHILE;}
 
-{REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return STRLIT;}
+{REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return REALLIT;}
 {DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return DECLIT;}
 {BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return BOOLLIT;}				
 {SPACE}|{TAB}|{FORM}			{col += yyleng;}
