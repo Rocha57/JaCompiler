@@ -52,20 +52,28 @@ Node* createNode(tag tipo,char* token,Node* filho,Node* irmao ){
 	return no;
 }
 
+/**
+	createBlock
+	returns Node*
+	receives Node* -> the node with the list of Statements
+			 int = 1 -> if checking sons of If, While or DoWhile (Nodes that have a mandatory empty statement)
+			 	 = 0 -> otherwise
+**/
+
 Node* createBlock(Node* eu, int statlist){
 	int stats = 0;
 	Node* temp = malloc(sizeof(Node));
 	temp = eu;
 	while(temp != NULL){
 		if (temp->tipo != Null){
-			stats++;
+			stats++; //Count the list elements that are different from Null node
 		}
 		temp = temp->irmao;
 	}
-	if (stats > 1 && statlist == 0)
-		return createNode(Block, NULL,eu,NULL);
-	else if (stats == 0 && statlist == 1){
-		return createNode(Block, NULL,NULL,NULL);
+	if (stats > 1 && statlist == 0) //The list has at least 2 nodes with types different from Null
+		return createNode(Block, NULL,eu,NULL); // create Block that is a parent of the list
+	else if (stats == 0 && statlist == 1){  //The list only has empty statements, and is mandatory to have one
+		return createNode(Block, NULL,NULL,NULL); //create Block
 	}
 	else{
 		return eu;

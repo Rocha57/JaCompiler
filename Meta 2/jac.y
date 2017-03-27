@@ -181,11 +181,7 @@ Type: BOOL                                                                  {$$ 
     | DOUBLE                                                                {$$ = createNode(Double,NULL,NULL,NULL);}
     ;
 
-Statement: OBRACE StatementList CBRACE                                      {/*if ($2->tipo == Null && $2->irmao == NULL) $$ = $2; //the statementList is empty (has only a Null node)
-                                                                            else if ($2->irmao->irmao == NULL) $$ = $2; //there is only 1 statement beyond the obligatory Null node
-                                                                            else $$ = createNode(Block, NULL, $2, NULL);*/
-                                                                            $$ = createBlock($2,0);
-                                                                            }
+Statement: OBRACE StatementList CBRACE                                      {$$ = createBlock($2,0);}
 
          | IF OCURV Expr CCURV Statement ELSE Statement                     {$7 = createBlock($7,1); $5 = createBlock($5,1); 
                                                                             joinIrmao($5, $7); joinIrmao($3,$5); $$ = createNode(If,NULL,$3,NULL);}
