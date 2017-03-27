@@ -185,7 +185,7 @@ int main(int argc, char** argv){
 		yyparse();
 		elimina(raiz);
 	}
-
+	yylex_destroy();
 	return 0;
 }
 

@@ -6,6 +6,12 @@ class soma{
 		c = 1;
 		d = 3;
 		System.out.println(a);
+		System.out.println("a");
 		return (a+b+c*d);
+		{
+		;
+		while(a==3){}
+		;
+		}
 	};
 }
