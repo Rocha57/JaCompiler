@@ -184,33 +184,20 @@ Type: BOOL                                                                  {$$ 
 Statement: OBRACE StatementList CBRACE                                      {/*if ($2->tipo == Null && $2->irmao == NULL) $$ = $2; //the statementList is empty (has only a Null node)
                                                                             else if ($2->irmao->irmao == NULL) $$ = $2; //there is only 1 statement beyond the obligatory Null node
                                                                             else $$ = createNode(Block, NULL, $2, NULL);*/
-                                                                            stats = 0;
-                                                                            temp = $2;
-                                                                            while (temp != NULL){
-                                                                                if (temp->tipo != Null)
-                                                                                    stats++;
-                                                                                temp = temp->irmao;
-                                                                            }
-                                                                            if (stats > 1){
-                                                                                $$ = createNode(Block, NULL, $2, NULL);
-                                                                            }
-                                                                            else{
-                                                                                $$ = $2;
-                                                                            }
+                                                                            $$ = createBlock($2,0);
                                                                             }
 
-         | IF OCURV Expr CCURV Statement ELSE Statement                     {if ($7->tipo == Null && $7->irmao == NULL) $7 = createNode(Block, NULL,NULL,NULL); 
-                                                                            if ($5->tipo == Null && $5->irmao == NULL) $5 = createNode(Block, NULL,NULL,NULL);
+         | IF OCURV Expr CCURV Statement ELSE Statement                     {$7 = createBlock($7,1); $5 = createBlock($5,1); 
                                                                             joinIrmao($5, $7); joinIrmao($3,$5); $$ = createNode(If,NULL,$3,NULL);}
 
-         | IF OCURV Expr CCURV Statement %prec IFX                          {if ($5->tipo == Null && $5->irmao == NULL) $5 = createNode(Block, NULL,NULL,NULL);
+         | IF OCURV Expr CCURV Statement %prec IFX                          {$5 = createBlock($5,1);
                                                                             joinIrmao($3,$5); joinIrmao($3, createNode(Block, NULL,NULL,NULL));
                                                                             $$ = createNode(If,NULL,$3,NULL);}
 
-         | WHILE OCURV Expr CCURV Statement                                 {if ($5->tipo == Null && $5->irmao == NULL) $5 = createNode(Block, NULL,NULL,NULL);
+         | WHILE OCURV Expr CCURV Statement                                 {$5 = createBlock($5,1);
                                                                             joinIrmao($3,$5); $$ = createNode(While,NULL,$3,NULL);}
 
-         | DO Statement WHILE OCURV Expr CCURV SEMI                         {if ($2->tipo == Null && $2->irmao == NULL) $2 = createNode(Block, NULL,NULL,NULL);
+         | DO Statement WHILE OCURV Expr CCURV SEMI                         {$2 = createBlock($2,1);
                                                                             joinIrmao($2,$5); $$ = createNode(DoWhile,NULL,$2,NULL);}
 
          | PRINT OCURV Expr CCURV SEMI                                      {$$ = createNode(Print,NULL, $3,NULL);}

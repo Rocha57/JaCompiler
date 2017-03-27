@@ -52,6 +52,27 @@ Node* createNode(tag tipo,char* token,Node* filho,Node* irmao ){
 	return no;
 }
 
+Node* createBlock(Node* eu, int statlist){
+	int stats = 0;
+	Node* temp = malloc(sizeof(Node));
+	temp = eu;
+	while(temp != NULL){
+		if (temp->tipo != Null){
+			stats++;
+		}
+		temp = temp->irmao;
+	}
+	if (stats > 1 && statlist == 0)
+		return createNode(Block, NULL,eu,NULL);
+	else if (stats == 0 && statlist == 1){
+		return createNode(Block, NULL,NULL,NULL);
+	}
+	else{
+		return eu;
+	}
+
+}
+
 void joinIrmao(Node* eu, Node* irmao){
 	if(eu == NULL)
 		return;

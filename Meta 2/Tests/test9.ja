@@ -19,7 +19,7 @@ class block{
 		c = 1;
 		c = 2;
 		}
-		if(a == 3);
-		while(a==3){}
+		if(a == 3){x = 3; x= 7;}
+		while(a==3){x = 3;}
 	};
 }
