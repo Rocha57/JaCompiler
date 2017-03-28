@@ -33,14 +33,14 @@ struct _Node{
 	Node* irmao;
 };
 
-Node* createNode(tag tipo,char* token,Node* filho,Node* irmao );
+Node* createNode(tag tipo,char* token,Node* filho,Node* irmao);
 void joinIrmao(Node* eu, Node* irmao);
 void printTree(Node* root,int altura);
 void elimina(Node* root);
 char* getTipo(tag etag);
 
 
-Node* createNode(tag tipo,char* token,Node* filho,Node* irmao ){
+Node* createNode(tag tipo,char* token,Node* filho,Node* irmao){
 	Node* no = malloc(sizeof(Node));
 	no->tipo = tipo;
 	if(token != NULL)
@@ -65,21 +65,17 @@ Node* createBlock(Node* eu, int statlist){
 	Node* temp = malloc(sizeof(Node));
 	temp = eu;
 	while(temp != NULL){
-		if (temp->tipo != Null){
-			stats++; //Count the list elements that are different from Null node
-		}
+		if (temp->tipo != Null)
+			stats++; 								//Count the list elements that are different from Null node
 		temp = temp->irmao;
 	}
 	free(temp);
-	if (stats > 1 && statlist == 0) //The list has at least 2 nodes with types different from Null
-		return createNode(Block, NULL,eu,NULL); // create Block that is a parent of the list
-	else if (stats == 0 && statlist == 1){  //The list only has empty statements, and is mandatory to have one
-		return createNode(Block, NULL,NULL,NULL); //create Block
-	}
-	else{
+	if (stats > 1 && statlist == 0) 				//The list has at least 2 nodes with types different from Null
+		return createNode(Block, NULL,eu,NULL); 	// create Block that is a parent of the list
+	else if (stats == 0 && statlist == 1)  			//The list only has empty statements, and is mandatory to have one
+		return createNode(Block, NULL,NULL,NULL); 	//create Block
+	else
 		return eu;
-	}
-
 }
 
 void joinIrmao(Node* eu, Node* irmao){
@@ -104,11 +100,10 @@ void printTree(Node* root,int altura){
 		}else{
 			if (root->tipo != Null){
 				for(i=0; i < altura;i++){
-						printf(".");
+					printf(".");
 				}
 				printf("%s\n",getTipo(root->tipo) );
-			}
-			
+			}	
 		}
 
 		printTree(root->filho,altura+2);
