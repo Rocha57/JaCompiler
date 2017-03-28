@@ -70,6 +70,7 @@ Node* createBlock(Node* eu, int statlist){
 		}
 		temp = temp->irmao;
 	}
+	free(temp);
 	if (stats > 1 && statlist == 0) //The list has at least 2 nodes with types different from Null
 		return createNode(Block, NULL,eu,NULL); // create Block that is a parent of the list
 	else if (stats == 0 && statlist == 1){  //The list only has empty statements, and is mandatory to have one

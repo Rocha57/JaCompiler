@@ -90,6 +90,7 @@
 %type <node> ExprList
 %type <node> ParseArgs
 %type <node> Expr
+%type <node> Expr2
 
 
 
@@ -240,43 +241,45 @@ ParseArgs: PARSEINT OCURV ID OSQUARE Expr CSQUARE CCURV                     {tem
          | PARSEINT OCURV error CCURV                                       {$$ = createNode(Null, NULL,NULL,NULL);}
          ;
 
-Expr: Assignment                                                            {$$ = $1;}
+                                                                                        //Factorização do Assignment/Expression
+Expr: Assignment                                                            {$$ = $1;}  //Precisamos de separar os assignments de todas as outras expressões de forma a dar maior precedencia ao assignment sobre as expressoões
+    | Expr2                                                                 {$$ = $1;}  //Segundo as regras aprendidas nas primeiras aulas acerca da remoção de ambiguidade, criamos um novo símbolo não terminal para tratarmos essa precedência
 
-    | MethodInvocation                                                      {$$ = $1;}
+Expr2: MethodInvocation                                                     {$$ = $1;}
 
     | ParseArgs                                                             {$$ = $1;}
 
-    | Expr AND Expr                                                         {joinIrmao($1,$3); $$ = createNode(And,NULL,$1,NULL);}
+    | Expr2 AND Expr2                                                       {joinIrmao($1,$3); $$ = createNode(And,NULL,$1,NULL);}
 
-    | Expr OR Expr                                                          {joinIrmao($1,$3); $$ = createNode(Or,NULL,$1,NULL);}
+    | Expr2 OR Expr2                                                        {joinIrmao($1,$3); $$ = createNode(Or,NULL,$1,NULL);}
 
-    | Expr EQ Expr                                                          {joinIrmao($1,$3); $$ = createNode(Eq,NULL,$1,NULL);}
+    | Expr2 EQ Expr2                                                        {joinIrmao($1,$3); $$ = createNode(Eq,NULL,$1,NULL);}
 
-    | Expr GEQ Expr                                                         {joinIrmao($1,$3); $$ = createNode(Geq,NULL,$1,NULL);}
+    | Expr2 GEQ Expr2                                                       {joinIrmao($1,$3); $$ = createNode(Geq,NULL,$1,NULL);}
 
-    | Expr GT Expr                                                          {joinIrmao($1,$3); $$ = createNode(Gt,NULL,$1,NULL);}
+    | Expr2 GT Expr2                                                        {joinIrmao($1,$3); $$ = createNode(Gt,NULL,$1,NULL);}
 
-    | Expr LEQ Expr                                                         {joinIrmao($1,$3); $$ = createNode(Leq,NULL,$1,NULL);}
+    | Expr2 LEQ Expr2                                                       {joinIrmao($1,$3); $$ = createNode(Leq,NULL,$1,NULL);}
 
-    | Expr LT Expr                                                          {joinIrmao($1,$3); $$ = createNode(Lt,NULL,$1,NULL);}
+    | Expr2 LT Expr2                                                        {joinIrmao($1,$3); $$ = createNode(Lt,NULL,$1,NULL);}
 
-    | Expr NEQ Expr                                                         {joinIrmao($1,$3); $$ = createNode(Neq,NULL,$1,NULL);}
+    | Expr2 NEQ Expr2                                                       {joinIrmao($1,$3); $$ = createNode(Neq,NULL,$1,NULL);}
 
-    | Expr PLUS Expr                                                        {joinIrmao($1,$3); $$ = createNode(Add,NULL,$1,NULL);}
+    | Expr2 PLUS Expr2                                                      {joinIrmao($1,$3); $$ = createNode(Add,NULL,$1,NULL);}
 
-    | Expr MINUS Expr                                                       {joinIrmao($1,$3); $$ = createNode(Sub,NULL,$1,NULL);}
+    | Expr2 MINUS Expr2                                                     {joinIrmao($1,$3); $$ = createNode(Sub,NULL,$1,NULL);}
 
-    | Expr STAR Expr                                                        {joinIrmao($1,$3); $$ = createNode(Mul,NULL,$1,NULL);}
+    | Expr2 STAR Expr2                                                      {joinIrmao($1,$3); $$ = createNode(Mul,NULL,$1,NULL);}
 
-    | Expr DIV Expr                                                         {joinIrmao($1,$3); $$ = createNode(Div,NULL,$1,NULL);}
+    | Expr2 DIV Expr2                                                       {joinIrmao($1,$3); $$ = createNode(Div,NULL,$1,NULL);}
 
-    | Expr MOD Expr                                                         {joinIrmao($1,$3); $$ = createNode(Mod,NULL,$1,NULL);}
+    | Expr2 MOD Expr2                                                       {joinIrmao($1,$3); $$ = createNode(Mod,NULL,$1,NULL);}
 
-    | PLUS Expr  %prec NOT                                                  {$$ = createNode(Plus,NULL,$2,NULL);}
+    | PLUS Expr2  %prec NOT                                                 {$$ = createNode(Plus,NULL,$2,NULL);}
 
-    | MINUS Expr %prec NOT                                                  {$$ = createNode(Minus,NULL,$2,NULL);}
+    | MINUS Expr2 %prec NOT                                                 {$$ = createNode(Minus,NULL,$2,NULL);}
 
-    | NOT Expr                                                              {$$ = createNode(Not,NULL,$2,NULL);}
+    | NOT Expr2                                                             {$$ = createNode(Not,NULL,$2,NULL);}
 
     | ID DOTLENGTH                                                          {$$ = createNode(Length,NULL,createNode(Id, $1, NULL, NULL),NULL);}
 
