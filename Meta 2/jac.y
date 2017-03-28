@@ -285,7 +285,7 @@ Expr2: MethodInvocation                                                     {$$ 
 
     | ID                                                                    {$$ = createNode(Id,$1,NULL,NULL);}
 
-    | OCURV Expr CCURV                                                      {$$ = $2;}
+    | OCURV Expr CCURV                                                      {$$ = $2;} //Aqui chamamos novamente Expr, uma vez que dentro de parentêsis pode esta um Assignment
 
     | BOOLLIT                                                               {$$ = createNode(BoolLit,$1, NULL,NULL);}
 
