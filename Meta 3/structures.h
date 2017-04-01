@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <ctype.h>
 
 typedef enum{	Program, 	FieldDecl, 	VarDecl, 	MethodDecl, 	MethodHeader, 	MethodParams, 	ParamDecl, 
 				MethodBody, Block, 		DoWhile,	If,  	 		Print, 			Return,  		While, 	 
@@ -15,6 +15,10 @@ typedef enum{	Program, 	FieldDecl, 	VarDecl, 	MethodDecl, 	MethodHeader, 	Method
 				StringArray,Sub, 		Gt
 }tag;
 
+
+typedef enum{_boolean_,_integer_,_real_,_function_,_program_,_type_,_false_,_true_,
+	_constant_,_return_,_param_,_varparam_,_erro_,_outer_,_null_}symbol;
+
 char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeader",		"MethodParams", 	"ParamDecl", 
 				"MethodBody", 	"Block", 		"DoWhile",	"If",  	 		"Print", 			"Return",  			"While", 	 
 				"Assign",		"Call", 		"ParseArgs","Or", 			"And",   			"Eq", 				"Neq",
@@ -24,6 +28,14 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 				"StringArray", 	"Sub", 			"Gt"
 };
 
+char* tabelaTipos[] ={ "_boolean_","_integer_","_real_","_function_","_program_","_type_","_false_","_true_",
+	"constant","return","param","varparam","Erro","_outer_","null"};
+
+
+typedef struct _info{
+	int linha,coluna;
+	char* token;
+}Info;
 
 typedef struct _Node Node;
 struct _Node{
@@ -32,6 +44,28 @@ struct _Node{
 	Node* filho;
 	Node* irmao;
 };
+
+typedef struct _table Table;
+typedef struct _element Elemento;
+typedef struct _element{
+	char* token; //Token
+	symbol tType,tFlag,tValue; //Atributos
+
+	Elemento* next;
+	Table* table;
+
+}Elemento;
+
+//Tabela de simbolos
+typedef struct _table{
+	char* idTable; //Id pelo qual é identificada a tabela, normalmente o nome da funcao
+
+	symbol tableType;
+	Elemento* simbolo; //Simbolos na tabela
+	Table* parent;
+}Table;
+
+
 
 Node* createNode(tag tipo,char* token,Node* filho,Node* irmao);
 void joinIrmao(Node* eu, Node* irmao);
@@ -128,6 +162,11 @@ void elimina(Node* root){
 char* getTipo(tag etag){ //Vir aqui buscar token para imprimir
 	return tipos[etag];
 }
+
+char* getTipoTabela(symbol simbolo){
+	return tabelaTipos[simbolo];
+}
+
 
 
 #endif
