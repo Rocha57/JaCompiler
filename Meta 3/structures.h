@@ -25,13 +25,16 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 				"StringArray", 	"Sub", 			"Gt"
 };
 
+/*alterado para meta 3*/
 typedef struct _Node Node;
-struct _Node{
+typedef struct _Node{
 	tag tipo;
-	char* token;
+	Info* token;
+	symbol type;
 	Node* filho;
 	Node* irmao;
-};
+}Node;
+
 
 /* META 3  estruturas auxiliares*/
 typedef enum{_boolean_,_integer_,_real_,_function_,_program_,_type_,_false_,_true_,
