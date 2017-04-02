@@ -1,5 +1,6 @@
 #include "structures.h"
 
+/*Isto vai ser a variavel que vai ser usada na main para os erros semanticos*/
 extern int errosS;
 /*a meta 3 vai ser isto, em principio mais facil, mas isto*/
 void percorreAST(Node* raiz,Table* tabela){
