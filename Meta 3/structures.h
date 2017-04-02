@@ -71,7 +71,7 @@ typedef struct _table{
 
 /* META 2  declaração funções*/
 
-Node* createNode(tag tipo,char* token,Node* filho,Node* irmao);
+Node* createNode(tag tipo,Info* token,Node* filho,Node* irmao );
 void joinIrmao(Node* eu, Node* irmao);
 void printTree(Node* root,int altura);
 void elimina(Node* root);
@@ -91,16 +91,17 @@ void toSmall(char* string);
 
 
 /* META 2  funções*/
-
-Node* createNode(tag tipo,char* token,Node* filho,Node* irmao){
+/*alterado para meta 3*/
+Node* createNode(tag tipo,Info* token,Node* filho,Node* irmao ){
 	Node* no = malloc(sizeof(Node));
 	no->tipo = tipo;
 	if(token != NULL)
-		no->token = strdup(token);
+		no->token = token;
 	else
 		no->token = NULL;
 	no->irmao = irmao;
 	no->filho = filho;
+	no->type = _null_;
 	return no;
 }
 
