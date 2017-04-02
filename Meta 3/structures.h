@@ -25,15 +25,7 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 				"StringArray", 	"Sub", 			"Gt"
 };
 
-/*alterado para meta 3*/
-typedef struct _Node Node;
-typedef struct _Node{
-	tag tipo;
-	Info* token;
-	symbol type;
-	Node* filho;
-	Node* irmao;
-}Node;
+
 
 
 /* META 3  estruturas auxiliares*/
@@ -47,6 +39,16 @@ typedef struct _info{
 	int linha,coluna;
 	char* token;
 }Info;
+
+/*alterado para meta 3*/
+typedef struct _Node Node;
+typedef struct _Node{
+	tag tipo;
+	Info* token;
+	symbol type;
+	Node* filho;
+	Node* irmao;
+}Node;
 
 typedef struct _table Table;
 typedef struct _element Elemento;
