@@ -13,8 +13,13 @@
 	int sintax = 0;
 
 	struct Node* raiz;
+	typedef struct _info{
+		int linha,coluna;
+		char* token;
+	}Info;
 	void printTree(struct Node* root,int altura);
 	void elimina(struct Node* root);
+	Info* createInfo(int linha,int coluna,char* token);
 %}
 
 ID					[_$a-zA-Z][_$0-9a-zA-Z]*
@@ -95,7 +100,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 <COMMENT>.						{col += yyleng;}
 
 
-{STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0; yylval.yylval = strdup(yytext); if (sintax==1)return STRLIT;}
+{STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0; yylval.yylval = createInfo(line,col,yytext); if (sintax==1)return STRLIT;}
 \"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;}
 <STR>{ESCAPE}					{ col += yyleng; }
 <STR>\"							{col += yyleng; BEGIN 0;}
@@ -146,13 +151,13 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 {VOID}							{if(erros==0) printf("VOID\n"); col += yyleng; if (sintax==1)return VOID;}
 {WHILE}							{if(erros==0) printf("WHILE\n"); col += yyleng; if (sintax==1)return WHILE;}
 
-{REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return REALLIT;}
-{DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return DECLIT;}
-{BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return BOOLLIT;}
+{REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext);col += yyleng; yylval.yylval = createInfo(line,col,yytext); if (sintax==1)return REALLIT;}
+{DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext);col += yyleng; yylval.yylval = createInfo(line,col,yytext); if (sintax==1)return DECLIT;}
+{BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext);col += yyleng; yylval.yylval = createInfo(line,col,yytext); if (sintax==1)return BOOLLIT;}
 {SPACE}|{TAB}|{FORM}			{col += yyleng;}
 {PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH}	{line++; col = 1;}
-{RESERVED}						{if(erros==0) printf("RESERVED(%s)\n", yytext); col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return RESERVED;}
-{ID}							{if(erros==0) printf("ID(%s)\n", yytext); col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return ID;}
+{RESERVED}						{if(erros==0) printf("RESERVED(%s)\n", yytext); col += yyleng; yylval.yylval = createInfo(line,col,yytext); if (sintax==1)return RESERVED;}
+{ID}							{if(erros==0) printf("ID(%s)\n", yytext); col += yyleng; yylval.yylval = createInfo(line,col,yytext); if (sintax==1)return ID;}
 <<EOF>>							{col += yyleng; return yytext[0];}
 .								{printf("Line %d, col %d: illegal character (%s)\n", line, col, yytext); col += yyleng;}
 

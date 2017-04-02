@@ -80,6 +80,7 @@ void elimina(Node* root);
 char* getTipo(tag etag);
 
 /* META 3  declaração funções*/
+Info* createInfo(int linha,int coluna,char* token);
 char* getTipoTabela(symbol simbolo);
 Table* createTable(char* id,symbol tableType,Table* parent);
 Elemento* createElement(char* token,symbol tType,symbol tFlag,symbol tValue);
@@ -150,7 +151,7 @@ void printTree(Node* root,int altura){
 			for(i=0; i < altura;i++){
 				printf(".");
 			}
-			printf("%s(%s)\n",getTipo(root->tipo),root->token );
+			printf("%s(%s)\n",getTipo(root->tipo),root->token->token );
 		}else{
 			if (root->tipo != Null){
 				for(i=0; i < altura;i++){
@@ -183,6 +184,16 @@ char* getTipo(tag etag){ //Vir aqui buscar token para imprimir
 }
 
 /* META 3  funções*/
+Info* createInfo(int linha,int coluna,char* token){
+	Info* info = malloc(sizeof(Info));
+
+	info->coluna = coluna;
+	info->linha = linha;
+	info->token = (char*) strdup(token);
+
+	return info;
+}
+
 
 char* getTipoTabela(symbol simbolo){
 	return tabelaTipos[simbolo];
@@ -326,6 +337,8 @@ void toSmall(char* string){
 		++aux;
 	}
 }
+
+
 
 
 

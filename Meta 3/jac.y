@@ -1,7 +1,7 @@
 %{
     #include "structures.h"
-    
-    
+
+
     extern void yyerror( char *s);
     int yylex(void);
     extern Node* raiz;
@@ -17,9 +17,9 @@
 %}
 
 %union{
-    char *yylval; /*token*/
+    struct _info *yylval; /*token*/
     struct _Node* node;
-    
+
 }
 
 %token CBRACE
@@ -35,32 +35,32 @@
 %token CLASS
 %token COMMA
 %token DIV
-%token DO 
+%token DO
 %token DOTLENGTH
 %token DOUBLE
 %token ELSE
 %token EQ
 %token GEQ
 %token GT
-%token IF 
-%token INT 
+%token IF
+%token INT
 %token LEQ
-%token LT 
+%token LT
 %token MINUS
 %token MOD
 %token NEQ
 %token NOT
-%token OR 
-%token RETURN 
+%token OR
+%token RETURN
 %token PARSEINT
 %token PLUS
-%token PRINT 
+%token PRINT
 %token PUBLIC
-%token SEMI 
-%token STAR 
+%token SEMI
+%token STAR
 %token STATIC
 %token STRING
-%token VOID 
+%token VOID
 %token WHILE
 
 %token <yylval> RESERVED
@@ -95,8 +95,8 @@
 
 
 %start Program
- 
-%right ASSIGN 
+
+%right ASSIGN
 %left OR
 %left AND
 %left EQ NEQ
@@ -106,12 +106,12 @@
 %right NOT
 %left OCURV OSQUARE CCURV CSQUARE
 %nonassoc IFX
-%nonassoc ELSE 
+%nonassoc ELSE
 
 
- 
+
 %%
-Program: CLASS ID OBRACE ProgramList CBRACE                                 {temp = createNode(Id,$2,NULL,$4); 
+Program: CLASS ID OBRACE ProgramList CBRACE                                 {temp = createNode(Id,$2,NULL,$4);
                                                                             raiz = createNode(Program,NULL,temp,NULL);}
 
 ProgramList: ProgramList FieldDecl                                          {joinIrmao($1,$2); $$ = $1;}
@@ -134,18 +134,18 @@ FieldIdList: FieldIdList COMMA ID                                           {tem
 
 MethodDecl: PUBLIC STATIC MethodHeader MethodBody                           {joinIrmao($3,$4); $$ = createNode(MethodDecl, NULL, $3, NULL);}
 
-MethodHeader: Type ID OCURV CCURV                                           {joinIrmao($1,createNode(Id, $2, NULL, createNode(MethodParams, NULL,NULL,NULL))); 
+MethodHeader: Type ID OCURV CCURV                                           {joinIrmao($1,createNode(Id, $2, NULL, createNode(MethodParams, NULL,NULL,NULL)));
                                                                             $$ = createNode(MethodHeader, NULL, $1,NULL);}
 
-            | Type ID OCURV FormalParams CCURV                              {joinIrmao($1,createNode(Id, $2, NULL, createNode(MethodParams, NULL,$4,NULL))); 
+            | Type ID OCURV FormalParams CCURV                              {joinIrmao($1,createNode(Id, $2, NULL, createNode(MethodParams, NULL,$4,NULL)));
                                                                             $$ = createNode(MethodHeader, NULL, $1,NULL);}
 
-            | VOID ID OCURV CCURV                                           {temp = createNode(Void,NULL,NULL,NULL); 
-                                                                            joinIrmao(temp,createNode(Id, $2, NULL, createNode(MethodParams, NULL,NULL,NULL))); 
+            | VOID ID OCURV CCURV                                           {temp = createNode(Void,NULL,NULL,NULL);
+                                                                            joinIrmao(temp,createNode(Id, $2, NULL, createNode(MethodParams, NULL,NULL,NULL)));
                                                                             $$ = createNode(MethodHeader, NULL, temp,NULL);}
 
-            | VOID ID OCURV FormalParams CCURV                              {temp = createNode(Void,NULL,NULL,NULL); 
-                                                                            joinIrmao(temp,createNode(Id, $2, NULL, createNode(MethodParams, NULL,$4,NULL))); 
+            | VOID ID OCURV FormalParams CCURV                              {temp = createNode(Void,NULL,NULL,NULL);
+                                                                            joinIrmao(temp,createNode(Id, $2, NULL, createNode(MethodParams, NULL,$4,NULL)));
                                                                             $$ = createNode(MethodHeader, NULL, temp,NULL);}
             ;
 
@@ -184,7 +184,7 @@ Type: BOOL                                                                  {$$ 
 
 Statement: OBRACE StatementList CBRACE                                      {$$ = createBlock($2,0);}
 
-         | IF OCURV Expr CCURV Statement ELSE Statement                     {$7 = createBlock($7,1); $5 = createBlock($5,1); 
+         | IF OCURV Expr CCURV Statement ELSE Statement                     {$7 = createBlock($7,1); $5 = createBlock($5,1);
                                                                             joinIrmao($5, $7); joinIrmao($3,$5); $$ = createNode(If,NULL,$3,NULL);}
 
          | IF OCURV Expr CCURV Statement %prec IFX                          {$5 = createBlock($5,1);
@@ -221,7 +221,7 @@ StatementList: StatementList Statement                                      {joi
              | %empty                                                       {$$ = createNode(Null,NULL,NULL,NULL);}
              ;
 
-Assignment: ID ASSIGN Expr                                                  {temp = createNode(Id, $1, NULL, $3); 
+Assignment: ID ASSIGN Expr                                                  {temp = createNode(Id, $1, NULL, $3);
                                                                             $$ = createNode(Assign, NULL, temp, NULL);}
 
 MethodInvocation: ID OCURV ExprList CCURV                                   {temp = createNode(Id, $1, NULL, $3); $$ = createNode(Call, NULL, temp, NULL);}
@@ -299,4 +299,3 @@ Expr2: MethodInvocation                                                     {$$ 
 
 %%
 //A main está no lex
-    
