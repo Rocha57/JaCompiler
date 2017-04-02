@@ -96,7 +96,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 
 
 {STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0; yylval.yylval = strdup(yytext); if (sintax==1)return STRLIT;}
-\"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;} 
+\"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;}
 <STR>{ESCAPE}					{ col += yyleng; }
 <STR>\"							{col += yyleng; BEGIN 0;}
 <STR>({PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH})			    {printf("Line %d, col %d: unterminated string literal\n", aux1, aux2);col=1; line++; BEGIN 0;}
@@ -111,7 +111,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 {OBRACE}						{if(erros==0) printf("OBRACE\n"); col += yyleng; if (sintax==1)return OBRACE;}
 {OCURV}							{if(erros==0) printf("OCURV\n"); col += yyleng; if (sintax==1)return OCURV;}
 {OSQUARE}						{if(erros==0) printf("OSQUARE\n"); col += yyleng; if (sintax==1)return OSQUARE;}
- 
+
 {AND}							{if(erros==0) printf("AND\n"); col += yyleng; if (sintax==1)return AND;}
 {ASSIGN}						{if(erros==0) printf("ASSIGN\n"); col += yyleng; if (sintax==1)return ASSIGN;}
 {BOOL} 							{if(erros==0) printf("BOOL\n"); col += yyleng; if (sintax==1)return BOOL;}
@@ -148,7 +148,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 
 {REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return REALLIT;}
 {DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return DECLIT;}
-{BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return BOOLLIT;}				
+{BOOLIT}						{if(erros==0) printf("BOOLLIT(%s)\n", yytext);col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return BOOLLIT;}
 {SPACE}|{TAB}|{FORM}			{col += yyleng;}
 {PARAGRAPH}|{CARRIAGE}|{CARRIAGE}{PARAGRAPH}	{line++; col = 1;}
 {RESERVED}						{if(erros==0) printf("RESERVED(%s)\n", yytext); col += yyleng; yylval.yylval = strdup(yytext); if (sintax==1)return RESERVED;}
@@ -159,7 +159,52 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 
 %%
 int main(int argc, char** argv){
+/*o argc é sempre maior que 1 porque o primeiro argumento é o ./jac
+aqui vamos ter de verificar se os argumentos seguintes são -s -t ou -t -s
+para imprimir a arvore primeiro ou a tabela
+(não sei se ele quer esta prioridade ou se quer sempre a imprimir na mesma ordem)
 
+MAIN Meta 3 antiga
+
+int main(int argc, char* argv[]){
+	yyparse();
+
+	if(argc>1){
+		if( strcmp(argv[1],"-t") == 0 && erros == 0){
+			printTree(raiz,0);
+		}
+		if(argc>2 && strcmp(argv[2],"-s") == 0){
+			if(erros == 0){
+				Table* tabela = insereOuter();
+				percorreAST(raiz,tabela);
+				if(errosS == 0){
+					printf("\n");
+					printTabela(tabela);
+				}
+			}
+		}
+		if(strcmp(argv[1],"-s") == 0){
+			if(erros == 0){
+				Table* tabela = insereOuter();
+				percorreAST(raiz,tabela);
+				if(errosS == 0){
+					printTabela(tabela);
+					printf("\n");
+				}
+			}
+		}
+		if(argc > 2 && strcmp(argv[2],"-t")== 0 && erros == 0){
+			printTree(raiz,0);
+		}
+	}
+
+	return 0;
+}
+
+
+
+
+*/
 	if (argc > 1){
 		if (strcmp(argv[1], "-l") == 0){
 			erros = 0;
