@@ -1,0 +1,29 @@
+class gcd2 {
+  public static void main(String[] args){
+    int a,b;
+    if(args.length>=2){
+    a = Intege.parseInt(args[0]);
+    b = Intege.parseInt(args[1]);
+    }
+
+
+  }
+
+
+
+
+}
+
+
+====== Class gcd2 Symbol Table ======
+main void(String[])
+gcd int(int,int)
+====== Method main Symbol Table ======
+return void
+args String param
+int a
+int b
+====== Method gcd Symbol Table =======
+return int
+a   int   param
+b   int   param

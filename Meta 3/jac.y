@@ -1,5 +1,5 @@
 %{
-    #include "structures.h"
+    #include "tabelhas.h"
 
 
     extern void yyerror( char *s);

@@ -13,6 +13,7 @@
 	int sintax = 0;
 
 	struct Node* raiz;
+	struct Table* tabela;
 	typedef struct _info{
 		int linha,coluna;
 		char* token;
@@ -20,6 +21,10 @@
 	void printTree(struct Node* root,int altura);
 	void elimina(struct Node* root);
 	Info* createInfo(int linha,int coluna,char* token);
+	void printTabela(struct Table* tabela);
+	void percorreAST(struct Node* raiz,struct Table* tabela);
+	struct Table* insereOuter();
+
 %}
 
 ID					[_$a-zA-Z][_$0-9a-zA-Z]*
@@ -164,6 +169,44 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 
 %%
 int main(int argc, char** argv){
+		if (argc > 1){
+			if (strcmp(argv[1], "-l") == 0){
+				erros = 0;
+				yylex();
+			}
+			else if (strcmp(argv[1], "-1") == 0){
+				erros = 1;
+				yylex();
+			}
+			else if (strcmp(argv[1], "-t") == 0){
+				sintax = 1;
+				erros = 1;
+				yyparse();
+				if (erros_sintax==0){
+					printTree(raiz,0);
+				}
+				elimina(raiz);
+			}
+			else if(strcmp(argv[1],"-s") == 0){
+				sintax = 1;
+				erros=1;
+				yyparse();
+				tabela = insereOuter();
+				percorreAST(raiz,tabela);
+				printf("\n");
+				printTabela(tabela);
+		}
+		else{
+			sintax = 1;
+			erros = 1;
+			yyparse();
+			elimina(raiz);
+		}
+		yylex_destroy();
+		return 0;
+	}
+}
+
 /*o argc é sempre maior que 1 porque o primeiro argumento é o ./jac
 aqui vamos ter de verificar se os argumentos seguintes são -s -t ou -t -s
 para imprimir a arvore primeiro ou a tabela
@@ -205,39 +248,8 @@ int main(int argc, char* argv[]){
 
 	return 0;
 }
-
-
-
-
 */
-	if (argc > 1){
-		if (strcmp(argv[1], "-l") == 0){
-			erros = 0;
-			yylex();
-		}
-		else if (strcmp(argv[1], "-1") == 0){
-			erros = 1;
-			yylex();
-		}
-		else if (strcmp(argv[1], "-t") == 0){
-			sintax = 1;
-			erros = 1;
-			yyparse();
-			if (erros_sintax==0){
-				printTree(raiz,0);
-			}
-			elimina(raiz);
-		}
-	}
-	else{
-		sintax = 1;
-		erros = 1;
-		yyparse();
-		elimina(raiz);
-	}
-	yylex_destroy();
-	return 0;
-}
+
 
 void yyerror (const char *s){
 	if (sintax == 1){

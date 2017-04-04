@@ -2,7 +2,95 @@
 
 /*Isto vai ser a variavel que vai ser usada na main para os erros semanticos*/
 extern int errosS;
-/*a meta 3 vai ser isto, em principio mais facil, mas isto*/
+
+
+
+void percorreAST(Node* raiz, Table* tabela){
+	Table* tabelaProgram;
+	Table* tabelaFunc;
+	char* tipoVar;
+	char* nome;
+	Node* temp;
+	Elemento* elementoDaPesquisa;
+	Elemento* assignTwo;
+	Elemento* elExp1;
+	Elemento* elExp2;
+	Node* nodeAux;
+	Node* exp1;
+	Node* exp2;
+	int tipoElem;
+	printf("%s\n", );
+	if (raiz != NULL){
+		printf("%s\n",getTipo(raiz->tipo) );
+		switch (raiz->tipo) {
+
+			case 	Program:
+				tabelaProgram = createTable("program",_program_,tabela);
+				insertElement(createElement("program",_program_,_null_,_null_),tabela,tabelaProgram);
+
+				percorreAST(raiz->filho->irmao,tabelaProgram);
+				break;
+			case FieldDecl:
+				break;
+			case VarDecl:
+				break;
+			case 	MethodDecl:
+				break;
+			case 	MethodHeader: break;
+			case 	MethodParams: break;
+			case 	ParamDecl: break;
+			case	MethodBody: break;
+			case  Block: break;
+			case 	DoWhile: break;
+			case	If: break;
+			case	Print: break;
+			case  Return: break;
+			case	While: break;
+			case	Assign: break;
+			case	Call: break;
+			case 	ParseArgs: break;
+			case 	Or: break;
+			case 	And: break;
+			case 	Eq: break;
+			case	Neq: break;
+			case  Lt: break;
+			case  Leq: break;
+			case	Geq: break;
+			case  Add: break;
+			case 	Mul: break;
+			case	Div: break;
+			case	Mod: break;
+			case	Not: break;
+			case	Minus: break;
+			case 	Plus: break;
+			case	Length: break;
+			case	Bool: break;
+			case 	BoolLit: break;
+			case 	Double: break;
+			case	DecLit: break;
+			case 	Id: break;
+			case 	Int: break;
+			case	RealLit: break;
+			case 	StrLit: break;
+			case	Void: break;
+			case 	Null: break;
+			case	StringArray: break;
+			case	Sub: break;
+			case	Gt: break;
+			default:
+				percorreAST(raiz->filho,tabela);
+				percorreAST(raiz->irmao,tabela);
+				break;
+		}
+
+
+	}
+
+
+}
+
+
+/*a meta 3 vai ser isto, em principio mais facil, mas isto
 void percorreAST(Node* raiz,Table* tabela){
 	Table* tabelaProgram;
 	Table* tabelaFunc;
@@ -256,7 +344,7 @@ void percorreAST(Node* raiz,Table* tabela){
 				percorreAST(raiz->irmao,tabela);
 				break;
 
-/*---------------------------STATMENTS e EXPR -------------------------------------------------------------------------------------------*/
+//---------------------------STATMENTS e EXPR -------------------------------------------------------------------------------------------
 			case tag_Assign:
 				temp = raiz->filho;
 				//Check if ID has been declared
@@ -623,3 +711,4 @@ void percorreAST(Node* raiz,Table* tabela){
 		}
 	}
 }
+*/

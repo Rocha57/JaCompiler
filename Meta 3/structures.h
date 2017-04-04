@@ -80,6 +80,7 @@ void elimina(Node* root);
 char* getTipo(tag etag);
 
 /* META 3  declaração funções*/
+
 Info* createInfo(int linha,int coluna,char* token);
 char* getTipoTabela(symbol simbolo);
 Table* createTable(char* id,symbol tableType,Table* parent);
