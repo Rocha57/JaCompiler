@@ -1,17 +1,29 @@
 class gcd2 {
-  public static void main(String[] args){
-    int a,b;
-    if(args.length>=2){
-    a = Intege.parseInt(args[0]);
-    b = Intege.parseInt(args[1]);
+	public static void main(String[] args){
+	    int a,b;
+	    if(args.length>=2){
+		    a = Integer.parseInt(args[0]);
+		    b = Integer.parseInt(args[1]);
+		    System.out.println(gcd(a,b));
+	    }
+	    else{
+	    	System.out.println("Error: Wrong number of arguments");
+	    }
     }
 
-
-  }
-
-
-
-
+    public static int gcd(int a, int b){
+    	if (a == 0){
+    		return b;
+    	}
+    	else{
+    		while(b>0)
+    			if (a > b)
+    				a = a-b;
+    			else
+    				b = b-a;
+    		return a;
+    	}
+    }
 }
 
 
@@ -20,9 +32,9 @@ main void(String[])
 gcd int(int,int)
 ====== Method main Symbol Table ======
 return void
-args String param
-int a
-int b
+args String[] param
+a 	int
+b 	int
 ====== Method gcd Symbol Table =======
 return int
 a   int   param
