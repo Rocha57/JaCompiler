@@ -20,18 +20,16 @@ void percorreAST(Node* raiz, Table* tabela){
 	Node* exp2;
 	int tipoElem;
 	if (raiz != NULL){
-		printf("%s\n",getTipo(raiz->tipo) );
-		switch (raiz->tipo) {
+		/*printf("%s\n",getTipo(raiz->tipo) );
+		*/switch (raiz->tipo) {
 
 			case 	Program:
-				strcpy(nome, "Class");
-				strcat(nome,raiz->filho->token);
-
-				tabelaClass = createTable(nome,_Class_,tabela);
-				/*insertElement(createElement("Class",_Class_,_null_,_null_),tabela,tabelaProgram);
-*/
-
-				percorreAST(raiz->filho->irmao,tabelaClass);
+			/*se calhar tenho de refazer isto porque depois volta a entrar no id*/
+				tabela->idTable = strdup(raiz->filho->token->token);
+				tabela->tableType = _Class_;
+				tabela->parent = NULL;
+				tabela->simbolo = NULL;
+				percorreAST(raiz->filho->irmao,tabela);
 				break;
 			case FieldDecl:
 				break;
@@ -71,7 +69,18 @@ void percorreAST(Node* raiz, Table* tabela){
 			case 	BoolLit: break;
 			case 	Double: break;
 			case	DecLit: break;
-			case 	Id: break;
+			case 	Id:/*
+			elementoDaPesquisa = searchGlobalID(tabela,raiz->token->token);
+			if(elementoDaPesquisa == NULL){
+				printf("Line %d, col %d: Symbol %s not defined\n",raiz->token->linha,raiz->token->coluna,raiz->token->token);
+				raiz->type = _erro_;
+				return;
+			}
+
+			raiz->type = elementoDaPesquisa->tType;
+			percorreAST(raiz->filho,tabela);
+			percorreAST(raiz->irmao,tabela);*/
+			break;
 			case 	Int: break;
 			case	RealLit: break;
 			case 	StrLit: break;
@@ -115,8 +124,6 @@ void percorreAST(Node* raiz,Table* tabela){
 
 		switch(raiz->tipo){
 			case tag_Program:
-				tabelaProgram = createTable("program",_program_,tabela);
-				insertElement(createElement("program",_program_,_null_,_null_),tabela,tabelaProgram);
 
 				percorreAST(raiz->filho->irmao,tabelaProgram);
 				break;
@@ -347,7 +354,6 @@ void percorreAST(Node* raiz,Table* tabela){
 				percorreAST(raiz->irmao,tabela);
 				break;
 
-//---------------------------STATMENTS e EXPR -------------------------------------------------------------------------------------------
 			case tag_Assign:
 				temp = raiz->filho;
 				//Check if ID has been declared

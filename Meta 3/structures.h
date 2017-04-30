@@ -278,18 +278,16 @@ void printTabela(Table* tabela){
 
 	if(tabela != NULL){
 		if(tabela->tableType == _Class_){
-			printf("===== Class %s Symbol Table =====");
-		}else if(tabela->tableType == _Method_){
-			printf("\n");
-			printf("\n===== Function Symbol Table =====");
-		}else{
-			printf("\n");
-			printf("\n===== Program Symbol Table =====");
+			printf("===== Class %s Symbol Table =====", tabela -> idTable);
 		}
-		printSimbolos(tabela->simbolo);
+		else if(tabela->tableType == _Method_){
+			printf("\n");
+			printf("\n===== Method %s Symbol Table =====", tabela -> idTable);
+		}
 	}
-
+	printSimbolos(tabela->simbolo);
 }
+
 
 void printSimbolos(Elemento* elemento){
 	Elemento* auxiliar = elemento;
