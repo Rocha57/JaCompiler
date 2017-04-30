@@ -6,8 +6,8 @@ extern int errosS;
 
 
 void percorreAST(Node* raiz, Table* tabela){
-	Table* tabelaProgram;
-	Table* tabelaFunc;
+	Table* tabelaClass;
+	Table* tabelaMethod;
 	char* tipoVar;
 	char* nome;
 	Node* temp;
@@ -19,16 +19,19 @@ void percorreAST(Node* raiz, Table* tabela){
 	Node* exp1;
 	Node* exp2;
 	int tipoElem;
-	printf("%s\n", );
 	if (raiz != NULL){
 		printf("%s\n",getTipo(raiz->tipo) );
 		switch (raiz->tipo) {
 
 			case 	Program:
-				tabelaProgram = createTable("program",_program_,tabela);
-				insertElement(createElement("program",_program_,_null_,_null_),tabela,tabelaProgram);
+				strcpy(nome, "Class");
+				strcat(nome,raiz->filho->token);
 
-				percorreAST(raiz->filho->irmao,tabelaProgram);
+				tabelaClass = createTable(nome,_Class_,tabela);
+				/*insertElement(createElement("Class",_Class_,_null_,_null_),tabela,tabelaProgram);
+*/
+
+				percorreAST(raiz->filho->irmao,tabelaClass);
 				break;
 			case FieldDecl:
 				break;

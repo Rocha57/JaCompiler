@@ -18,7 +18,7 @@ typedef enum{	Program, 	FieldDecl, 	VarDecl, 	MethodDecl, 	MethodHeader, 	Method
 
 char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeader",		"MethodParams", 	"ParamDecl",
 				"MethodBody", 	"Block", 		"DoWhile",	"If",  	 		"Print", 			"Return",  			"While",
-				"Assign",		"Call", 		"ParseArgs","Or", 			"And",   			"Eq", 				"Neq",
+				"Assign",		"Call", 		"ParseArgs", "Or", 			"And",   			"Eq", 				"Neq",
 				"Lt", 			"Leq", 	 		"Geq", 		"Add", 		   	"Mul", 		 		"Div", 				"Mod",
 				"Not",   		"Minus", 		"Plus", 	"Length", 		"Bool", 	 		"BoolLit", 	 		"Double",
 				"DecLit", 		"Id", 			"Int", 		"RealLit",   	"StrLit",			"Void", 			"Null",
@@ -29,11 +29,11 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 
 
 /* META 3  estruturas auxiliares*/
-typedef enum{_boolean_,_integer_,_real_,_function_,_program_,_type_,_false_,_true_,
-	_constant_,_return_,_param_,_varparam_,_erro_,_outer_,_null_}symbol;
+typedef enum{_boolean_,_int_,_String_,_Method_,_Class_,_type_,_false_,_true_,
+	_constant_,_return_,_param_,_void_,_erro_,_outer_,_null_}symbol;
 //TODO possivelmente corrigir estes nomes e na função insereOuter
-char* tabelaTipos[] ={ "_boolean_","_integer_","_real_","_function_","_program_","_type_","_false_","_true_",
-	"constant","return","param","varparam","Erro","_outer_","null"};
+char* tabelaTipos[] ={ "boolean","int","String[]","Method","Class","_type_","_false_","_true_",
+	"constant","return","param","voi","Erro","_outer_","null"};
 
 typedef struct _info{
 	int linha,coluna;
@@ -91,7 +91,6 @@ Elemento* searchLocal(Table* tabela,char* aProcurar);
 Elemento* searchGlobalID(Table* tabela,char* aProcurar);
 void printTabela(Table* tabela);
 void printSimbolos(Elemento* elemento);
-void toSmall(char* string);
 
 
 /* META 2  funções*/
@@ -203,7 +202,6 @@ char* getTipoTabela(symbol simbolo){
 Table* createTable(char* id,symbol tableType,Table* parent){
 	Table* table = malloc(sizeof(Table));
 	table->idTable = strdup(id);
-	toSmall(table->idTable);
 	table->tableType = tableType;
 	table->parent = parent;
 	table->simbolo = NULL;
@@ -214,7 +212,6 @@ Table* createTable(char* id,symbol tableType,Table* parent){
 Elemento* createElement(char* token,symbol tType,symbol tFlag,symbol tValue){
 	Elemento* element = malloc(sizeof(Elemento));
 	element->token = strdup(token);
-	toSmall(element->token);
 	element->tType = tType;
 	element->tFlag = tFlag;
 	element->tValue = tValue;
@@ -239,18 +236,7 @@ void insertElement(Elemento* element,Table* inserir,Table* next){
 }
 
 Table* insereOuter(){
-	Table* tabela = createTable("_outer_",_outer_,NULL);
-	insertElement(createElement("boolean",_type_,_constant_,_boolean_),tabela,NULL);
-	insertElement(createElement("integer",_type_,_constant_,_integer_),tabela,NULL);
-	insertElement(createElement("real",_type_,_constant_,_real_),tabela,NULL);
-	insertElement(createElement("false",_boolean_,_constant_,_false_),tabela,NULL);
-	insertElement(createElement("true",_boolean_,_constant_,_true_),tabela,NULL);
-
-	Table* paramcountTable = createTable("paramcount",_function_,tabela);
-	insertElement(createElement("paramcount",_integer_,_return_,_null_),paramcountTable,NULL);
-
-	insertElement(createElement("paramcount",_function_,_null_,_null_),tabela,paramcountTable);
-
+	Table* tabela =  malloc(sizeof(Table));
 	return tabela;
 }
 /*percorre a local e compara com o elemento*/
@@ -258,7 +244,6 @@ Elemento* searchLocal(Table* tabela,char* aProcurar){
 	if(tabela != NULL){
 		Elemento* pElem = tabela->simbolo;
 		char* aux = strdup(aProcurar);
-		toSmall(aux);
 		while(pElem != NULL){
 			if(strcmp(pElem->token,aux) == 0){
 				return pElem;
@@ -276,7 +261,6 @@ Elemento* searchGlobalID(Table* tabela,char* aProcurar){
 	if(tabela != NULL){
 		Elemento* pElem = tabela->simbolo;
 		char* aux = strdup(aProcurar);
-		toSmall(aux);
 		while(pElem != NULL){
 			if(strcmp(aux,pElem->token) == 0 && pElem->tFlag != _return_){
 				return pElem;
@@ -293,9 +277,9 @@ Elemento* searchGlobalID(Table* tabela,char* aProcurar){
 void printTabela(Table* tabela){
 
 	if(tabela != NULL){
-		if(tabela->tableType == _outer_){
-			printf("===== Outer Symbol Table =====");
-		}else if(tabela->tableType == _function_){
+		if(tabela->tableType == _Class_){
+			printf("===== Class %s Symbol Table =====");
+		}else if(tabela->tableType == _Method_){
 			printf("\n");
 			printf("\n===== Function Symbol Table =====");
 		}else{
@@ -326,16 +310,6 @@ void printSimbolos(Elemento* elemento){
 	while(auxiliar != NULL){
 		printTabela(auxiliar->table);
 		auxiliar = auxiliar->next;
-	}
-}
-
-/*teoricamente isto é uma mera função para meter todas as letras como minusculas, só não percebo o porquê de estar assim construida...*/
-void toSmall(char* string){
-    char* aux = string;
-
-	while((long)*aux != (long)NULL){
-		*aux = tolower((int)*aux);
-		++aux;
 	}
 }
 
