@@ -27,22 +27,24 @@ void percorreAST(Node* raiz, Table* tabela){
 				tabela->tableType = _Class_;
 				tabela->parent = NULL;
 				tabela->simbolo = NULL;
+//teste inserir um elemento, funciona
+				insertElement(createElement(raiz->filho->token->token,_Class_,_null_,_null_),tabela,NULL);
 				//PROBLEMA  este nó não devia ser Null
 				percorreAST(raiz->filho->irmao,tabela);
 				break;
 			case FieldDecl:
-			temp = raiz->filho; //Entrar na declaracao de vars
-			tipoVar = temp->token->token; //Temos tipo da var
-			printf("%s\n",tipoVar );
-			while(temp->irmao != NULL){ //avancar até à declaracao do token
-				temp = temp->irmao;
-			}
+				temp = raiz->filho; //Entrar na declaracao de vars
+				tipoVar = temp->token->token; //Temos tipo da var
+				printf("%s\n",tipoVar );
+				while(temp->irmao != NULL){ //avancar até à declaracao do token
+					temp = temp->irmao;
+				}
 
-			nodeAux = temp;
-			//insertElement(createElement(nodeAux->token->token,tipoVar,_null_,_null_),tabela,NULL);
+				nodeAux = temp;
+				//insertElement(createElement(nodeAux->token->token,tipoVar,_null_,_null_),tabela,NULL);
 
 
-			percorreAST(raiz->irmao,tabela);
+				percorreAST(raiz->irmao,tabela);
 				break;
 
 			case VarDecl:

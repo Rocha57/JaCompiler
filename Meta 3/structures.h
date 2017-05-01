@@ -284,8 +284,9 @@ void printTabela(Table* tabela){
 			printf("\n");
 			printf("\n===== Method %s Symbol Table =====", tabela -> idTable);
 		}
+		printSimbolos(tabela->simbolo);
 	}
-	printSimbolos(tabela->simbolo);
+
 }
 
 
