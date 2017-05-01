@@ -6,7 +6,6 @@ extern int errosS;
 
 
 void percorreAST(Node* raiz, Table* tabela){
-	Table* tabelaClass;
 	Table* tabelaMethod;
 	char* tipoVar;
 	char* nome;
@@ -20,22 +19,79 @@ void percorreAST(Node* raiz, Table* tabela){
 	Node* exp2;
 	int tipoElem;
 	if (raiz != NULL){
-		/*printf("%s\n",getTipo(raiz->tipo) );
-		*/switch (raiz->tipo) {
+		printf("%s\n",getTipo(raiz->tipo) );
+		switch (raiz->tipo) {
 
 			case 	Program:
-			/*se calhar tenho de refazer isto porque depois volta a entrar no id*/
 				tabela->idTable = strdup(raiz->filho->token->token);
 				tabela->tableType = _Class_;
 				tabela->parent = NULL;
 				tabela->simbolo = NULL;
+				//PROBLEMA  este nó não devia ser Null
 				percorreAST(raiz->filho->irmao,tabela);
 				break;
 			case FieldDecl:
+			temp = raiz->filho; //Entrar na declaracao de vars
+			tipoVar = temp->token->token; //Temos tipo da var
+			printf("%s\n",tipoVar );
+			while(temp->irmao != NULL){ //avancar até à declaracao do token
+				temp = temp->irmao;
+			}
+
+			nodeAux = temp;
+			//insertElement(createElement(nodeAux->token->token,tipoVar,_null_,_null_),tabela,NULL);
+
+
+			percorreAST(raiz->irmao,tabela);
 				break;
+
 			case VarDecl:
+				temp = raiz->filho; //Entrar na declaracao de vars
+
+				while(temp->irmao != NULL){ //avancar até à declaracao do tipo
+					temp = temp->irmao;
+				}
+				tipoVar = temp->token->token; //Temos tipo da var
+				nodeAux = temp;
+
+				//Meter todos os ids excepto o ultimo na tabela atual
+				//printf("Type found:%s\n",getTipoTabela(elementoDaPesquisa->tValue));
+				temp = raiz->filho;
+
+				elementoDaPesquisa = searchGlobalID(tabela,tipoVar);//Pesquisar se tipo existe
+
+				while(temp->irmao != NULL){
+					if(searchLocal(tabela,temp->token->token) != NULL){ //Ver se já existe nesta scope
+						//errosS +=1;
+						printf("Line %d, col %d: Symbol %s already defined\n",temp->token->linha,temp->token->coluna,temp->token->token);
+						return; //Already defined
+					}
+					//Verificar se este tipo existe
+
+					if(elementoDaPesquisa == NULL){
+						printf("Line %d, col %d: Symbol %s not defined\n",nodeAux->token->linha,nodeAux->token->coluna,nodeAux->token->token );
+						//errosS+=1;
+						return;
+					}
+
+					if(elementoDaPesquisa->tType != _type_){ //Tipo nao declarado
+						printf("Line %d, col %d: Type identifier expected\n",nodeAux->token->linha,nodeAux->token->coluna);
+						//errosS +=1;
+						return; //Type expected
+					}
+
+
+					//printf("%s\n",getTipoTabela(elementoDaPesquisa->tValue) );
+					if(elementoDaPesquisa->tValue != _null_)
+						insertElement(createElement(temp->token->token,elementoDaPesquisa->tValue,_null_,_null_),tabela,NULL);
+					temp = temp->irmao;
+				}
+				percorreAST(raiz->filho,tabela);
+				percorreAST(raiz->irmao,tabela);
 				break;
 			case 	MethodDecl:
+				tabelaMethod = createTable(nome,_Method_,tabela);
+				insertElement(createElement(nome,_Method_,_null_,_null_),tabela,tabelaMethod);
 				break;
 			case 	MethodHeader: break;
 			case 	MethodParams: break;

@@ -29,7 +29,7 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 
 
 /* META 3  estruturas auxiliares*/
-typedef enum{_boolean_,_int_,_String_,_Method_,_Class_,_type_,_false_,_true_,
+	typedef enum{_boolean_,_int_,_String_,_Method_,_Class_,_type_,_false_,_true_,
 	_constant_,_return_,_param_,_void_,_erro_,_outer_,_null_}symbol;
 //TODO possivelmente corrigir estes nomes e na função insereOuter
 char* tabelaTipos[] ={ "boolean","int","String[]","Method","Class","_type_","_false_","_true_",
