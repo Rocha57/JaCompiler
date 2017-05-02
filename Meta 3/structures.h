@@ -29,11 +29,9 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 
 
 /* META 3  estruturas auxiliares*/
-	typedef enum{_boolean_,_int_,_String_,_Method_,_Class_,_type_,_false_,_true_,
-	_constant_,_return_,_param_,_void_,_erro_,_outer_,_null_,_Double_}symbol;
+	typedef enum{_boolean_,_int_,_String_,_Method_,_Class_,_return_,_param_,_void_,_erro_,_null_,_Double_}symbol;
 //TODO possivelmente corrigir estes nomes e na função insereOuter
-char* tabelaTipos[] ={ "boolean","int","String[]","Method","Class","_type_","_false_","_true_",
-	"constant","return","param","void","Erro","_outer_","null","Double"};
+char* tabelaTipos[] ={ "boolean","int","String[]","Method","Class","return","param","void","Erro","","double"};
 
 /*função para inserir elementos*/
 symbol getTipoInserirTabela(char* tipo){
@@ -41,7 +39,7 @@ symbol getTipoInserirTabela(char* tipo){
 	if (strcmp(tipo, "Int")==0 ){
 		simbolo = _int_;
 	}
-	if (strcmp(tipo, "boolean")==0 ){
+	if (strcmp(tipo, "Bool")==0 ){
 		simbolo = _boolean_;
 	}
 	if (strcmp(tipo, "Double")==0 ){
@@ -64,41 +62,40 @@ typedef struct _info{
 
 /*alterado para meta 3*/
 typedef struct _Node Node;
-typedef struct _Node{
+struct _Node{
 	tag tipo;
 	Info* token;
 	symbol type;
 	Node* filho;
 	Node* irmao;
-}Node;
+};
 
 typedef struct _ParamList ParamList;
-typedef struct _ParamList{
+struct _ParamList{
 	symbol simbolo;
 	ParamList* next;
-}ParamList;
+};
 
 typedef struct _table Table;
 typedef struct _element Elemento;
-typedef struct _element{
+struct _element{
 	char* token; //Token
 	symbol tType,tFlag; //Atributos
 	ParamList* tParams;
 
 	Elemento* next;
 	Table* table;
-
-}Elemento;
+};
 
 //Tabela de simbolos
-typedef struct _table{
+struct _table{
 	char* idTable; //Id pelo qual é identificada a tabela, normalmente o nome da funcao
 
 	symbol tableType;
 	Elemento* simbolo; //Simbolos na tabela
 	Table* parent;
 	ParamList* params;
-}Table;
+};
 
 
 /* META 2  declaração funções*/
@@ -366,12 +363,18 @@ ParamList* createSymbolList(Node* MethodParams){
 	ParamList* lista = malloc(sizeof(ParamList));
 	ParamList* temp1 = lista;
 	Node* temp = MethodParams;
+	temp1->simbolo = _null_;
 	while (temp != NULL){
-		temp1->simbolo = getTipoInserirTabela(getTipo(temp->filho->tipo));
-		if (temp->irmao != NULL)
-			temp1->next = malloc(sizeof(ParamList));
-		temp1 = temp1->next;
-		temp = temp->irmao;
+		if (temp->filho->tipo != Null){
+			temp1->simbolo = getTipoInserirTabela(getTipo(temp->filho->tipo));
+			if (temp->irmao != NULL)
+				temp1->next = malloc(sizeof(ParamList));
+			temp1 = temp1->next;
+			temp = temp->irmao;
+		}
+		else{
+			temp1->simbolo = _null_;
+		}
 	}
 	return lista;
 }

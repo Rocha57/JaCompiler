@@ -187,6 +187,12 @@ int main(int argc, char** argv){
 				}
 				elimina(raiz);
 			}
+			else if (strcmp(argv[1], "-2") == 0){
+				sintax = 1;
+				erros = 1;
+				yyparse();
+				elimina(raiz);
+			}
 			else if(strcmp(argv[1],"-s") == 0){
 				sintax = 1;
 				erros=1;
@@ -194,6 +200,8 @@ int main(int argc, char** argv){
 				tabela = insereOuter();
 				percorreAST(raiz,tabela);
 				printTabela(tabela);
+				printf("\n\n");
+				printTree(raiz,0);
 		}
 		else{
 			sintax = 1;
