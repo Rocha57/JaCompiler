@@ -30,10 +30,32 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 
 /* META 3  estruturas auxiliares*/
 	typedef enum{_boolean_,_int_,_String_,_Method_,_Class_,_type_,_false_,_true_,
-	_constant_,_return_,_param_,_void_,_erro_,_outer_,_null_}symbol;
+	_constant_,_return_,_param_,_void_,_erro_,_outer_,_null_,_Double_}symbol;
 //TODO possivelmente corrigir estes nomes e na função insereOuter
 char* tabelaTipos[] ={ "boolean","int","String[]","Method","Class","_type_","_false_","_true_",
-	"constant","return","param","voi","Erro","_outer_","null"};
+	"constant","return","param","void","Erro","_outer_","null","Double"};
+
+/*função para inserir elementos*/
+symbol getTipoInserirTabela(char* tipo){
+	symbol simbolo;
+	if (strcmp(tipo, "Int")==0 ){
+		simbolo = _int_;
+	}
+	if (strcmp(tipo, "boolean")==0 ){
+		simbolo = _boolean_;
+	}
+	if (strcmp(tipo, "Double")==0 ){
+		simbolo = _Double_;
+	}
+	if (strcmp(tipo, "StringArray")==0 ){
+		simbolo = _String_;
+	}
+	if (strcmp(tipo, "Void")==0 ){
+		simbolo = _void_;
+	}
+
+	return simbolo;
+}
 
 typedef struct _info{
 	int linha,coluna;
@@ -282,7 +304,7 @@ void printTabela(Table* tabela){
 		}
 		else if(tabela->tableType == _Method_){
 			printf("\n");
-			printf("\n===== Method %s Symbol Table =====", tabela -> idTable);
+			printf("\n===== Method %s(%s) Symbol Table =====", tabela -> idTable, tabela -> idTable);
 		}
 		printSimbolos(tabela->simbolo);
 	}

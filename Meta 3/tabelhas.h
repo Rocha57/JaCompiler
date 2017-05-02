@@ -27,26 +27,24 @@ void percorreAST(Node* raiz, Table* tabela){
 				tabela->tableType = _Class_;
 				tabela->parent = NULL;
 				tabela->simbolo = NULL;
-//teste inserir um elemento, funciona
-				insertElement(createElement(raiz->filho->token->token,_Class_,_null_,_null_),tabela,NULL);
+				//teste inserir um elemento, funciona
+				//insertElement(createElement(raiz->filho->token->token,_Class_,_null_,_null_),tabela,NULL);
 				//PROBLEMA  este nó não devia ser Null
 				percorreAST(raiz->filho->irmao,tabela);
 				break;
 			case FieldDecl:
 				temp = raiz->filho; //Entrar na declaracao de vars
-				tipoVar = temp->token->token; //Temos tipo da var
-				printf("%s\n",tipoVar );
 				while(temp->irmao != NULL){ //avancar até à declaracao do token
 					temp = temp->irmao;
 				}
-
 				nodeAux = temp;
-				//insertElement(createElement(nodeAux->token->token,tipoVar,_null_,_null_),tabela,NULL);
+				insertElement(createElement(nodeAux->token->token,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_,_null_),tabela,NULL);
 
 
 				percorreAST(raiz->irmao,tabela);
 				break;
 
+//FALTA ESTE
 			case VarDecl:
 				temp = raiz->filho; //Entrar na declaracao de vars
 
@@ -92,10 +90,22 @@ void percorreAST(Node* raiz, Table* tabela){
 				percorreAST(raiz->irmao,tabela);
 				break;
 			case 	MethodDecl:
+				nome = raiz -> filho -> filho -> irmao -> token -> token;
+				tipoVar = getTipo(raiz->filho->filho->irmao->irmao->filho->filho->tipo);
+				//printf("test:  %s\n",getTipo(raiz->filho ->filho->tipo));
+				//printf("bananan  %s\n",getTipoTabela(getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)) ));
+				//getTipoInserirTabela(tipoVar);
+				//quando criamos a tabela temos logo de inserir nó, caso contrário dá bode
 				tabelaMethod = createTable(nome,_Method_,tabela);
-				insertElement(createElement(nome,_Method_,_null_,_null_),tabela,tabelaMethod);
+				insertElement(createElement(nome,getTipoInserirTabela(getTipo(raiz->filho->filho->irmao->irmao->filho->filho->tipo)),getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)),_null_),tabela,tabelaMethod);
+
+				//printTabela(tabelaMethod);
+				percorreAST(raiz->filho,tabelaMethod);
+				percorreAST(raiz->irmao,tabela);
 				break;
-			case 	MethodHeader: break;
+			case 	MethodHeader:
+
+			break;
 			case 	MethodParams: break;
 			case 	ParamDecl: break;
 			case	MethodBody: break;
@@ -127,7 +137,8 @@ void percorreAST(Node* raiz, Table* tabela){
 			case 	BoolLit: break;
 			case 	Double: break;
 			case	DecLit: break;
-			case 	Id:/*
+			case 	Id:
+			/*
 			elementoDaPesquisa = searchGlobalID(tabela,raiz->token->token);
 			if(elementoDaPesquisa == NULL){
 				printf("Line %d, col %d: Symbol %s not defined\n",raiz->token->linha,raiz->token->coluna,raiz->token->token);
@@ -143,7 +154,11 @@ void percorreAST(Node* raiz, Table* tabela){
 			case	RealLit: break;
 			case 	StrLit: break;
 			case	Void: break;
-			case 	Null: break;
+			case 	Null:
+				percorreAST(raiz->irmao,tabela);
+
+
+			 break;
 			case	StringArray: break;
 			case	Sub: break;
 			case	Gt: break;
