@@ -202,6 +202,7 @@ int main(int argc, char** argv){
 				printTabela(tabela);
 				printf("\n\n");
 				printTree(raiz,0);
+				elimina(raiz);
 		}
 		else{
 			sintax = 1;

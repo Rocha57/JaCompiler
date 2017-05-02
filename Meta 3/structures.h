@@ -58,6 +58,7 @@ symbol getTipoInserirTabela(char* tipo){
 typedef struct _info{
 	int linha,coluna;
 	char* token;
+	char* annotation;
 }Info;
 
 /*alterado para meta 3*/
@@ -118,6 +119,8 @@ Elemento* searchLocal(Table* tabela,char* aProcurar);
 Elemento* searchGlobalID(Table* tabela,char* aProcurar);
 void printTabela(Table* tabela);
 void printSimbolos(Elemento* elemento);
+Info* AddAnnotation(Node* no, char* annotation);
+
 
 
 /* META 2  funções*/
@@ -378,6 +381,17 @@ ParamList* createSymbolList(Node* MethodParams){
 	}
 	return lista;
 }
+
+
+void AddAnnotation(Node* no, char* annotation){
+	if(no != NULL){
+		if (no->token != null){
+			no->token->annotation = (char*) strdup(annotation);
+		}
+	}
+}
+
+
 
 
 
