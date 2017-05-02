@@ -19,7 +19,7 @@ void percorreAST(Node* raiz, Table* tabela){
 	Node* exp2;
 	int tipoElem;
 	if (raiz != NULL){
-		printf("%s\n",getTipo(raiz->tipo) );
+		//printf("%s\n",getTipo(raiz->tipo) );
 		switch (raiz->tipo) {
 
 			case 	Program:
@@ -32,13 +32,14 @@ void percorreAST(Node* raiz, Table* tabela){
 				//PROBLEMA  este nó não devia ser Null
 				percorreAST(raiz->filho->irmao,tabela);
 				break;
+			
 			case FieldDecl:
 				temp = raiz->filho; //Entrar na declaracao de vars
 				while(temp->irmao != NULL){ //avancar até à declaracao do token
 					temp = temp->irmao;
 				}
 				nodeAux = temp;
-				insertElement(createElement(nodeAux->token->token,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_,_null_),tabela,NULL);
+				insertElement(createElement(nodeAux->token->token,NULL,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_),tabela,NULL);
 
 
 				percorreAST(raiz->irmao,tabela);
@@ -82,9 +83,9 @@ void percorreAST(Node* raiz, Table* tabela){
 
 
 					//printf("%s\n",getTipoTabela(elementoDaPesquisa->tValue) );
-					if(elementoDaPesquisa->tValue != _null_)
-						insertElement(createElement(temp->token->token,elementoDaPesquisa->tValue,_null_,_null_),tabela,NULL);
-					temp = temp->irmao;
+					/*if(elementoDaPesquisa->tValue != _null_)
+						insertElement(createElement(temp->token->token,NULL,elementoDaPesquisa->tValue,_null_),tabela,NULL);
+					temp = temp->irmao;*/
 				}
 				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
@@ -92,12 +93,25 @@ void percorreAST(Node* raiz, Table* tabela){
 			case 	MethodDecl:
 				nome = raiz -> filho -> filho -> irmao -> token -> token;
 				tipoVar = getTipo(raiz->filho->filho->irmao->irmao->filho->filho->tipo);
-				//printf("test:  %s\n",getTipo(raiz->filho ->filho->tipo));
+				//printf("test:  %s\n",getTipo(raiz->filho ->filho->irmao->irmao->tipo));
 				//printf("bananan  %s\n",getTipoTabela(getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)) ));
 				//getTipoInserirTabela(tipoVar);
 				//quando criamos a tabela temos logo de inserir nó, caso contrário dá bode
-				tabelaMethod = createTable(nome,_Method_,tabela);
-				insertElement(createElement(nome,getTipoInserirTabela(getTipo(raiz->filho->filho->irmao->irmao->filho->filho->tipo)),getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)),_null_),tabela,tabelaMethod);
+				//printf("PARAMS: %s\n", getTipo(raiz->filho ->filho->irmao->irmao->filho->tipo));
+				/*int i = 0;
+				symbol symbols[5];
+				temp = raiz->filho->filho->irmao->irmao->filho;
+				while (temp != NULL){
+					symbols[i] = getTipoInserirTabela(getTipo(temp->filho->tipo));
+					i++;
+					temp = temp->irmao;
+				}
+				while (i >0){
+					printf("%d: %s\n", i-1, getTipoTabela(symbols[i-1]));
+					i--;
+				}*/
+				tabelaMethod = createTable(nome,_Method_,tabela, createSymbolList(raiz->filho->filho->irmao->irmao->filho));
+				insertElement(createElement(nome,createSymbolList(raiz->filho->filho->irmao->irmao->filho),getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)),_null_),tabela,tabelaMethod);
 
 				//printTabela(tabelaMethod);
 				percorreAST(raiz->filho,tabelaMethod);

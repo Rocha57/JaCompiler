@@ -193,7 +193,6 @@ int main(int argc, char** argv){
 				yyparse();
 				tabela = insereOuter();
 				percorreAST(raiz,tabela);
-				printf("\n");
 				printTabela(tabela);
 		}
 		else{

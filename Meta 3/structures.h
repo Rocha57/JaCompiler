@@ -72,11 +72,18 @@ typedef struct _Node{
 	Node* irmao;
 }Node;
 
+typedef struct _ParamList ParamList;
+typedef struct _ParamList{
+	symbol simbolo;
+	ParamList* next;
+}ParamList;
+
 typedef struct _table Table;
 typedef struct _element Elemento;
 typedef struct _element{
 	char* token; //Token
-	symbol tType,tFlag,tValue; //Atributos
+	symbol tType,tFlag; //Atributos
+	ParamList* tParams;
 
 	Elemento* next;
 	Table* table;
@@ -90,6 +97,7 @@ typedef struct _table{
 	symbol tableType;
 	Elemento* simbolo; //Simbolos na tabela
 	Table* parent;
+	ParamList* params;
 }Table;
 
 
@@ -105,8 +113,8 @@ char* getTipo(tag etag);
 
 Info* createInfo(int linha,int coluna,char* token);
 char* getTipoTabela(symbol simbolo);
-Table* createTable(char* id,symbol tableType,Table* parent);
-Elemento* createElement(char* token,symbol tType,symbol tFlag,symbol tValue);
+Table* createTable(char* id,symbol tableType,Table* parent, ParamList* params);
+Elemento* createElement(char* token,ParamList* tParams, symbol tType,symbol tFlag);
 void insertElement(Elemento* element,Table* inserir,Table* next);
 Table* insereOuter();
 Elemento* searchLocal(Table* tabela,char* aProcurar);
@@ -221,22 +229,23 @@ char* getTipoTabela(symbol simbolo){
 	return tabelaTipos[simbolo];
 }
 
-Table* createTable(char* id,symbol tableType,Table* parent){
+Table* createTable(char* id,symbol tableType,Table* parent, ParamList* params){
 	Table* table = malloc(sizeof(Table));
 	table->idTable = strdup(id);
 	table->tableType = tableType;
 	table->parent = parent;
+	table->params = params;
 	table->simbolo = NULL;
 
 	return table;
 }
 
-Elemento* createElement(char* token,symbol tType,symbol tFlag,symbol tValue){
+Elemento* createElement(char* token, ParamList* tParams, symbol tType,symbol tFlag){
 	Elemento* element = malloc(sizeof(Elemento));
 	element->token = strdup(token);
+	element->tParams = tParams;
 	element->tType = tType;
 	element->tFlag = tFlag;
-	element->tValue = tValue;
 	element->next = NULL;
 
 	return element;
@@ -297,14 +306,23 @@ Elemento* searchGlobalID(Table* tabela,char* aProcurar){
 }
 
 void printTabela(Table* tabela){
-
+	ParamList* temp;
 	if(tabela != NULL){
 		if(tabela->tableType == _Class_){
 			printf("===== Class %s Symbol Table =====", tabela -> idTable);
 		}
 		else if(tabela->tableType == _Method_){
 			printf("\n");
-			printf("\n===== Method %s(%s) Symbol Table =====", tabela -> idTable, tabela -> idTable);
+			printf("\n===== Method %s(", tabela -> idTable);
+			if (tabela->params != NULL){
+				temp = tabela->params;
+				printf("%s", getTipoTabela(temp->simbolo));
+				while (temp->next != NULL){
+					printf(",%s", getTipoTabela(temp->next->simbolo));
+					temp = temp->next;
+				}
+			}
+			printf(") Symbol Table =====");
 		}
 		printSimbolos(tabela->simbolo);
 	}
@@ -314,16 +332,24 @@ void printTabela(Table* tabela){
 
 void printSimbolos(Elemento* elemento){
 	Elemento* auxiliar = elemento;
+	ParamList* temp;
 
 	while(elemento != NULL){
 		printf("\n");
-		printf("%s\t%s",elemento->token,getTipoTabela(elemento->tType));
+		printf("%s\t",elemento->token);
+		if (elemento->tParams != NULL){
+			temp = elemento->tParams;
+			printf("(");
+			printf("%s", getTipoTabela(temp->simbolo));
+			while (temp->next != NULL){
+				printf(",%s", getTipoTabela(temp->next->simbolo));
+				temp = temp->next;
+			}
+			printf(")");
+		}
+		printf("\t%s",getTipoTabela(elemento->tType));
 		if(elemento->tFlag != _null_){
 			printf("\t%s",getTipoTabela(elemento->tFlag));
-
-			if(elemento->tValue != _null_){
-				printf("\t%s",getTipoTabela(elemento->tValue));
-			}
 		}
 		elemento = elemento->next;
 	}
@@ -336,7 +362,19 @@ void printSimbolos(Elemento* elemento){
 
 
 
-
+ParamList* createSymbolList(Node* MethodParams){
+	ParamList* lista = malloc(sizeof(ParamList));
+	ParamList* temp1 = lista;
+	Node* temp = MethodParams;
+	while (temp != NULL){
+		temp1->simbolo = getTipoInserirTabela(getTipo(temp->filho->tipo));
+		if (temp->irmao != NULL)
+			temp1->next = malloc(sizeof(ParamList));
+		temp1 = temp1->next;
+		temp = temp->irmao;
+	}
+	return lista;
+}
 
 
 
