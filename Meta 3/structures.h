@@ -487,14 +487,24 @@ int calculateParamLength(ParamList* params){
 int compareParamList(ParamList* first, ParamList* second){
 	int size_first = calculateParamLength(first);
 	int size_second = calculateParamLength(second);
+	ParamList* temp = first;
+	ParamList* temp1 = second;
 	if (size_first == 0)
 		return 0;
 	if (size_first != size_second)
 		return 0;
 	
+	while(temp != NULL){
+		if (temp->simbolo != temp1->simbolo)
+			return 0;
+		temp = temp->next;
+		temp1 = temp1->next;
+	}
+
 	while(first != NULL){
 		if (first->simbolo != second->simbolo)
-			return 0;
+			if (!(first->simbolo == _Double_ && second->simbolo == _int_))
+				return 0;
 		first = first->next;
 		second = second->next;
 	}
@@ -573,6 +583,11 @@ void checkCall(Node* no, Table* tabela){
 		addAnnotation(no->filho, annotMethod(params));
 		no->token = malloc(sizeof(Info));
 		addAnnotation(no, getTipoTabela(search->tType));
+	}
+	else{
+		addAnnotation(no->filho, "undef");
+		no->token = malloc(sizeof(Info));
+		addAnnotation(no,"undef");
 	}
 }
 

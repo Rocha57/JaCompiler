@@ -1,0 +1,8 @@
+class teste{
+	public static void main(String[] args){
+		sopa(2);
+	}
+public static void sopa(double oi){
+  	System.out.println(oi);
+}
+}
