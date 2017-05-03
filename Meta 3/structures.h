@@ -246,7 +246,10 @@ Info* createInfo(int linha,int coluna,char* token){
 
 	info->coluna = coluna;
 	info->linha = linha;
-	info->token = (char*) strdup(token);
+	if (token!=NULL)
+		info->token = (char*) strdup(token);
+	else
+		info->token = NULL;
 	info->annotation = NULL;
 
 	return info;
@@ -414,7 +417,7 @@ ParamList* createSymbolList(Node* MethodParams){
 
 void addAnnotation(Node* no, char* annotation){
 	if(no != NULL){
-		if (no->token != NULL){
+		if (no->token->token != NULL){
 			no->token->annotation = (char*) strdup(annotation);
 		}
 	}
