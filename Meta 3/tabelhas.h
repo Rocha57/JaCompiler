@@ -62,51 +62,8 @@ void percorreAST(Node* raiz, Table* tabela){
 				//nodeAux = temp;
 				insertElement(createElement(temp->token->token,NULL,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_),tabela,NULL);
 
-				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 				break;
-				/*temp = raiz->filho; //Entrar na declaracao de vars
-
-				while(temp->irmao != NULL){ //avancar até à declaracao do tipo
-					temp = temp->irmao;
-				}
-				tipoVar = temp->token->token; //Temos tipo da var
-				nodeAux = temp;
-
-				//Meter todos os ids excepto o ultimo na tabela atual
-				//printf("Type found:%s\n",getTipoTabela(elementoDaPesquisa->tValue));
-				temp = raiz->filho;
-
-				elementoDaPesquisa = searchGlobalID(tabela,tipoVar);//Pesquisar se tipo existe
-
-				while(temp->irmao != NULL){
-					if(searchLocal(tabela,temp->token->token) != NULL){ //Ver se já existe nesta scope
-						//errosS +=1;
-						printf("Line %d, col %d: Symbol %s already defined\n",temp->token->linha,temp->token->coluna,temp->token->token);
-						return; //Already defined
-					}
-					//Verificar se este tipo existe
-
-					if(elementoDaPesquisa == NULL){
-						printf("Line %d, col %d: Symbol %s not defined\n",nodeAux->token->linha,nodeAux->token->coluna,nodeAux->token->token );
-						//errosS+=1;
-						return;
-					}
-
-					if(elementoDaPesquisa->tType != _type_){ //Tipo nao declarado
-						printf("Line %d, col %d: Type identifier expected\n",nodeAux->token->linha,nodeAux->token->coluna);
-						//errosS +=1;
-						return; //Type expected
-					}
-
-
-					//printf("%s\n",getTipoTabela(elementoDaPesquisa->tValue) );
-					if(elementoDaPesquisa->tValue != _null_)
-						insertElement(createElement(temp->token->token,NULL,elementoDaPesquisa->tValue,_null_),tabela,NULL);
-					temp = temp->irmao;
-				}
-				percorreAST(raiz->filho,tabela);
-				percorreAST(raiz->irmao,tabela);*/
 			case 	MethodDecl:
 				nome = raiz -> filho -> filho -> irmao -> token -> token;
 				tabelaMethod = createTable(nome,_Method_,tabela, createSymbolList(raiz->filho->filho->irmao->irmao->filho));
@@ -118,7 +75,7 @@ void percorreAST(Node* raiz, Table* tabela){
 				break;
 			case 	MethodHeader:
 				insertElement(createElement("return",NULL,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_),tabela, NULL);
-				percorreAST(raiz->filho,tabela);
+				percorreAST(raiz->filho->irmao->irmao,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	MethodParams:
@@ -129,7 +86,6 @@ void percorreAST(Node* raiz, Table* tabela){
 				nome = raiz -> filho -> irmao -> token -> token;
 				//printf("%s\n", nome);
 				insertElement(createElement(nome,NULL, getTipoInserirTabela(getTipo(raiz->filho->tipo)),_param_),tabela, NULL);
-				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	MethodBody: 
@@ -137,54 +93,35 @@ void percorreAST(Node* raiz, Table* tabela){
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Assign:
-				nome = raiz->filho->token->token;
-				search = searchGlobalID(tabela, nome);
-				if (search != NULL)
-					addAnnotation(raiz->filho, getTipoTabela(search->tType));
-				raiz->token = malloc(sizeof(Info));
-				if (search != NULL)
-					addAnnotation(raiz, getTipoTabela(search->tType));
 				percorreAST(raiz->filho,tabela);
+				raiz->token = malloc(sizeof(Info));
+				addAnnotation(raiz, raiz->filho->token->annotation);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Call:
 				nome = raiz->filho->token->token;
 				search = searchMethod(tabela, nome);
 				params = search->tParams;
-				
 				addAnnotation(raiz->filho, annotMethod(params));
 				raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz, getTipoTabela(search->tType));
-				temp = raiz->filho->irmao;
-				while (temp != NULL){
-					if (temp->tipo == Id){
-						nome = temp->token->token;
-						search = searchGlobalID(tabela, nome);
-						addAnnotation(temp, getTipoTabela(search->tType));
-					}
-					temp = temp->irmao;
-				}
-				percorreAST(raiz->filho,tabela);
+				percorreAST(raiz->filho->irmao,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	ParseArgs:
+				percorreAST(raiz->filho,tabela);
 				raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz,"int");
-				nome = raiz->filho->token->token;
-				search = searchGlobalID(tabela, nome);
-				addAnnotation(raiz->filho, getTipoTabela(search->tType));
-				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	Or:
 			case 	And:
 				// VERIFICAR TIPOS DOS FILHOS DESTES MENS
+				percorreAST(raiz->filho,tabela);
 				raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz,"boolean");
-				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
-
 			case 	Eq: 
 			case	Neq: 
 			case  	Lt: 
@@ -192,35 +129,9 @@ void percorreAST(Node* raiz, Table* tabela){
 			case	Geq: 
 			case	Gt: 
 				// VERIFICAR TIPOS DOS FILHOS DESTES MENS
+				percorreAST(raiz->filho,tabela);
 				raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz,"boolean");
-				temp = raiz->filho;
-				while (temp != NULL){
-					if (temp->tipo == Id){
-						nome = temp->token->token;
-						search = searchGlobalID(tabela, nome);
-						if (search != NULL){
-							printf("%s\n",search->token );
-							addAnnotation(temp, getTipoTabela(search->tType));
-						}
-					}
-					temp = temp->irmao;
-				}
-				percorreAST(raiz->filho,tabela);
-				percorreAST(raiz->irmao,tabela);
-			break;
-			case 	Mul: 
-				percorreAST(raiz->filho,tabela);
-				percorreAST(raiz->irmao,tabela);
-			break;
-			case	Div: 
-				percorreAST(raiz->filho,tabela);
-				percorreAST(raiz->irmao,tabela);
-			break;
-			case	Mod:
-				raiz->token = malloc(sizeof(Info));
-				addAnnotation(raiz,"int");
-				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Not: 
@@ -230,97 +141,53 @@ void percorreAST(Node* raiz, Table* tabela){
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Minus: 
-				percorreAST(raiz->filho,tabela);
-				percorreAST(raiz->irmao,tabela);
-			break;
 			case 	Plus: 
 				percorreAST(raiz->filho,tabela);
+				checkUnary(raiz);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Length: 
+				percorreAST(raiz->filho,tabela);
 				raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz,"int");
-				nome = raiz->filho->token->token;
-				search = searchGlobalID(tabela, nome);
-				addAnnotation(raiz->filho, getTipoTabela(search->tType));
-				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	BoolLit:
 				addAnnotation(raiz,"boolean"); 
-				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	DecLit: 
 				addAnnotation(raiz,"int");
-				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	Id:
-			/*
-			elementoDaPesquisa = searchGlobalID(tabela,raiz->token->token);
-			if(elementoDaPesquisa == NULL){
-				printf("Line %d, col %d: Symbol %s not defined\n",raiz->token->linha,raiz->token->coluna,raiz->token->token);
-				raiz->type = _erro_;
-				return;
-			}
-
-			raiz->type = elementoDaPesquisa->tType;
-			percorreAST(raiz->filho,tabela);
-			percorreAST(raiz->irmao,tabela);*/
-				percorreAST(raiz->filho,tabela);
+				nome = raiz->token->token;
+				search = searchGlobalID(tabela, nome);
+				if (search != NULL)
+					addAnnotation(raiz, getTipoTabela(search->tType));
+				else
+					addAnnotation(raiz, "undef");
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	RealLit:
 				addAnnotation(raiz,"double"); 
-				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	StrLit: 
 				addAnnotation(raiz,"String");
-				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
+			case	Mod:
+			case 	Mul:
+			case	Div: 
 			case  	Add: 
 			case	Sub:
-				temp = raiz->filho;
-				while (temp != NULL){
-					if (temp->tipo == Id){
-						nome = temp->token->token;
-						search = searchGlobalID(tabela, nome);
-						if (search != NULL)
-							addAnnotation(temp, getTipoTabela(search->tType));
-					}
-					temp = temp->irmao;
-				}
-				raiz->token = malloc(sizeof(Info));
-				if (search != NULL)
-					addAnnotation(raiz, getTipoTabela(search->tType));
 				percorreAST(raiz->filho,tabela);
+				checkSubAddMulDiv(raiz);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Print:
-				if (raiz->filho->tipo == Id){
-					nome = raiz->filho->token->token;
-					search = searchGlobalID(tabela, nome);
-					if (search != NULL)
-						addAnnotation(raiz->filho, getTipoTabela(search->tType));
-				} 
-				percorreAST(raiz->filho,tabela);
-				percorreAST(raiz->irmao,tabela);
-			break;
 			case  	Return:
-				if (raiz->filho != NULL){
-					if (raiz->filho->token!=NULL){
-						nome = raiz->filho->token->token;
-						search = searchGlobalID(tabela, nome);	
-						if (search != NULL)
-							addAnnotation(raiz->filho, getTipoTabela(search->tType));
-					}
-				}
-				percorreAST(raiz->filho,tabela);
-				percorreAST(raiz->irmao,tabela);
-				break; 
 			case	Bool: 
 			case 	Double: 
 			case	Void: 

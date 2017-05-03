@@ -295,6 +295,7 @@ Elemento* searchGlobalID(Table* tabela,char* aProcurar){
 		Elemento* pElem = tabela->simbolo;
 		char* aux = strdup(aProcurar);
 		while(pElem != NULL){
+			//printf("PROCURANDO VARIAVEL %s: Tabela: %s Elemento %s\n", aProcurar, tabela->idTable ,pElem->token);
 			if(strcmp(aux,pElem->token) == 0 && pElem->tFlag != _return_){
 				return pElem;
 			}
@@ -435,7 +436,7 @@ Elemento* searchMethod(Table* tabela,char* aProcurar){
 		Elemento* pElem = tabela->simbolo;
 		char* aux = strdup(aProcurar);
 		while(pElem != NULL){
-			printf("crl %s\n", pElem->token);
+			//printf("PROCURANDO METODO %s: Tabela: %s Elemento %s\n", aProcurar, tabela->idTable ,pElem->token);
 			if(strcmp(aux,pElem->token) == 0 && pElem->tParams!=NULL){
 				//printf("elemento: %s", pElem->token);
 				return pElem;
@@ -460,6 +461,37 @@ char* annotMethod(ParamList* params){
 	}
 	strcat(anotacao, ")");
 	return anotacao;
+}
+
+void checkSubAddMulDiv(Node* no){
+	Node* expr1 = no->filho;
+	Node* expr2 = no->filho->irmao;
+	no->token = malloc(sizeof(Info));
+
+	if (strcmp(expr1->token->annotation,"int") == 0){
+		if (strcmp(expr2->token->annotation,"int") == 0)
+			addAnnotation(no, "int");
+		else if (strcmp(expr2->token->annotation,"double") == 0){
+			addAnnotation(no, "double");
+		}
+	}
+	else if (strcmp(expr2->token->annotation,"int") == 0){
+		if (strcmp(expr1->token->annotation,"int") == 0)
+			addAnnotation(no, "int");
+		else if (strcmp(expr1->token->annotation,"double") == 0){
+			addAnnotation(no, "double");
+		}
+	}
+}
+
+void checkUnary(Node* no){
+	Node* expr = no->filho;
+	no->token = malloc(sizeof(Info));
+
+	if (strcmp(expr->token->annotation,"int") == 0)
+		addAnnotation(no, "int");
+	else if (strcmp(expr->token->annotation,"double") == 0)
+		addAnnotation(no,"double");
 }
 
 #endif

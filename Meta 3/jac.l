@@ -216,50 +216,6 @@ int main(int argc, char** argv){
 	}
 }
 
-/*o argc é sempre maior que 1 porque o primeiro argumento é o ./jac
-aqui vamos ter de verificar se os argumentos seguintes são -s -t ou -t -s
-para imprimir a arvore primeiro ou a tabela
-(não sei se ele quer esta prioridade ou se quer sempre a imprimir na mesma ordem)
-
-MAIN Meta 3 antiga
-
-int main(int argc, char* argv[]){
-	yyparse();
-
-	if(argc>1){
-		if( strcmp(argv[1],"-t") == 0 && erros == 0){
-			printTree(raiz,0);
-		}
-		if(argc>2 && strcmp(argv[2],"-s") == 0){
-			if(erros == 0){
-				Table* tabela = insereOuter();
-				percorreAST(raiz,tabela);
-				if(errosS == 0){
-					printf("\n");
-					printTabela(tabela);
-				}
-			}
-		}
-		if(strcmp(argv[1],"-s") == 0){
-			if(erros == 0){
-				Table* tabela = insereOuter();
-				percorreAST(raiz,tabela);
-				if(errosS == 0){
-					printTabela(tabela);
-					printf("\n");
-				}
-			}
-		}
-		if(argc > 2 && strcmp(argv[2],"-t")== 0 && erros == 0){
-			printTree(raiz,0);
-		}
-	}
-
-	return 0;
-}
-*/
-
-
 void yyerror (const char *s){
 	if (sintax == 1){
 		printf ("Line %d, col %d: %s: %s\n", line, col-(int)yyleng, s, yytext);
