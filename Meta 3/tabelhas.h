@@ -19,7 +19,6 @@ void percorreAST(Node* raiz, Table* tabela){
 	char* nome;
 	Node* temp;
 	Elemento* search;
-	ParamList* params;
 	/*Elemento* assignTwo;
 	Elemento* elExp1;
 	Elemento* elExp2;
@@ -99,13 +98,8 @@ void percorreAST(Node* raiz, Table* tabela){
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Call:
-				nome = raiz->filho->token->token;
-				search = searchMethod(tabela, nome);
-				params = search->tParams;
-				addAnnotation(raiz->filho, annotMethod(params));
-				raiz->token = malloc(sizeof(Info));
-				addAnnotation(raiz, getTipoTabela(search->tType));
 				percorreAST(raiz->filho->irmao,tabela);
+				checkCall(raiz, tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	ParseArgs:
@@ -183,7 +177,7 @@ void percorreAST(Node* raiz, Table* tabela){
 			case  	Add: 
 			case	Sub:
 				percorreAST(raiz->filho,tabela);
-				checkSubAddMulDiv(raiz);
+				checkArithmetic(raiz);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Print:

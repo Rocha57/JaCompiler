@@ -55,6 +55,27 @@ symbol getTipoInserirTabela(char* tipo){
 	return simbolo;
 }
 
+symbol getAnnotInserirTabela(char* annot){
+	symbol simbolo;
+	if (strcmp(annot, "int")==0 ){
+		simbolo = _int_;
+	}
+	if (strcmp(annot, "boolean")==0 ){
+		simbolo = _boolean_;
+	}
+	if (strcmp(annot, "double")==0 ){
+		simbolo = _Double_;
+	}
+	if (strcmp(annot, "String[]")==0 ){
+		simbolo = _String_;
+	}
+	if (strcmp(annot, "void")==0 ){
+		simbolo = _void_;
+	}
+
+	return simbolo;
+}
+
 typedef struct _info{
 	int linha,coluna;
 	char* token;
@@ -121,7 +142,12 @@ void printTabela(Table* tabela);
 void printSimbolos(Elemento* elemento);
 void addAnnotation(Node* no, char* annotation);
 void printTreeAnnot(Node* root,int altura);
-Elemento* searchMethod(Table* tabela,char* aProcurar);
+Elemento* searchMethod(Table* tabela,char* aProcurar, ParamList* params);
+char* annotMethod(ParamList* params);
+void checkArithmetic(Node* no);
+void checkUnary(Node* no);
+int compareParamList(ParamList* first, ParamList* second);
+int calculateParamLength(ParamList* params);
 
 
 /* META 2  funções*/
@@ -296,7 +322,7 @@ Elemento* searchGlobalID(Table* tabela,char* aProcurar){
 		char* aux = strdup(aProcurar);
 		while(pElem != NULL){
 			//printf("PROCURANDO VARIAVEL %s: Tabela: %s Elemento %s\n", aProcurar, tabela->idTable ,pElem->token);
-			if(strcmp(aux,pElem->token) == 0 && pElem->tFlag != _return_){
+			if(strcmp(aux,pElem->token) == 0 && pElem->tFlag != _return_ && pElem->tParams == NULL){
 				return pElem;
 			}
 			pElem = pElem->next;
@@ -431,13 +457,14 @@ void printTreeAnnot(Node* root,int altura){
 }
 
 // retorno da funcao pElem->tType, lista com paramlist pElem->tParams
-Elemento* searchMethod(Table* tabela,char* aProcurar){
+Elemento* searchMethod(Table* tabela,char* aProcurar, ParamList* params){
 	while(tabela != NULL){
 		Elemento* pElem = tabela->simbolo;
 		char* aux = strdup(aProcurar);
 		while(pElem != NULL){
 			//printf("PROCURANDO METODO %s: Tabela: %s Elemento %s\n", aProcurar, tabela->idTable ,pElem->token);
-			if(strcmp(aux,pElem->token) == 0 && pElem->tParams!=NULL){
+			//if(strcmp(aux,pElem->token) == 0 && pElem->tParams==params){
+			if(strcmp(aux,pElem->token) == 0 && compareParamList(pElem->tParams,params)){
 				//printf("elemento: %s", pElem->token);
 				return pElem;
 			}
@@ -446,6 +473,33 @@ Elemento* searchMethod(Table* tabela,char* aProcurar){
 		tabela = tabela-> parent;
 	}
 	return NULL;
+}
+
+int calculateParamLength(ParamList* params){
+	int i = 0;
+	while (params != NULL){
+		i++;
+		params = params->next;
+	}
+	return i;
+}
+
+int compareParamList(ParamList* first, ParamList* second){
+	int size_first = calculateParamLength(first);
+	int size_second = calculateParamLength(second);
+	if (size_first == 0)
+		return 0;
+	if (size_first != size_second)
+		return 0;
+	
+	while(first != NULL){
+		if (first->simbolo != second->simbolo)
+			return 0;
+		first = first->next;
+		second = second->next;
+	}
+
+	return 1;
 }
 
 char* annotMethod(ParamList* params){
@@ -463,7 +517,7 @@ char* annotMethod(ParamList* params){
 	return anotacao;
 }
 
-void checkSubAddMulDiv(Node* no){
+void checkArithmetic(Node* no){
 	Node* expr1 = no->filho;
 	Node* expr2 = no->filho->irmao;
 	no->token = malloc(sizeof(Info));
@@ -482,6 +536,9 @@ void checkSubAddMulDiv(Node* no){
 			addAnnotation(no, "double");
 		}
 	}
+	else if (strcmp(expr1->token->annotation,"double") == 0 && strcmp(expr2->token->annotation,"double") == 0){
+		addAnnotation(no, "double");
+	}
 }
 
 void checkUnary(Node* no){
@@ -492,6 +549,31 @@ void checkUnary(Node* no){
 		addAnnotation(no, "int");
 	else if (strcmp(expr->token->annotation,"double") == 0)
 		addAnnotation(no,"double");
+}
+
+void checkCall(Node* no, Table* tabela){
+	char* nome = no->filho->token->token;
+	Node* temp = no->filho->irmao;
+	ParamList* lista = malloc(sizeof(ParamList));
+	ParamList* temp1 = lista;
+	temp1->simbolo = _null_;
+	while (temp != NULL){
+		temp1->simbolo = getAnnotInserirTabela(temp->token->annotation);
+		if (temp->irmao != NULL)
+				temp1->next = malloc(sizeof(ParamList));
+		temp1 = temp1->next;
+		temp = temp->irmao;
+	}
+
+	Elemento* search = searchMethod(tabela, nome,lista);
+	ParamList* params = NULL;
+				
+	if (search != NULL){
+		params = search->tParams;
+		addAnnotation(no->filho, annotMethod(params));
+		no->token = malloc(sizeof(Info));
+		addAnnotation(no, getTipoTabela(search->tType));
+	}
 }
 
 #endif

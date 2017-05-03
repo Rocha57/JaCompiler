@@ -198,11 +198,13 @@ int main(int argc, char** argv){
 				sintax = 1;
 				erros=1;
 				yyparse();
-				tabela = insereOuter();
-				percorreAST(raiz,tabela);
-				printTabela(tabela);
-				printf("\n\n");
-				printTreeAnnot(raiz,0);
+				if (erros_sintax == 0){
+					tabela = insereOuter();
+					percorreAST(raiz,tabela);
+					printTabela(tabela);
+					printf("\n\n");
+					printTreeAnnot(raiz,0);
+				}
 				elimina(raiz);
 		}
 		else{
