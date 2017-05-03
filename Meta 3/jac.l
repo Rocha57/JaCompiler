@@ -116,46 +116,46 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 <STR>.							{col += yyleng;}
 
 
-{CBRACE}						{if(erros==0) printf("CBRACE\n"); col += yyleng; if (sintax==1)return CBRACE;}
-{CCURV}							{if(erros==0) printf("CCURV\n"); col += yyleng; if (sintax==1)return CCURV;}
-{CSQUARE}						{if(erros==0) printf("CSQUARE\n"); col += yyleng; if (sintax==1)return CSQUARE;}
-{OBRACE}						{if(erros==0) printf("OBRACE\n"); col += yyleng; if (sintax==1)return OBRACE;}
-{OCURV}							{if(erros==0) printf("OCURV\n"); col += yyleng; if (sintax==1)return OCURV;}
-{OSQUARE}						{if(erros==0) printf("OSQUARE\n"); col += yyleng; if (sintax==1)return OSQUARE;}
+{CBRACE}						{if(erros==0) printf("CBRACE\n");	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return CBRACE;}
+{CCURV}							{if(erros==0) printf("CCURV\n");	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return CCURV;}
+{CSQUARE}						{if(erros==0) printf("CSQUARE\n");	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return CSQUARE;}
+{OBRACE}						{if(erros==0) printf("OBRACE\n");	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return OBRACE;}
+{OCURV}							{if(erros==0) printf("OCURV\n");	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return OCURV;}
+{OSQUARE}						{if(erros==0) printf("OSQUARE\n");	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return OSQUARE;}
 
-{AND}							{if(erros==0) printf("AND\n"); col += yyleng; if (sintax==1)return AND;}
-{ASSIGN}						{if(erros==0) printf("ASSIGN\n"); col += yyleng; if (sintax==1)return ASSIGN;}
-{BOOL} 							{if(erros==0) printf("BOOL\n"); col += yyleng; if (sintax==1)return BOOL;}
-{CLASS} 						{if(erros==0) printf("CLASS\n"); col += yyleng; if (sintax==1)return CLASS;}
-{COMMA}							{if(erros==0) printf("COMMA\n"); col += yyleng; if (sintax==1)return COMMA;}
-{DIV}							{if(erros==0) printf("DIV\n"); col += yyleng; if (sintax==1)return DIV;}
-{DO} 							{if(erros==0) printf("DO\n"); col += yyleng; if (sintax==1)return DO;}
-{DOTLENGTH}						{if(erros==0) printf("DOTLENGTH\n"); col += yyleng; if (sintax==1)return DOTLENGTH;}
-{DOUBLE}						{if(erros==0) printf("DOUBLE\n"); col += yyleng; if (sintax==1)return DOUBLE;}
-{ELSE}							{if(erros==0) printf("ELSE\n"); col += yyleng; if (sintax==1)return ELSE;}
-{EQ}							{if(erros==0) printf("EQ\n"); col += yyleng; if (sintax==1)return EQ;}
-{GEQ}							{if(erros==0) printf("GEQ\n"); col += yyleng; if (sintax==1)return GEQ;}
-{GT}							{if(erros==0) printf("GT\n"); col += yyleng; if (sintax==1)return GT;}
-{IF}							{if(erros==0) printf("IF\n"); col += yyleng; if (sintax==1)return IF;}
-{INT} 							{if(erros==0) printf("INT\n"); col += yyleng; if (sintax==1)return INT;}
-{LEQ}							{if(erros==0) printf("LEQ\n"); col += yyleng; if (sintax==1)return LEQ;}
-{LT}							{if(erros==0) printf("LT\n"); col += yyleng; if (sintax==1)return LT;}
-{MINUS}							{if(erros==0) printf("MINUS\n"); col += yyleng; if (sintax==1)return MINUS;}
-{MOD}							{if(erros==0) printf("MOD\n"); col += yyleng; if (sintax==1)return MOD;}
-{NEQ}							{if(erros==0) printf("NEQ\n"); col += yyleng; if (sintax==1)return NEQ;}
-{NOT}							{if(erros==0) printf("NOT\n"); col += yyleng; if (sintax==1)return NOT;}
-{OR}							{if(erros==0) printf("OR\n"); col += yyleng; if (sintax==1)return OR;}
-{RETURN} 						{if(erros==0) printf("RETURN\n"); col += yyleng; if (sintax==1)return RETURN;}
-{PARSEINT} 						{if(erros==0) printf("PARSEINT\n"); col += yyleng; if (sintax==1)return PARSEINT;}
-{PLUS}							{if(erros==0) printf("PLUS\n"); col += yyleng; if (sintax==1)return PLUS;}
-{PRINT}							{if(erros==0) printf("PRINT\n"); col += yyleng; if (sintax==1)return PRINT;}
-{PUBLIC} 						{if(erros==0) printf("PUBLIC\n"); col += yyleng; if (sintax==1)return PUBLIC;}
-{SEMI}							{if(erros==0) printf("SEMI\n"); col += yyleng; if (sintax==1)return SEMI;}
-{STAR}							{if(erros==0) printf("STAR\n"); col += yyleng; if (sintax==1)return STAR;}
-{STATIC} 						{if(erros==0) printf("STATIC\n"); col += yyleng; if (sintax==1)return STATIC;}
-{STRING} 						{if(erros==0) printf("STRING\n"); col += yyleng; if (sintax==1)return STRING;}
-{VOID}							{if(erros==0) printf("VOID\n"); col += yyleng; if (sintax==1)return VOID;}
-{WHILE}							{if(erros==0) printf("WHILE\n"); col += yyleng; if (sintax==1)return WHILE;}
+{AND}							{if(erros==0) printf("AND\n");		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return AND;}
+{ASSIGN}						{if(erros==0) printf("ASSIGN\n");	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return ASSIGN;}
+{BOOL} 							{if(erros==0) printf("BOOL\n");		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return BOOL;}
+{CLASS} 						{if(erros==0) printf("CLASS\n");	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return CLASS;}
+{COMMA}							{if(erros==0) printf("COMMA\n");	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return COMMA;}
+{DIV}							{if(erros==0) printf("DIV\n");		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return DIV;}
+{DO} 							{if(erros==0) printf("DO\n");		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return DO;}
+{DOTLENGTH}						{if(erros==0) printf("DOTLENGTH\n");col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return DOTLENGTH;}
+{DOUBLE}						{if(erros==0) printf("DOUBLE\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return DOUBLE;}
+{ELSE}							{if(erros==0) printf("ELSE\n");		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return ELSE;}
+{EQ}							{if(erros==0) printf("EQ\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return EQ;}
+{GEQ}							{if(erros==0) printf("GEQ\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return GEQ;}
+{GT}							{if(erros==0) printf("GT\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return GT;}
+{IF}							{if(erros==0) printf("IF\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return IF;}
+{INT} 							{if(erros==0) printf("INT\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return INT;}
+{LEQ}							{if(erros==0) printf("LEQ\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return LEQ;}
+{LT}							{if(erros==0) printf("LT\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return LT;}
+{MINUS}							{if(erros==0) printf("MINUS\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return MINUS;}
+{MOD}							{if(erros==0) printf("MOD\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return MOD;}
+{NEQ}							{if(erros==0) printf("NEQ\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return NEQ;}
+{NOT}							{if(erros==0) printf("NOT\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return NOT;}
+{OR}							{if(erros==0) printf("OR\n"); 		col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return OR;}
+{RETURN} 						{if(erros==0) printf("RETURN\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return RETURN;}
+{PARSEINT} 						{if(erros==0) printf("PARSEINT\n"); col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return PARSEINT;}
+{PLUS}							{if(erros==0) printf("PLUS\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return PLUS;}
+{PRINT}							{if(erros==0) printf("PRINT\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return PRINT;}
+{PUBLIC} 						{if(erros==0) printf("PUBLIC\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return PUBLIC;}
+{SEMI}							{if(erros==0) printf("SEMI\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return SEMI;}
+{STAR}							{if(erros==0) printf("STAR\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return STAR;}
+{STATIC} 						{if(erros==0) printf("STATIC\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return STATIC;}
+{STRING} 						{if(erros==0) printf("STRING\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return STRING;}
+{VOID}							{if(erros==0) printf("VOID\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return VOID;}
+{WHILE}							{if(erros==0) printf("WHILE\n"); 	col += yyleng; yylval.yylval = createInfo(line,col - yyleng,NULL); if (sintax==1)return WHILE;}
 
 {REALLIT}						{if(erros==0) printf("REALLIT(%s)\n", yytext);col += yyleng; yylval.yylval = createInfo(line,col,yytext); if (sintax==1)return REALLIT;}
 {DECLIT}						{if(erros==0) printf("DECLIT(%s)\n", yytext);col += yyleng; yylval.yylval = createInfo(line,col,yytext); if (sintax==1)return DECLIT;}
@@ -198,13 +198,11 @@ int main(int argc, char** argv){
 				sintax = 1;
 				erros=1;
 				yyparse();
-				if (erros_sintax == 0){
-					tabela = insereOuter();
-					percorreAST(raiz,tabela);
-					printTabela(tabela);
-					printf("\n\n");
-					printTreeAnnot(raiz,0);
-				}
+				tabela = insereOuter();
+				percorreAST(raiz,tabela);
+				printTabela(tabela);
+				printf("\n\n");
+				printTreeAnnot(raiz,0);
 				elimina(raiz);
 		}
 		else{
