@@ -311,10 +311,12 @@ void percorreAST(Node* raiz, Table* tabela){
 			break;
 			case  	Return:
 				if (raiz->filho != NULL){
-					nome = raiz->filho->token->token;
-					search = searchGlobalID(tabela, nome);
-					if (search != NULL)
-						addAnnotation(raiz->filho, getTipoTabela(search->tType));
+					if (raiz->filho->token!=NULL){
+						nome = raiz->filho->token->token;
+						search = searchGlobalID(tabela, nome);	
+						if (search != NULL)
+							addAnnotation(raiz->filho, getTipoTabela(search->tType));
+					}
 				}
 				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
