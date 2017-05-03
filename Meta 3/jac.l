@@ -24,6 +24,7 @@
 	void printTabela(struct Table* tabela);
 	void percorreAST(struct Node* raiz,struct Table* tabela);
 	struct Table* insereOuter();
+	void printTreeAnnot(struct Node* root,int altura);
 
 %}
 
@@ -201,7 +202,7 @@ int main(int argc, char** argv){
 				percorreAST(raiz,tabela);
 				printTabela(tabela);
 				printf("\n\n");
-				printTree(raiz,0);
+				printTreeAnnot(raiz,0);
 				elimina(raiz);
 		}
 		else{

@@ -119,8 +119,9 @@ Elemento* searchLocal(Table* tabela,char* aProcurar);
 Elemento* searchGlobalID(Table* tabela,char* aProcurar);
 void printTabela(Table* tabela);
 void printSimbolos(Elemento* elemento);
-Info* AddAnnotation(Node* no, char* annotation);
-
+void addAnnotation(Node* no, char* annotation);
+void printTreeAnnot(Node* root,int altura);
+Elemento* searchMethod(Table* tabela,char* aProcurar);
 
 
 /* META 2  funções*/
@@ -220,6 +221,7 @@ Info* createInfo(int linha,int coluna,char* token){
 	info->coluna = coluna;
 	info->linha = linha;
 	info->token = (char*) strdup(token);
+	info->annotation = NULL;
 
 	return info;
 }
@@ -383,16 +385,81 @@ ParamList* createSymbolList(Node* MethodParams){
 }
 
 
-void AddAnnotation(Node* no, char* annotation){
+void addAnnotation(Node* no, char* annotation){
 	if(no != NULL){
-		if (no->token != null){
+		if (no->token != NULL){
 			no->token->annotation = (char*) strdup(annotation);
 		}
 	}
 }
 
+void printTreeAnnot(Node* root,int altura){
+	int i;
+	if(root != NULL){
+		if(root->tipo == Id || root->tipo == BoolLit || root->tipo == DecLit || root->tipo == StrLit || root->tipo == RealLit){
+			for(i=0; i < altura;i++){
+				printf(".");
+			}
+			if (root->token == NULL)
+				printf("%s(%s)\n",getTipo(root->tipo),root->token->token );
+			else{
+				if (root->token->annotation != NULL)
+					printf("%s(%s) - %s\n",getTipo(root->tipo),root->token->token, root->token->annotation);
+				else
+					printf("%s(%s)\n",getTipo(root->tipo),root->token->token);
+			}
+		}else{
+			if (root->tipo != Null){
+				for(i=0; i < altura;i++){
+					printf(".");
+				}
+				if (root->token == NULL)
+					printf("%s\n",getTipo(root->tipo) );
+				else{
+					if (root->token->annotation != NULL)
+						printf("%s - %s\n",getTipo(root->tipo), root->token->annotation);
+					else
+						printf("%s\n",getTipo(root->tipo));
+				}
+			}
+		}
 
+		printTreeAnnot(root->filho,altura+2);
+		printTreeAnnot(root->irmao,altura);
+	}
+}
 
+// retorno da funcao pElem->tType, lista com paramlist pElem->tParams
+Elemento* searchMethod(Table* tabela,char* aProcurar){
+	while(tabela != NULL){
+		Elemento* pElem = tabela->simbolo;
+		char* aux = strdup(aProcurar);
+		while(pElem != NULL){
+			printf("crl %s\n", pElem->token);
+			if(strcmp(aux,pElem->token) == 0 && pElem->tParams!=NULL){
+				//printf("elemento: %s", pElem->token);
+				return pElem;
+			}
+			pElem = pElem->next;
+		}
+		tabela = tabela-> parent;
+	}
+	return NULL;
+}
 
+char* annotMethod(ParamList* params){
+	char* anotacao;
+	anotacao = strdup("(");
+	if (params != NULL){
+		strcat(anotacao, getTipoTabela(params->simbolo));
+	}
+	while (params->next != NULL){
+		strcat(anotacao, ",");
+		strcat(anotacao, getTipoTabela(params->next->simbolo));
+		params = params->next;
+	}
+	strcat(anotacao, ")");
+	return anotacao;
+}
 
 #endif
