@@ -1,0 +1,9 @@
+class gcd2 {
+	public static double f;
+	public static void main(String[] args) {
+		f = 1;
+
+		boolean f;
+		System.out.println(f);
+	}
+}
