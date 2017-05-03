@@ -93,7 +93,7 @@ void percorreAST(Node* raiz, Table* tabela){
 			break;
 			case	Assign:
 				percorreAST(raiz->filho,tabela);
-				raiz->token = malloc(sizeof(Info));
+				//raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz, raiz->filho->token->annotation);
 				percorreAST(raiz->irmao,tabela);
 			break;
@@ -104,7 +104,7 @@ void percorreAST(Node* raiz, Table* tabela){
 			break;
 			case 	ParseArgs:
 				percorreAST(raiz->filho,tabela);
-				raiz->token = malloc(sizeof(Info));
+				//raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz,"int");
 				percorreAST(raiz->irmao,tabela);
 			break;
@@ -112,7 +112,7 @@ void percorreAST(Node* raiz, Table* tabela){
 			case 	And:
 				// VERIFICAR TIPOS DOS FILHOS DESTES MENS
 				percorreAST(raiz->filho,tabela);
-				raiz->token = malloc(sizeof(Info));
+				//raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz,"boolean");
 				percorreAST(raiz->irmao,tabela);
 			break;
@@ -124,12 +124,12 @@ void percorreAST(Node* raiz, Table* tabela){
 			case	Gt: 
 				// VERIFICAR TIPOS DOS FILHOS DESTES MENS
 				percorreAST(raiz->filho,tabela);
-				raiz->token = malloc(sizeof(Info));
+				//raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz,"boolean");
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Not: 
-				raiz->token = malloc(sizeof(Info));
+				//raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz,"boolean");
 				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
@@ -142,7 +142,7 @@ void percorreAST(Node* raiz, Table* tabela){
 			break;
 			case	Length: 
 				percorreAST(raiz->filho,tabela);
-				raiz->token = malloc(sizeof(Info));
+				//raiz->token = malloc(sizeof(Info));
 				addAnnotation(raiz,"int");
 				percorreAST(raiz->irmao,tabela);
 			break;

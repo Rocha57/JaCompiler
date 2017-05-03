@@ -417,7 +417,7 @@ ParamList* createSymbolList(Node* MethodParams){
 
 void addAnnotation(Node* no, char* annotation){
 	if(no != NULL){
-		if (no->token->token != NULL){
+		if (no->token != NULL){
 			no->token->annotation = (char*) strdup(annotation);
 		}
 	}
@@ -437,6 +437,8 @@ void printTreeAnnot(Node* root,int altura){
 					printf("%s(%s) - %s\n",getTipo(root->tipo),root->token->token, root->token->annotation);
 				else
 					printf("%s(%s)\n",getTipo(root->tipo),root->token->token);
+				/*if(root->token->linha > -1) 
+					printf("linha: %d,coluna: %d\n", root->token->linha,root->token->coluna);*/
 			}
 		}else{
 			if (root->tipo != Null){
@@ -445,11 +447,15 @@ void printTreeAnnot(Node* root,int altura){
 				}
 				if (root->token == NULL)
 					printf("%s\n",getTipo(root->tipo) );
+
+
 				else{
 					if (root->token->annotation != NULL)
 						printf("%s - %s\n",getTipo(root->tipo), root->token->annotation);
 					else
 						printf("%s\n",getTipo(root->tipo));
+					/*if(root->token->linha > -1) 
+						printf("linha: %d,coluna: %d\n", root->token->linha,root->token->coluna);*/
 				}
 			}
 		}
@@ -533,7 +539,7 @@ char* annotMethod(ParamList* params){
 void checkArithmetic(Node* no){
 	Node* expr1 = no->filho;
 	Node* expr2 = no->filho->irmao;
-	no->token = malloc(sizeof(Info));
+	//no->token = malloc(sizeof(Info));
 
 	if (strcmp(expr1->token->annotation,"int") == 0){
 		if (strcmp(expr2->token->annotation,"int") == 0)
@@ -556,7 +562,7 @@ void checkArithmetic(Node* no){
 
 void checkUnary(Node* no){
 	Node* expr = no->filho;
-	no->token = malloc(sizeof(Info));
+	//no->token = malloc(sizeof(Info));
 
 	if (strcmp(expr->token->annotation,"int") == 0)
 		addAnnotation(no, "int");
@@ -584,12 +590,12 @@ void checkCall(Node* no, Table* tabela){
 	if (search != NULL){
 		params = search->tParams;
 		addAnnotation(no->filho, annotMethod(params));
-		no->token = malloc(sizeof(Info));
+		//no->token = malloc(sizeof(Info));
 		addAnnotation(no, getTipoTabela(search->tType));
 	}
 	else{
 		addAnnotation(no->filho, "undef");
-		no->token = malloc(sizeof(Info));
+		//no->token = malloc(sizeof(Info));
 		addAnnotation(no,"undef");
 	}
 }
