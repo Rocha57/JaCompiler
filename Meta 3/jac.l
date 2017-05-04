@@ -170,51 +170,53 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 
 %%
 int main(int argc, char** argv){
-		if (argc > 1){
-			if (strcmp(argv[1], "-l") == 0){
-				erros = 0;
-				yylex();
-			}
-			else if (strcmp(argv[1], "-1") == 0){
-				erros = 1;
-				yylex();
-			}
-			else if (strcmp(argv[1], "-t") == 0){
-				sintax = 1;
-				erros = 1;
-				yyparse();
-				if (erros_sintax==0){
-					printTree(raiz,0);
-				}
-				elimina(raiz);
-			}
-			else if (strcmp(argv[1], "-2") == 0){
-				sintax = 1;
-				erros = 1;
-				yyparse();
-				elimina(raiz);
-			}
-			else if(strcmp(argv[1],"-s") == 0){
-				sintax = 1;
-				erros=1;
-				yyparse();
-				tabela = insereOuter();
-				percorreAST(raiz,tabela);
-				printTabela(tabela);
-				printf("\n\n");
-				printTreeAnnot(raiz,0);
-				elimina(raiz);
+	if (argc > 1){
+		if (strcmp(argv[1], "-l") == 0){
+			erros = 0;
+			yylex();
 		}
-		else{
+		else if (strcmp(argv[1], "-1") == 0){
+			erros = 1;
+			yylex();
+		}
+		else if (strcmp(argv[1], "-t") == 0){
 			sintax = 1;
 			erros = 1;
 			yyparse();
-			percorreAST(raiz,tabela);
+			if (erros_sintax==0){
+				printTree(raiz,0);
+			}
 			elimina(raiz);
 		}
-		yylex_destroy();
-		return 0;
+		else if (strcmp(argv[1], "-2") == 0){
+			sintax = 1;
+			erros = 1;
+			yyparse();
+			elimina(raiz);
+		}
+		else if(strcmp(argv[1],"-s") == 0){
+			printf("%d\n", strcmp("3","2147483647") > 0);
+			sintax = 1;
+			erros=1;
+			yyparse();
+			tabela = insereOuter();
+			percorreAST(raiz,tabela);
+			printTabela(tabela);
+			printf("\n\n");
+			printTreeAnnot(raiz,0);
+			elimina(raiz);
+		}
 	}
+	else{
+		sintax = 1;
+		erros = 1;
+		yyparse();
+		tabela = insereOuter();
+		percorreAST(raiz,tabela);
+		elimina(raiz);
+	}
+	yylex_destroy();
+	return 0;
 }
 
 void yyerror (const char *s){

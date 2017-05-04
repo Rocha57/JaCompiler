@@ -1,9 +1,5 @@
 #include "structures.h"
 
-/*Isto vai ser a variavel que vai ser usada na main para os erros semanticos*/
-extern int errosS;
-
-
 /*
 *
 *
@@ -19,6 +15,8 @@ void percorreAST(Node* raiz, Table* tabela){
 	char* nome;
 	Node* temp;
 	Elemento* search;
+	ParamList* params;
+	unsigned long input_number;
 	/*Elemento* assignTwo;
 	Elemento* elExp1;
 	Elemento* elExp2;
@@ -37,7 +35,6 @@ void percorreAST(Node* raiz, Table* tabela){
 				tabela->simbolo = NULL;
 				//teste inserir um elemento, funciona
 				//insertElement(createElement(raiz->filho->token->token,_Class_,_null_,_null_),tabela,NULL);
-				//PROBLEMA  este nó não devia ser Null
 				percorreAST(raiz->filho->irmao,tabela);
 				break;
 			
@@ -46,34 +43,35 @@ void percorreAST(Node* raiz, Table* tabela){
 				while(temp->irmao != NULL){ //avancar até à declaracao do token
 					temp = temp->irmao;
 				}
-				//nodeAux = temp;
-				insertElement(createElement(temp->token->token,NULL,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_),tabela,NULL);
-
-				percorreAST(raiz->irmao,tabela);
-				break;
-
-//FALTA ESTE
-			case VarDecl:
-				temp = raiz->filho; //Entrar na declaracao de vars
-				while(temp->irmao != NULL){ //avancar até à declaracao do token
-					temp = temp->irmao;
-				}
-				//nodeAux = temp;
-				insertElement(createElement(temp->token->token,NULL,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_),tabela,NULL);
+				if (checkFieldDecl(temp, tabela) == NULL)
+					insertElement(createElement(temp->token->token,NULL,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_),tabela,NULL);
+				else
+					printf("Line %d, col %d: Symbol %s already defined\n",temp->token->linha, temp->token->coluna, temp->token->token);
 
 				percorreAST(raiz->irmao,tabela);
 				break;
 			case 	MethodDecl:
+				//tabelaMethod = NULL;
+				temp = raiz->filho->filho->irmao;
 				nome = raiz -> filho -> filho -> irmao -> token -> token;
-				tabelaMethod = createTable(nome,_Method_,tabela, createSymbolList(raiz->filho->filho->irmao->irmao->filho));
-				insertElement(createElement(nome,createSymbolList(raiz->filho->filho->irmao->irmao->filho),getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)),_null_),tabela,tabelaMethod);
+				params = createSymbolList(raiz->filho->filho->irmao->irmao->filho);
+				if (checkMethodDecl(nome, params, tabela) == NULL){
+					tabelaMethod = createTable(nome,_Method_,tabela, params);
+					insertElement(createElement(nome,params,getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)),_null_),tabela,tabelaMethod);
+					insertElement(createElement("return",NULL,getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)),_null_),tabelaMethod, NULL);
+					percorreAST(raiz->filho,tabelaMethod);
+				}
+				else{
+					tabelaMethod = createTable(nome,_erro_,tabela, params);
+					percorreAST(raiz->filho,tabelaMethod);
+					printf("Line %d, col %d: Symbol %s already defined\n",temp->token->linha, temp->token->coluna, temp->token->token);
+				}
 
 				//printTabela(tabelaMethod);
+				//if (tabelaMethod != NULL)
 				percorreAST(raiz->irmao,tabela);
-				percorreAST(raiz->filho,tabelaMethod);
 				break;
 			case 	MethodHeader:
-				insertElement(createElement("return",NULL,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_),tabela, NULL);
 				percorreAST(raiz->filho->irmao->irmao,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
@@ -82,15 +80,37 @@ void percorreAST(Node* raiz, Table* tabela){
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	ParamDecl: 
+				temp = raiz -> filho -> irmao;
 				nome = raiz -> filho -> irmao -> token -> token;
+
+				if(checkParamDecl(tabela,temp) == NULL){
+					insertElement(createElement(nome,NULL, getTipoInserirTabela(getTipo(raiz->filho->tipo)),_param_),tabela, NULL);
+				}
+				else{
+					printf("Line %d, col %d: Symbol %s already defined\n",temp->token->linha, temp->token->coluna, temp->token->token);
+				}
 				//printf("%s\n", nome);
-				insertElement(createElement(nome,NULL, getTipoInserirTabela(getTipo(raiz->filho->tipo)),_param_),tabela, NULL);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	MethodBody: 
 				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
+			case VarDecl:
+				temp = raiz->filho; //Entrar na declaracao de vars
+				while(temp->irmao != NULL){ //avancar até à declaracao do token
+					temp = temp->irmao;
+				}
+
+				if(checkVarDecl(tabela,temp) == NULL){
+					insertElement(createElement(temp->token->token,NULL,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_),tabela,NULL);					
+				}
+				else{
+					printf("Line %d, col %d: Symbol %s already defined\n",temp->token->linha, temp->token->coluna, temp->token->token);
+				}
+				
+				percorreAST(raiz->irmao,tabela);
+				break;
 			case	Assign:
 				percorreAST(raiz->filho,tabela);
 				//raiz->token = malloc(sizeof(Info));
@@ -151,7 +171,15 @@ void percorreAST(Node* raiz, Table* tabela){
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	DecLit: 
-				addAnnotation(raiz, _int_);
+			  	input_number = strtol(raiz->token->token,NULL,10);
+				if(2147483647 < input_number){
+					printf("Number %s out of bounds\n", raiz->token->token);
+					addAnnotation(raiz, _undef_);
+				}
+				else{
+					addAnnotation(raiz, _int_);
+				}
+				
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	Id:

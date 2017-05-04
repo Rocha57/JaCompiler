@@ -125,7 +125,7 @@ void printTabela(Table* tabela);
 void printSimbolos(Elemento* elemento);
 void addAnnotation(Node* no, symbol annotation);
 void printTreeAnnot(Node* root,int altura);
-Elemento* searchMethod(Table* tabela,char* aProcurar, ParamList* params);
+Elemento* searchMethod(Table* tabela,char* aProcurar, ParamList* params, int erros);
 char* annotMethod(ParamList* params);
 void checkArithmetic(Node* no);
 void checkUnary(Node* no);
@@ -470,7 +470,7 @@ void printTreeAnnot(Node* root,int altura){
 }
 
 // retorno da funcao pElem->tType, lista com paramlist pElem->tParams
-Elemento* searchMethod(Table* tabela,char* aProcurar, ParamList* params){
+Elemento* searchMethod(Table* tabela,char* aProcurar, ParamList* params, int erros){
 	Table* temp = tabela;
 	while(temp != NULL){
 		Elemento* pElem = temp->simbolo;
@@ -486,19 +486,21 @@ Elemento* searchMethod(Table* tabela,char* aProcurar, ParamList* params){
 		}
 		temp = temp-> parent;
 	}
-	while(tabela != NULL){
-		Elemento* pElem = tabela->simbolo;
-		char* aux = strdup(aProcurar);
-		while(pElem != NULL){
-			//printf("PROCURANDO METODO %s: Tabela: %s Elemento %s\n", aProcurar, tabela->idTable ,pElem->token);
-			//if(strcmp(aux,pElem->token) == 0 && pElem->tParams==params){
-			if(strcmp(aux,pElem->token) == 0 && compareParamList(pElem->tParams,params)){
-				//printf("elemento: %s", pElem->token);
-				return pElem;
+	if (erros > 0){
+		while(tabela != NULL){
+			Elemento* pElem = tabela->simbolo;
+			char* aux = strdup(aProcurar);
+			while(pElem != NULL){
+				//printf("PROCURANDO METODO %s: Tabela: %s Elemento %s\n", aProcurar, tabela->idTable ,pElem->token);
+				//if(strcmp(aux,pElem->token) == 0 && pElem->tParams==params){
+				if(strcmp(aux,pElem->token) == 0 && compareParamList(pElem->tParams,params)){
+					//printf("elemento: %s", pElem->token);
+					return pElem;
+				}
+				pElem = pElem->next;
 			}
-			pElem = pElem->next;
+			tabela = tabela-> parent;
 		}
-		tabela = tabela-> parent;
 	}
 	return NULL;
 }
@@ -515,8 +517,6 @@ int calculateParamLength(ParamList* params){
 int compareParamList(ParamList* first, ParamList* second){
 	int size_first = calculateParamLength(first);
 	int size_second = calculateParamLength(second);
-	ParamList* temp = first;
-	ParamList* temp1 = second;
 	if (size_first == 0)
 		return 0;
 	if (size_first != size_second)
@@ -550,6 +550,25 @@ int compareExactParamList(ParamList* first, ParamList* second){
 		temp1 = temp1->next;
 	}
 	return 1; //ENCONTRA EXACTAMENTE OS PARAMETROS CORRECTOS
+}
+
+
+// ====================== FUNÇÕES DE CHECK PARA ERRORS E OUTRAS COISAS ==============================
+
+Elemento* checkFieldDecl(Node* var, Table* tabela){
+	return searchGlobalID(tabela,var->token->token);
+}
+
+Elemento* checkMethodDecl(char* nome, ParamList* params, Table* tabela){
+	return searchMethod(tabela, nome, params,0);
+}
+
+Elemento* checkParamDecl(Table* tabela,Node* no){
+	return searchLocal(tabela, no->token->token);
+}
+
+Elemento* checkVarDecl(Table* tabela,Node* no){
+	return searchLocal(tabela, no->token->token);
 }
 
 void checkArithmetic(Node* no){
@@ -604,7 +623,7 @@ void checkCall(Node* no, Table* tabela){
 		temp = temp->irmao;
 	}
 
-	Elemento* search = searchMethod(tabela, nome,lista);
+	Elemento* search = searchMethod(tabela, nome,lista,1);
 	ParamList* params = NULL;
 				
 	if (search != NULL){
