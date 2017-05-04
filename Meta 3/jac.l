@@ -106,7 +106,7 @@ STRLIT 				\"([^\\\n\"\r]|{ESCAPE})*\"
 <COMMENT>.						{col += yyleng;}
 
 
-{STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0; yylval.yylval = createInfo(aux1,aux2,yytext); if (sintax==1)return STRLIT;}
+{STRLIT} 						{if (erros==0) printf("STRLIT(%s)\n", yytext);col += yyleng; BEGIN 0; yylval.yylval = createInfo(line,col - yyleng,yytext); if (sintax==1)return STRLIT;}
 \"								{aux1 = line; aux2 = col; col += yyleng; BEGIN STR;}
 <STR>{ESCAPE}					{ col += yyleng; }
 <STR>\"							{col += yyleng; BEGIN 0;}
