@@ -195,7 +195,6 @@ int main(int argc, char** argv){
 			elimina(raiz);
 		}
 		else if(strcmp(argv[1],"-s") == 0){
-			printf("%d\n", strcmp("3","2147483647") > 0);
 			sintax = 1;
 			erros=1;
 			yyparse();
