@@ -58,31 +58,17 @@ symbol getTipoInserirTabela(char* tipo){
 	return simbolo;
 }
 
-symbol getAnnotInserirTabela(char* annot){
+typedef struct _ParamList ParamList;
+struct _ParamList{
 	symbol simbolo;
-	if (strcmp(annot, "int")==0 ){
-		simbolo = _int_;
-	}
-	if (strcmp(annot, "boolean")==0 ){
-		simbolo = _boolean_;
-	}
-	if (strcmp(annot, "double")==0 ){
-		simbolo = _Double_;
-	}
-	if (strcmp(annot, "String[]")==0 ){
-		simbolo = _String_;
-	}
-	if (strcmp(annot, "void")==0 ){
-		simbolo = _void_;
-	}
-
-	return simbolo;
-}
+	ParamList* next;
+};
 
 typedef struct _info{
 	int linha,coluna;
 	char* token;
 	symbol annotation;
+	ParamList* params;
 }Info;
 
 /*alterado para meta 3*/
@@ -93,12 +79,6 @@ struct _Node{
 	symbol type;
 	Node* filho;
 	Node* irmao;
-};
-
-typedef struct _ParamList ParamList;
-struct _ParamList{
-	symbol simbolo;
-	ParamList* next;
 };
 
 typedef struct _table Table;
@@ -254,6 +234,7 @@ Info* createInfo(int linha,int coluna,char* token){
 	else
 		info->token = NULL;
 	info->annotation = _null_;
+	info->params = NULL;
 
 	return info;
 }
@@ -428,6 +409,7 @@ void addAnnotation(Node* no, symbol annotation){
 
 void printTreeAnnot(Node* root,int altura){
 	int i;
+	ParamList* temp;
 	if(root != NULL){
 		if(root->tipo == Id || root->tipo == BoolLit || root->tipo == DecLit || root->tipo == StrLit || root->tipo == RealLit){
 			for(i=0; i < altura;i++){
@@ -436,7 +418,25 @@ void printTreeAnnot(Node* root,int altura){
 			if (root->token == NULL)
 				printf("%s(%s)\n",getTipo(root->tipo),root->token->token );
 			else{
-				if (root->token->annotation != _null_)
+				if (root->token->params != NULL){
+					if (root->token->params->simbolo != _null_ && root->token->params->simbolo != _void_){ //COMO SE DIFERENCIOU OS METODOS COM PARAMETROS
+						printf("%s(%s) - (", getTipo(root->tipo),root->token->token); 					   //COM OS SEM PARAMETROS (VOID)
+						temp = root->token->params;
+						if (temp != NULL)
+							printf("%s", getTipoTabela(temp->simbolo));
+						while (temp->next != NULL){
+							printf(",%s", getTipoTabela(temp->next->simbolo));
+							temp = temp->next;
+						}
+						printf(")\n");
+					}
+					else if (root->token->params->simbolo == _void_) 									   //TEMOS QUE OS TRATAR DE FORMA DIFERENTE
+						printf("%s(%s) - ()\n",getTipo(root->tipo),root->token->token);
+					else{
+						printf("%s(%s) - %s\n", getTipo(root->tipo),root->token->token, getTipoTabela(root->token->annotation));
+					}
+				}
+				else if (root->token->annotation != _null_)
 					printf("%s(%s) - %s\n",getTipo(root->tipo),root->token->token, getTipoTabela(root->token->annotation));
 				else
 					printf("%s(%s)\n",getTipo(root->tipo),root->token->token);
@@ -524,21 +524,6 @@ int compareParamList(ParamList* first, ParamList* second){
 	return 1;
 }
 
-char* annotMethod(ParamList* params){
-	char* anotacao;
-	anotacao = strdup("(");
-	if (params != NULL){
-		strcat(anotacao, getTipoTabela(params->simbolo));
-	}
-	while (params->next != NULL){
-		strcat(anotacao, ",");
-		strcat(anotacao, getTipoTabela(params->next->simbolo));
-		params = params->next;
-	}
-	strcat(anotacao, ")");
-	return anotacao;
-}
-
 void checkArithmetic(Node* no){
 	Node* expr1 = no->filho;
 	Node* expr2 = no->filho->irmao;
@@ -574,6 +559,10 @@ void checkUnary(Node* no){
 }
 
 void checkCall(Node* no, Table* tabela){
+	if (no->token == NULL)
+		no->token = malloc(sizeof(Info));
+	no->filho->token->params = malloc(sizeof(ParamList));
+	no->filho->token->params->simbolo = _null_;
 	char* nome = no->filho->token->token;
 	Node* temp = no->filho->irmao;
 	ParamList* lista = malloc(sizeof(ParamList));
@@ -592,6 +581,11 @@ void checkCall(Node* no, Table* tabela){
 				
 	if (search != NULL){
 		params = search->tParams;
+		if (params->simbolo != _null_) 							//ESTE IF-ELSE SERVE PARA DIFERENCIAR METODOS COM PARAMETROS
+			no->filho->token->params = params;
+		else
+			no->filho->token->params->simbolo = _void_;			//COM METODOS SEM PARAMETROS (VOID)
+		//no->token->params = params;
 		//addAnnotation(no->filho, annotMethod(params));
 		//no->token = malloc(sizeof(Info));
 		addAnnotation(no, search->tType);
