@@ -29,9 +29,9 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 
 
 /* META 3  estruturas auxiliares*/
-	typedef enum{_boolean_,_int_,_String_,_Method_,_Class_,_return_,_param_,_void_,_erro_,_null_,_Double_}symbol;
+	typedef enum{_boolean_,_int_,_StringArray_,_String_,_Method_,_Class_,_return_,_param_,_void_,_erro_,_null_,_Double_,_undef_}symbol;
 //TODO possivelmente corrigir estes nomes e na função insereOuter
-char* tabelaTipos[] ={ "boolean","int","String[]","Method","Class","return","param","void","Erro","","double"};
+char* tabelaTipos[] ={ "boolean","int","String[]","String","Method","Class","return","param","void","Erro","","double","undef"};
 
 /*função para inserir elementos*/
 symbol getTipoInserirTabela(char* tipo){
@@ -46,6 +46,9 @@ symbol getTipoInserirTabela(char* tipo){
 		simbolo = _Double_;
 	}
 	if (strcmp(tipo, "StringArray")==0 ){
+		simbolo = _StringArray_;
+	}
+	if (strcmp(tipo, "String")==0 ){
 		simbolo = _String_;
 	}
 	if (strcmp(tipo, "Void")==0 ){
@@ -79,7 +82,7 @@ symbol getAnnotInserirTabela(char* annot){
 typedef struct _info{
 	int linha,coluna;
 	char* token;
-	char* annotation;
+	symbol annotation;
 }Info;
 
 /*alterado para meta 3*/
@@ -140,7 +143,7 @@ Elemento* searchLocal(Table* tabela,char* aProcurar);
 Elemento* searchGlobalID(Table* tabela,char* aProcurar);
 void printTabela(Table* tabela);
 void printSimbolos(Elemento* elemento);
-void addAnnotation(Node* no, char* annotation);
+void addAnnotation(Node* no, symbol annotation);
 void printTreeAnnot(Node* root,int altura);
 Elemento* searchMethod(Table* tabela,char* aProcurar, ParamList* params);
 char* annotMethod(ParamList* params);
@@ -250,7 +253,7 @@ Info* createInfo(int linha,int coluna,char* token){
 		info->token = (char*) strdup(token);
 	else
 		info->token = NULL;
-	info->annotation = NULL;
+	info->annotation = _null_;
 
 	return info;
 }
@@ -415,10 +418,10 @@ ParamList* createSymbolList(Node* MethodParams){
 }
 
 
-void addAnnotation(Node* no, char* annotation){
+void addAnnotation(Node* no, symbol annotation){
 	if(no != NULL){
 		if (no->token != NULL){
-			no->token->annotation = (char*) strdup(annotation);
+			no->token->annotation = annotation;
 		}
 	}
 }
@@ -433,8 +436,8 @@ void printTreeAnnot(Node* root,int altura){
 			if (root->token == NULL)
 				printf("%s(%s)\n",getTipo(root->tipo),root->token->token );
 			else{
-				if (root->token->annotation != NULL)
-					printf("%s(%s) - %s\n",getTipo(root->tipo),root->token->token, root->token->annotation);
+				if (root->token->annotation != _null_)
+					printf("%s(%s) - %s\n",getTipo(root->tipo),root->token->token, getTipoTabela(root->token->annotation));
 				else
 					printf("%s(%s)\n",getTipo(root->tipo),root->token->token);
 				/*if(root->token->linha > -1) 
@@ -450,8 +453,8 @@ void printTreeAnnot(Node* root,int altura){
 
 
 				else{
-					if (root->token->annotation != NULL)
-						printf("%s - %s\n",getTipo(root->tipo), root->token->annotation);
+					if (root->token->annotation != _null_)
+						printf("%s - %s\n",getTipo(root->tipo), getTipoTabela(root->token->annotation));
 					else
 						printf("%s\n",getTipo(root->tipo));
 					/*if(root->token->linha > -1) 
@@ -541,22 +544,22 @@ void checkArithmetic(Node* no){
 	Node* expr2 = no->filho->irmao;
 	//no->token = malloc(sizeof(Info));
 
-	if (strcmp(expr1->token->annotation,"int") == 0){
-		if (strcmp(expr2->token->annotation,"int") == 0)
-			addAnnotation(no, "int");
-		else if (strcmp(expr2->token->annotation,"double") == 0){
-			addAnnotation(no, "double");
+	if (expr1->token->annotation == _int_){
+		if (expr2->token->annotation == _int_)
+			addAnnotation(no, _int_);
+		else if (expr2->token->annotation == _Double_){
+			addAnnotation(no, _Double_);
 		}
 	}
-	else if (strcmp(expr2->token->annotation,"int") == 0){
-		if (strcmp(expr1->token->annotation,"int") == 0)
-			addAnnotation(no, "int");
-		else if (strcmp(expr1->token->annotation,"double") == 0){
-			addAnnotation(no, "double");
+	else if (expr2->token->annotation == _int_){
+		if (expr1->token->annotation == _int_)
+			addAnnotation(no, _int_);
+		else if (expr1->token->annotation == _Double_){
+			addAnnotation(no, _Double_);
 		}
 	}
-	else if (strcmp(expr1->token->annotation,"double") == 0 && strcmp(expr2->token->annotation,"double") == 0){
-		addAnnotation(no, "double");
+	else if (expr1->token->annotation == _Double_ && expr2->token->annotation == _Double_){
+		addAnnotation(no, _Double_);
 	}
 }
 
@@ -564,10 +567,10 @@ void checkUnary(Node* no){
 	Node* expr = no->filho;
 	//no->token = malloc(sizeof(Info));
 
-	if (strcmp(expr->token->annotation,"int") == 0)
-		addAnnotation(no, "int");
-	else if (strcmp(expr->token->annotation,"double") == 0)
-		addAnnotation(no,"double");
+	if (expr->token->annotation == _int_)
+		addAnnotation(no, _int_);
+	else if (expr->token->annotation == _Double_)
+		addAnnotation(no,_Double_);
 }
 
 void checkCall(Node* no, Table* tabela){
@@ -577,7 +580,7 @@ void checkCall(Node* no, Table* tabela){
 	ParamList* temp1 = lista;
 	temp1->simbolo = _null_;
 	while (temp != NULL){
-		temp1->simbolo = getAnnotInserirTabela(temp->token->annotation);
+		temp1->simbolo = temp->token->annotation;
 		if (temp->irmao != NULL)
 				temp1->next = malloc(sizeof(ParamList));
 		temp1 = temp1->next;
@@ -589,14 +592,14 @@ void checkCall(Node* no, Table* tabela){
 				
 	if (search != NULL){
 		params = search->tParams;
-		addAnnotation(no->filho, annotMethod(params));
+		//addAnnotation(no->filho, annotMethod(params));
 		//no->token = malloc(sizeof(Info));
-		addAnnotation(no, getTipoTabela(search->tType));
+		addAnnotation(no, search->tType);
 	}
 	else{
-		addAnnotation(no->filho, "undef");
+		addAnnotation(no->filho, _undef_);
 		//no->token = malloc(sizeof(Info));
-		addAnnotation(no,"undef");
+		addAnnotation(no,_undef_);
 	}
 }
 

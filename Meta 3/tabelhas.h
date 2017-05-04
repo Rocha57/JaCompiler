@@ -105,7 +105,7 @@ void percorreAST(Node* raiz, Table* tabela){
 			case 	ParseArgs:
 				percorreAST(raiz->filho,tabela);
 				//raiz->token = malloc(sizeof(Info));
-				addAnnotation(raiz,"int");
+				addAnnotation(raiz,_int_);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	Or:
@@ -113,7 +113,7 @@ void percorreAST(Node* raiz, Table* tabela){
 				// VERIFICAR TIPOS DOS FILHOS DESTES MENS
 				percorreAST(raiz->filho,tabela);
 				//raiz->token = malloc(sizeof(Info));
-				addAnnotation(raiz,"boolean");
+				addAnnotation(raiz,_boolean_);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	Eq: 
@@ -125,12 +125,12 @@ void percorreAST(Node* raiz, Table* tabela){
 				// VERIFICAR TIPOS DOS FILHOS DESTES MENS
 				percorreAST(raiz->filho,tabela);
 				//raiz->token = malloc(sizeof(Info));
-				addAnnotation(raiz,"boolean");
+				addAnnotation(raiz,_boolean_);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Not: 
 				//raiz->token = malloc(sizeof(Info));
-				addAnnotation(raiz,"boolean");
+				addAnnotation(raiz,_boolean_);
 				percorreAST(raiz->filho,tabela);
 				percorreAST(raiz->irmao,tabela);
 			break;
@@ -143,32 +143,32 @@ void percorreAST(Node* raiz, Table* tabela){
 			case	Length: 
 				percorreAST(raiz->filho,tabela);
 				//raiz->token = malloc(sizeof(Info));
-				addAnnotation(raiz,"int");
+				addAnnotation(raiz,_int_);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	BoolLit:
-				addAnnotation(raiz,"boolean"); 
+				addAnnotation(raiz,_boolean_); 
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	DecLit: 
-				addAnnotation(raiz,"int");
+				addAnnotation(raiz, _int_);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	Id:
 				nome = raiz->token->token;
 				search = searchGlobalID(tabela, nome);
 				if (search != NULL)
-					addAnnotation(raiz, getTipoTabela(search->tType));
+					addAnnotation(raiz, search->tType);
 				else
-					addAnnotation(raiz, "undef");
+					addAnnotation(raiz, _undef_);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	RealLit:
-				addAnnotation(raiz,"double"); 
+				addAnnotation(raiz,_Double_); 
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case 	StrLit: 
-				addAnnotation(raiz,"String");
+				addAnnotation(raiz,_String_);
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	Mod:
