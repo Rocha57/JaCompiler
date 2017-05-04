@@ -130,6 +130,7 @@ char* annotMethod(ParamList* params);
 void checkArithmetic(Node* no);
 void checkUnary(Node* no);
 int compareParamList(ParamList* first, ParamList* second);
+int compareExactParamList(ParamList* first, ParamList* second);
 int calculateParamLength(ParamList* params);
 
 
@@ -470,6 +471,21 @@ void printTreeAnnot(Node* root,int altura){
 
 // retorno da funcao pElem->tType, lista com paramlist pElem->tParams
 Elemento* searchMethod(Table* tabela,char* aProcurar, ParamList* params){
+	Table* temp = tabela;
+	while(temp != NULL){
+		Elemento* pElem = temp->simbolo;
+		char* aux = strdup(aProcurar);
+		while(pElem != NULL){
+			//printf("PROCURANDO METODO %s: Tabela: %s Elemento %s\n", aProcurar, tabela->idTable ,pElem->token);
+			//if(strcmp(aux,pElem->token) == 0 && pElem->tParams==params){
+			if(strcmp(aux,pElem->token) == 0 && compareExactParamList(pElem->tParams,params)){
+				//printf("elemento: %s", pElem->token);
+				return pElem;
+			}
+			pElem = pElem->next;
+		}
+		temp = temp-> parent;
+	}
 	while(tabela != NULL){
 		Elemento* pElem = tabela->simbolo;
 		char* aux = strdup(aProcurar);
@@ -505,13 +521,6 @@ int compareParamList(ParamList* first, ParamList* second){
 		return 0;
 	if (size_first != size_second)
 		return 0;
-	
-	while(temp != NULL){
-		if (temp->simbolo != temp1->simbolo)
-			return 0;
-		temp = temp->next;
-		temp1 = temp1->next;
-	}
 
 	while(first != NULL){
 		if (first->simbolo != second->simbolo)
@@ -522,6 +531,25 @@ int compareParamList(ParamList* first, ParamList* second){
 	}
 
 	return 1;
+}
+
+int compareExactParamList(ParamList* first, ParamList* second){
+	int size_first = calculateParamLength(first);
+	int size_second = calculateParamLength(second);
+	ParamList* temp = first;
+	ParamList* temp1 = second;
+	if (size_first == 0)
+		return 0;
+	if (size_first != size_second)
+		return 0;
+	/*PROCURA PARAMETROS EXACTOS*/
+	while(temp != NULL){
+		if (temp->simbolo != temp1->simbolo)
+			return 0;
+		temp = temp->next;
+		temp1 = temp1->next;
+	}
+	return 1; //ENCONTRA EXACTAMENTE OS PARAMETROS CORRECTOS
 }
 
 void checkArithmetic(Node* no){
