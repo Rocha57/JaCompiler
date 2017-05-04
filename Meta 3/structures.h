@@ -416,20 +416,9 @@ ParamList* createSymbolList(Node* MethodParams){
 
 
 void addAnnotation(Node* no, char* annotation){
-	printf("addAnnotation:%s --> (%d)\n", annotation, strlen(annotation) );
-	int i = 0;
-	//int k = strlen(annotation);
-	//printf("%d\n", k);
-	char* aux = (char*) malloc(sizeof(annotation));
-	while(i < strlen(annotation)){
-		aux[i]=annotation[i];
-		i++;
-	}
-	//strcpy(aux,annotation);
-	printf("addAnnotation:cpy %s (%d) original: %s (%d)\n", aux, strlen(aux), annotation, strlen (annotation) );
 	if(no != NULL){
 		if (no->token != NULL){
-			no->token->annotation = aux;
+			no->token->annotation = (char*) strdup(annotation);
 		}
 	}
 }
@@ -533,25 +522,17 @@ int compareParamList(ParamList* first, ParamList* second){
 }
 
 char* annotMethod(ParamList* params){
-	char* anotacao = NULL;
-	//Se este print não estiver aqui vai dar erro 
-	//printf("%s\n",anotacao );
-	anotacao = strdup("(\0");
-	//printf("%s\n",anotacao );
-
-	/*if (params != NULL){
+	char* anotacao;
+	anotacao = strdup("(");
+	if (params != NULL){
 		strcat(anotacao, getTipoTabela(params->simbolo));
-		printf("1 - %s\n", anotacao );
-	}*/
-	while (params != NULL){
-		strcat(anotacao, (char*) getTipoTabela(params->simbolo));
-		strcat(anotacao, ",\0");
-		//printf("%s\n", anotacao );
-
+	}
+	while (params->next != NULL){
+		strcat(anotacao, ",");
+		strcat(anotacao, getTipoTabela(params->next->simbolo));
 		params = params->next;
 	}
-	strcat(anotacao, "\b)\0");
-	printf("annotMethod: print final: %s  --> (%d)\n",anotacao,strlen(anotacao) );
+	strcat(anotacao, ")");
 	return anotacao;
 }
 
@@ -591,7 +572,6 @@ void checkUnary(Node* no){
 
 void checkCall(Node* no, Table* tabela){
 	char* nome = no->filho->token->token;
-	char* paramsaux;
 	Node* temp = no->filho->irmao;
 	ParamList* lista = malloc(sizeof(ParamList));
 	ParamList* temp1 = lista;
@@ -609,9 +589,7 @@ void checkCall(Node* no, Table* tabela){
 				
 	if (search != NULL){
 		params = search->tParams;
-		paramsaux = annotMethod(params);
-		printf("checkCall: %s -->(%d)\n", paramsaux, strlen(paramsaux));
-		addAnnotation(no->filho, paramsaux);
+		addAnnotation(no->filho, annotMethod(params));
 		//no->token = malloc(sizeof(Info));
 		addAnnotation(no, getTipoTabela(search->tType));
 	}
@@ -620,7 +598,6 @@ void checkCall(Node* no, Table* tabela){
 		//no->token = malloc(sizeof(Info));
 		addAnnotation(no,"undef");
 	}
-	free(paramsaux);
 }
 
 #endif
