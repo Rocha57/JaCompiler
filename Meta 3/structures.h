@@ -622,11 +622,12 @@ void checkCall(Node* no, Table* tabela){
 		temp1 = temp1->next;
 		temp = temp->irmao;
 	}
-
-	Elemento* search = searchMethod(tabela, nome,lista,1);
+	//printf("FUNCAO A PESQUISAR: %s\n", nome);
+	Elemento* search = searchMethod(tabela,nome,lista,1);
 	ParamList* params = NULL;
 				
 	if (search != NULL){
+		//printf("FUNCAO: %s\n", getTipoTabela(search->tType));
 		params = search->tParams;
 		if (params->simbolo != _null_) 							//ESTE IF-ELSE SERVE PARA DIFERENCIAR METODOS COM PARAMETROS
 			no->filho->token->params = params;

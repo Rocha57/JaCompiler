@@ -58,7 +58,7 @@ void percorreAST(Node* raiz, Table* tabela){
 				if (checkMethodDecl(nome, params, tabela) == NULL){
 					tabelaMethod = createTable(nome,_Method_,tabela, params);
 					insertElement(createElement(nome,params,getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)),_null_),tabela,tabelaMethod);
-					insertElement(createElement("return",NULL,getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)),_null_),tabelaMethod, NULL);
+					//insertElement(createElement("return",NULL,getTipoInserirTabela(getTipo(raiz->filho->filho->tipo)),_null_),tabelaMethod, NULL);
 					percorreAST(raiz->filho,tabelaMethod);
 				}
 				else{
@@ -70,19 +70,21 @@ void percorreAST(Node* raiz, Table* tabela){
 				//printTabela(tabelaMethod);
 				//if (tabelaMethod != NULL)
 				percorreAST(raiz->irmao,tabela);
+				percorreAST(raiz->filho->irmao,tabelaMethod);
 				break;
 			case 	MethodHeader:
+				insertElement(createElement("return",NULL,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_),tabela, NULL);
 				percorreAST(raiz->filho->irmao->irmao,tabela);
-				percorreAST(raiz->irmao,tabela);
+				//percorreAST(raiz->irmao,tabela);
 			break;
 			case 	MethodParams:
 				percorreAST(raiz->filho,tabela);
-				percorreAST(raiz->irmao,tabela);
+				//percorreAST(raiz->irmao,tabela);
 			break;
 			case 	ParamDecl: 
 				temp = raiz -> filho -> irmao;
 				nome = raiz -> filho -> irmao -> token -> token;
-
+				//printf("oi\n");
 				if(checkParamDecl(tabela,temp) == NULL){
 					insertElement(createElement(nome,NULL, getTipoInserirTabela(getTipo(raiz->filho->tipo)),_param_),tabela, NULL);
 				}
@@ -101,7 +103,7 @@ void percorreAST(Node* raiz, Table* tabela){
 				while(temp->irmao != NULL){ //avancar até à declaracao do token
 					temp = temp->irmao;
 				}
-
+				//printf("yo\n");
 				if(checkVarDecl(tabela,temp) == NULL){
 					insertElement(createElement(temp->token->token,NULL,getTipoInserirTabela(getTipo(raiz->filho->tipo)),_null_),tabela,NULL);					
 				}
@@ -173,7 +175,7 @@ void percorreAST(Node* raiz, Table* tabela){
 			case	DecLit: 
 			  	input_number = strtol(raiz->token->token,NULL,10);
 				if(2147483647 < input_number){
-					printf("Number %s out of bounds\n", raiz->token->token);
+					printf("Line %d, col %d: Number %s out of bounds\n",raiz->token->linha, raiz->token->coluna, raiz->token->token);
 					addAnnotation(raiz, _undef_);
 				}
 				else{
@@ -187,8 +189,10 @@ void percorreAST(Node* raiz, Table* tabela){
 				search = searchGlobalID(tabela, nome);
 				if (search != NULL)
 					addAnnotation(raiz, search->tType);
-				else
+				else{
+					printf("Line %d, col %d: Cannot find symbol %s\n",raiz->token->linha,raiz->token->coluna,raiz->token->token);
 					addAnnotation(raiz, _undef_);
+				}
 				percorreAST(raiz->irmao,tabela);
 			break;
 			case	RealLit:
