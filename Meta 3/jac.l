@@ -209,6 +209,7 @@ int main(int argc, char** argv){
 			sintax = 1;
 			erros = 1;
 			yyparse();
+			percorreAST(raiz,tabela);
 			elimina(raiz);
 		}
 		yylex_destroy();
