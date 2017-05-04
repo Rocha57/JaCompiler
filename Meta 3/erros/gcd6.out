@@ -1,0 +1,50 @@
+Line 7, col 20: Symbol main(int,double) already defined
+Line 12, col 3: Cannot find symbol kkk(int,int)
+===== Class gcd6 Symbol Table =====
+main	(int,double)	int
+test	()	int
+
+===== Method main(int,double) Symbol Table =====
+return		int
+a		int	param
+b		double	param
+
+===== Method test() Symbol Table =====
+return		int
+
+Program
+..Id(gcd6)
+..MethodDecl
+....MethodHeader
+......Int
+......Id(main)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Double
+..........Id(b)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Int
+......Id(main)
+......MethodParams
+........ParamDecl
+..........Int
+..........Id(a)
+........ParamDecl
+..........Double
+..........Id(b)
+....MethodBody
+..MethodDecl
+....MethodHeader
+......Int
+......Id(test)
+......MethodParams
+....MethodBody
+......Call - undef
+........Id(kkk) - undef
+........DecLit(3) - int
+........DecLit(3) - int
