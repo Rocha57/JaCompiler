@@ -10,15 +10,10 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 	if (raiz != NULL){
 		switch (raiz->tipo) {
 			case FieldDecl:
-				temp = raiz->filho; //Entrar na declaracao de vars
-				while(temp->irmao != NULL){ //avancar até à declaracao do token
-					temp = temp->irmao;
-				}
-				var = checkFieldDecl(temp, tabela);
-				if (var != NULL){
-					printf("@%s = global ",var->token);
-					printf("%s\n", getLLVMConstant(var->tType));
-				}
+				type = getTipoInserirTabela(getTipo(raiz->filho->tipo)); //Entrar na declaracao de vars
+				nome = raiz->filho->irmao->token->token;
+				printf("@%s = global ",nome);
+				printf("%s\n", getLLVMConstant(type));
 				generateLLVMFromAST(raiz->irmao, tabela);
 			break;
 
