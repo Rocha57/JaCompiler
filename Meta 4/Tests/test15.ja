@@ -1,0 +1,17 @@
+class main {
+    public static boolean b0;
+
+    public static int main() {
+        hello(1);
+    }
+
+    public static void hello(int b) {
+        System.out.println(b0);
+
+        double b0;
+
+        b0 = 1.0;
+
+        System.out.println(b0);
+    }
+}
