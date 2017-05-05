@@ -32,31 +32,7 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 	typedef enum{_boolean_,_int_,_StringArray_,_String_,_Method_,_Class_,_return_,_param_,_void_,_erro_,_null_,_Double_,_undef_}symbol;
 //TODO possivelmente corrigir estes nomes e na função insereOuter
 char* tabelaTipos[] ={ "boolean","int","String[]","String","Method","Class","return","param","void","Erro","","double","undef"};
-
-/*função para inserir elementos*/
-symbol getTipoInserirTabela(char* tipo){
-	symbol simbolo;
-	if (strcmp(tipo, "Int")==0 ){
-		simbolo = _int_;
-	}
-	if (strcmp(tipo, "Bool")==0 ){
-		simbolo = _boolean_;
-	}
-	if (strcmp(tipo, "Double")==0 ){
-		simbolo = _Double_;
-	}
-	if (strcmp(tipo, "StringArray")==0 ){
-		simbolo = _StringArray_;
-	}
-	if (strcmp(tipo, "String")==0 ){
-		simbolo = _String_;
-	}
-	if (strcmp(tipo, "Void")==0 ){
-		simbolo = _void_;
-	}
-
-	return simbolo;
-}
+char* llvmTypes[] = {"i1","i32","","","","","","","void","","","f64",""};
 
 typedef struct _ParamList ParamList;
 struct _ParamList{
@@ -133,6 +109,8 @@ int compareParamList(ParamList* first, ParamList* second);
 int compareExactParamList(ParamList* first, ParamList* second);
 int calculateParamLength(ParamList* params);
 
+/*META 4 declaração funções*/
+char* getLLVMConstant(symbol simbolo);
 
 /* META 2  funções*/
 /*alterado para meta 3*/
@@ -240,9 +218,37 @@ Info* createInfo(int linha,int coluna,char* token){
 	return info;
 }
 
+/*função para inserir elementos*/
+symbol getTipoInserirTabela(char* tipo){
+	symbol simbolo;
+	if (strcmp(tipo, "Int")==0 ){
+		simbolo = _int_;
+	}
+	if (strcmp(tipo, "Bool")==0 ){
+		simbolo = _boolean_;
+	}
+	if (strcmp(tipo, "Double")==0 ){
+		simbolo = _Double_;
+	}
+	if (strcmp(tipo, "StringArray")==0 ){
+		simbolo = _StringArray_;
+	}
+	if (strcmp(tipo, "String")==0 ){
+		simbolo = _String_;
+	}
+	if (strcmp(tipo, "Void")==0 ){
+		simbolo = _void_;
+	}
+
+	return simbolo;
+}
 
 char* getTipoTabela(symbol simbolo){
 	return tabelaTipos[simbolo];
+}
+
+char* getLLVMConstant(symbol simbolo){
+	return llvmTypes[simbolo];
 }
 
 Table* createTable(char* id,symbol tableType,Table* parent, ParamList* params){

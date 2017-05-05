@@ -1,7 +1,5 @@
 #include "tabelhas.h"
 
-char* getLLVMConstant(symbol type);
-
 void generateLLVMFromAST(Node* raiz, Table* tabela){
 	char* nome;
 	Node* temp;
@@ -29,19 +27,4 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 				generateLLVMFromAST(raiz->irmao, tabela);
 		}
 	}
-}
-
-char* getLLVMConstant(symbol type){
-	char* constant;
-	if (type == _int_)
-		constant = strdup("i32");
-	else if (type == _Double_)
-		constant = strdup("f64");
-	else if (type == _boolean_)
-		constant = strdup("i1");
-	else if (type == _void_)
-		constant = strdup("void");
-	else
-		constant = strdup("");
-	return constant;
 }
