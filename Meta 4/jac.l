@@ -213,6 +213,7 @@ int main(int argc, char** argv){
 		yyparse();
 		tabela = insereOuter();
 		percorreAST(raiz,tabela);
+		printf("%%StringArray = type { i32 , i8** }\n");
 		generateLLVMFromAST(raiz, tabela);
 		elimina(raiz);
 	}

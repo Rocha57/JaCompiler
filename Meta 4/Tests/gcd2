@@ -1,7 +1,5 @@
 class gcd2 {
-		public static double gcd;
-		public static int gcd2,a,b;
-		public static boolean lol;
+		public static int gcd;
 		public static void main(String[] args) {
 			int a, b;
 			if (args.length >= 2) {
@@ -12,7 +10,6 @@ class gcd2 {
 			} else
 			System.out.println("Error: two parameters required.");
 		}
-		public static boolean lol2;
 		public static int gcd(int a, int b) {
 			if (a == 0)
 			return b;
