@@ -74,6 +74,7 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 			break;
 
 			case Add:
+			case Sub:
 				generateLLVMFromAST(raiz->filho, tabela);
 				type = raiz->token->annotation;
 				if (raiz->filho->tipo == Id){
@@ -88,7 +89,10 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 					sprintf(raiz->filho->irmao->result,"%%%d", temp_var);
 					temp_var++;
 				}
-				printf("\t%%%d = add %s %s, %s\n",temp_var, getLLVMConstant(type), raiz->filho->result, raiz->filho->irmao->result);
+				if (raiz->tipo == Add)
+					printf("\t%%%d = add %s %s, %s\n",temp_var, getLLVMConstant(type), raiz->filho->result, raiz->filho->irmao->result);
+				else
+					printf("\t%%%d = sub %s %s, %s\n",temp_var, getLLVMConstant(type), raiz->filho->result, raiz->filho->irmao->result);
 				raiz->result = strdup("");
 				sprintf(raiz->result,"%%%d", temp_var);
 				temp_var++;

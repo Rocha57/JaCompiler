@@ -4,6 +4,6 @@ class zero{
 		int b;
 		a = 3;
 		b = a;
-		System.out.println(a+b);
+		System.out.println(a-b);
 	}
 }

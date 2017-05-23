@@ -9,7 +9,7 @@ define void @zero.main(i32 %args.c, i8** %args.v){
 	store i32 %1, i32* %b
 	%2 = load i32, i32* %a
 	%3 = load i32, i32* %b
-	%4 = add i32 %2, %3
+	%4 = sub i32 %2, %3
 	%call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strint, i32 0, i32 0), i32 %4)
 	ret void
 }
