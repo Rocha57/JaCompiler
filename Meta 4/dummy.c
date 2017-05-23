@@ -4,7 +4,8 @@
 #include <ctype.h>
 
 void main_java(int argc, char** argv){
-	printf("%.16E\n",0.000);
+	int a;
+	a = atoi(argv[1]);
 }
 
 int main(int argc, char** argv){

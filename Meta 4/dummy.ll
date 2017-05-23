@@ -2,20 +2,23 @@
 target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-apple-macosx10.12.0"
 
-@.str = private unnamed_addr constant [7 x i8] c"%.16E\0A\00", align 1
-
 ; Function Attrs: nounwind ssp uwtable
 define void @main_java(i32 %argc, i8** %argv) #0 {
 entry:
   %argc.addr = alloca i32, align 4
   %argv.addr = alloca i8**, align 8
+  %a = alloca i32, align 4
   store i32 %argc, i32* %argc.addr, align 4
   store i8** %argv, i8*** %argv.addr, align 8
-  %call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i32 0, i32 0), double 0.000000e+00)
+  %0 = load i8**, i8*** %argv.addr, align 8
+  %arrayidx = getelementptr inbounds i8*, i8** %0, i64 1
+  %1 = load i8*, i8** %arrayidx, align 8
+  %call = call i32 @atoi(i8* %1)
+  store i32 %call, i32* %a, align 4
   ret void
 }
 
-declare i32 @printf(i8*, ...) #1
+declare i32 @atoi(i8*) #1
 
 ; Function Attrs: nounwind ssp uwtable
 define i32 @main(i32 %argc, i8** %argv) #0 {
