@@ -1,8 +1,0 @@
-class x {
-	public static void x(){
-		if (door)
-    		if (resident)
-        		resident();
-		else door();	
-	}
-}

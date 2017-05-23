@@ -4,6 +4,5 @@ class gcd2 {
 		a = 2;
 		b = 3;
     	a = a + b;
-		return 0;
 	}
 }

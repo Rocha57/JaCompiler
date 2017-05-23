@@ -32,7 +32,7 @@ char* tipos[] = {"Program", 	"FieldDecl",	"VarDecl",	"MethodDecl", 	"MethodHeade
 	typedef enum{_boolean_,_int_,_StringArray_,_String_,_Method_,_Class_,_return_,_param_,_void_,_erro_,_null_,_Double_,_undef_}symbol;
 //TODO possivelmente corrigir estes nomes e na função insereOuter
 char* tabelaTipos[] ={ "boolean","int","String[]","String","Method","Class","return","param","void","Erro","","double","undef"};
-char* llvmTypes[] = {"i1","i32","%StringArray","","","","","","void","","","double",""};
+char* llvmTypes[] = {"i1","i32","i32 %argc, i8** %argv","","","","","","void","","","double",""};
 
 typedef struct _ParamList ParamList;
 struct _ParamList{
@@ -55,6 +55,7 @@ struct _Node{
 	symbol type;
 	Node* filho;
 	Node* irmao;
+	char* result;
 };
 
 typedef struct _table Table;
