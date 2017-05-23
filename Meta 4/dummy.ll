@@ -11,7 +11,7 @@ entry:
   store i32 %argc, i32* %argc.addr, align 4
   store i8** %argv, i8*** %argv.addr, align 8
   %0 = load i8**, i8*** %argv.addr, align 8
-  %arrayidx = getelementptr inbounds i8*, i8** %0, i64 1
+  %arrayidx = getelementptr inbounds i8*, i8** %0, i64 2
   %1 = load i8*, i8** %arrayidx, align 8
   %call = call i32 @atoi(i8* %1)
   store i32 %call, i32* %a, align 4
