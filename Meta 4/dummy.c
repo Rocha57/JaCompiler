@@ -6,6 +6,8 @@
 void main_java(int argc, char** argv){
 	int a;
 	a = atoi(argv[1]);
+	printf("aoasiodjasio\n");
+	printf("oi\n");
 }
 
 int main(int argc, char** argv){
