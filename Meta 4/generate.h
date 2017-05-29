@@ -6,10 +6,10 @@ int strings = 0;
 int prints = 0;
 char* classe;
 
-void loadId(Node* raiz, symbol type, Table* tabela){
+void loadId(Node* raiz, Table* tabela){
 	Elemento* global;
 	global = searchGlobalID(tabela, raiz->token->token);
-	printf("\t%%%d = load %s, %s* ", temp_var, getLLVMConstant(type), getLLVMConstant(type));
+	printf("\t%%%d = load %s, %s* ", temp_var, getLLVMConstant(raiz->token->annotation), getLLVMConstant(raiz->token->annotation));
 	if (global == NULL)
 		printf("%%%s\n", raiz->token->token);
 	else
@@ -19,12 +19,17 @@ void loadId(Node* raiz, symbol type, Table* tabela){
 	temp_var++;
 }
 
-void assignVar(Node* raiz, symbol type, Table* tabela){
+void assignVar(Node* raiz, Table* tabela){
 	if (raiz->filho->irmao->tipo == Id)
-		loadId(raiz->filho->irmao, type, tabela);
+		loadId(raiz->filho->irmao, tabela);
 	Elemento* global;
 	global = searchGlobalID(tabela, raiz->filho->token->token);
-	printf("\tstore %s %s, %s* ", getLLVMConstant(raiz->filho->irmao->token->annotation), raiz->filho->irmao->result, getLLVMConstant(raiz->filho->token->annotation));
+	if (raiz->filho->token->annotation == _Double_ && raiz->filho->irmao->token->annotation == _int_){
+		printf("\t%%conv%d = sitofp i32 %s to double\n", temp_var, raiz->filho->irmao->result);
+		printf("\tstore double %%conv%d, double* ", temp_var);
+	}
+	else
+		printf("\tstore %s %s, %s* ", getLLVMConstant(raiz->filho->irmao->token->annotation), raiz->filho->irmao->result, getLLVMConstant(raiz->filho->token->annotation));
 	if (global == NULL)
 		printf("%%%s\n", raiz->filho->token->token);
 	else
@@ -114,8 +119,8 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 
 			case Assign:
 				generateLLVMFromAST(raiz->filho, tabela);
-				type = raiz->filho->token->annotation;
-				assignVar(raiz, type, tabela);
+				type = raiz->filho->irmao->token->annotation;
+				assignVar(raiz, tabela);
 				generateLLVMFromAST(raiz->irmao, tabela);
 			break;
 
@@ -127,10 +132,10 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 				generateLLVMFromAST(raiz->filho, tabela);
 				type = raiz->token->annotation;
 				if (raiz->filho->tipo == Id)
-					loadId(raiz->filho, type, tabela);
+					loadId(raiz->filho, tabela);
 				
 				if (raiz->filho->irmao->tipo == Id)
-					loadId(raiz->filho->irmao, type, tabela);
+					loadId(raiz->filho->irmao, tabela);
 				
 				if (raiz->tipo == Add)
 					printf("\t%%%d = add %s %s, %s\n",temp_var, getLLVMConstant(type), raiz->filho->result, raiz->filho->irmao->result);
@@ -152,7 +157,7 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 				generateLLVMFromAST(raiz->filho, tabela);
 				type = raiz->filho->token->annotation;
 				if (raiz->filho->tipo == Id)
-					loadId(raiz->filho, type,tabela);
+					loadId(raiz->filho, tabela);
 				if (raiz->filho->token->annotation == _int_)
 					printf("\t%%call%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strint, i32 0, i32 0), i32 %s)\n",prints, raiz->filho->result);
 				else if (raiz->filho->token->annotation == _Double_)
@@ -160,15 +165,15 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 				else if (raiz->filho->token->annotation == _String_)
 					printf("\t%%call%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([%lu x i8], [%lu x i8]* %s, i32 0, i32 0))\n",prints, strlen(raiz->filho->token->token)+2, strlen(raiz->filho->token->token)+2, raiz->filho->result);
 				else if (raiz->filho->token->annotation == _boolean_){
-					printf("\t%%ifcond = icmp eq i1 %s, 1\n\tbr i1 %%ifcond , label %%then , label %%else\n", raiz->filho->result);
-					printf("then:\n");
+					printf("\t%%ifcond%d = icmp eq i1 %s, 1\n\tbr i1 %%ifcond%d , label %%then%d , label %%else%d\n", prints, raiz->filho->result, prints, prints, prints);
+					printf("then%d:\n", prints);
 					printf("\t%%call%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([6 x i8], [6 x i8]* @.strtrue, i32 0, i32 0))\n",prints);
 					prints++;
-					printf("\tbr label %%ifcont\n");
-					printf("else:\n");
+					printf("\tbr label %%ifcont%d\n", prints);
+					printf("else%d:\n", prints-1);
 					printf("\t%%call%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.strfalse, i32 0, i32 0))\n",prints);
-					printf("\tbr label %%ifcont\n");
-					printf("ifcont:\n");
+					printf("\tbr label %%ifcont%d\n", prints);
+					printf("ifcont%d:\n", prints);
 				}
 				prints++;
 				generateLLVMFromAST(raiz->irmao, tabela);
@@ -179,7 +184,7 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 				if (raiz->filho!= NULL){
 					type = raiz->filho->token->annotation;
 					if (raiz->filho->tipo == Id)
-						loadId(raiz->filho, type, tabela);
+						loadId(raiz->filho, tabela);
 					printf("\tret %s %s\n", getLLVMConstant(raiz->filho->token->annotation), raiz->filho->result);
 				}
 				generateLLVMFromAST(raiz->irmao, tabela);
@@ -189,10 +194,21 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 			case Minus:
 				generateLLVMFromAST(raiz->filho, tabela);
 				raiz->result = strdup("");
-				if (raiz->tipo == Minus)
-					sprintf(raiz->result,"-%s", raiz->filho->result);
-				else
-					sprintf(raiz->result,"%s", raiz->filho->result);
+				if (raiz->filho->tipo == DecLit || raiz->filho->tipo == RealLit){
+					if (raiz->tipo == Minus)
+						sprintf(raiz->result,"-%s", raiz->filho->result);
+					else
+						sprintf(raiz->result,"%s", raiz->filho->result);
+				}
+				else if (raiz->filho->tipo == Id){
+					loadId(raiz->filho, tabela);
+					if (raiz->tipo == Minus){
+						printf("\t%%sub%d = sub nsw i32 0, %s\n", temp_var, raiz->filho->result);
+						sprintf(raiz->result, "%%sub%d", temp_var);
+					}
+					else
+						sprintf(raiz->result, "%s", raiz->filho->result);
+				}
 				generateLLVMFromAST(raiz->irmao, tabela);
 			break;
 

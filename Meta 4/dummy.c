@@ -3,14 +3,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-double gcd;
-
-int abc(int a, int b){
-	b+2;
-	return b;
-}
+int gcd;
 void main_java(int argc, char** argv){
-	gcd = 2;
+	int a = 3;
+	int b = -a;
 }
 
 int main(int argc, char** argv){

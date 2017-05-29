@@ -2,29 +2,21 @@
 target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-apple-macosx10.12.0"
 
-@gcd = common global double 0.000000e+00, align 8
-
-; Function Attrs: nounwind ssp uwtable
-define i32 @abc(i32 %a, i32 %b) #0 {
-entry:
-  %a.addr = alloca i32, align 4
-  %b.addr = alloca i32, align 4
-  store i32 %a, i32* %a.addr, align 4
-  store i32 %b, i32* %b.addr, align 4
-  %0 = load i32, i32* %b.addr, align 4
-  %add = add nsw i32 %0, 2
-  %1 = load i32, i32* %b.addr, align 4
-  ret i32 %1
-}
+@gcd = common global i32 0, align 4
 
 ; Function Attrs: nounwind ssp uwtable
 define void @main_java(i32 %argc, i8** %argv) #0 {
 entry:
   %argc.addr = alloca i32, align 4
   %argv.addr = alloca i8**, align 8
+  %a = alloca i32, align 4
+  %b = alloca i32, align 4
   store i32 %argc, i32* %argc.addr, align 4
   store i8** %argv, i8*** %argv.addr, align 8
-  store double 2.000000e+00, double* @gcd, align 8
+  store i32 3, i32* %a, align 4
+  %0 = load i32, i32* %a, align 4
+  %sub = sub nsw i32 0, %0
+  store i32 %sub, i32* %b, align 4
   ret void
 }
 

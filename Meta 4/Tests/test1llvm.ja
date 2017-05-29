@@ -1,7 +1,15 @@
 class gcd2 {
 	public static boolean gcd;
+	public static double aaa;
 	public static void main(String[] args) {
     	gcd = false;
+    	int b;
+    	b = 3;
+    	double c;
+    	aaa = -b;
+    	System.out.println(b);
     	System.out.println(gcd);
+    	System.out.println(aaa);
+    	System.out.println(c);
 	}
 }
