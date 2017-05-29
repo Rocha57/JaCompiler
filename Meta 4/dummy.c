@@ -3,11 +3,14 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+double gcd;
+
+int abc(int a, int b){
+	b+2;
+	return b;
+}
 void main_java(int argc, char** argv){
-	int a;
-	a = atoi(argv[1]);
-	printf("aoasiodjasio\n");
-	printf("oi\n");
+	gcd = 2;
 }
 
 int main(int argc, char** argv){

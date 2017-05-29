@@ -56,6 +56,7 @@ struct _Node{
 	Node* filho;
 	Node* irmao;
 	char* result;
+	int boolean;
 };
 
 typedef struct _table Table;

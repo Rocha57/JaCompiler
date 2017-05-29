@@ -1,8 +1,7 @@
 class gcd2 {
+	public static boolean gcd;
 	public static void main(String[] args) {
-		int a, b;
-		a = 2;
-		b = 3;
-    	a = a + b;
+    	gcd = false;
+    	System.out.println(gcd);
 	}
 }
