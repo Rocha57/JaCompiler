@@ -56,7 +56,7 @@ void findStrLit(Node* raiz){
 
 void generateLLVMFromAST(Node* raiz, Table* tabela){
 	char* nome;
-	char *src, *dest, *aux, *begin;
+	char *src, *dest, *aux, *begin = NULL;
 	symbol type;
 	if (raiz != NULL){
 		switch (raiz->tipo) {
@@ -278,8 +278,10 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 				if(aux[0] =='.'){
 					begin = (char*) malloc(strlen(dest)+1);
 					begin[0]='0';
-					//++begin;
 					strcat(begin, aux);
+				}
+				else{
+					*begin=*dest;
 				}
 				
 				raiz->result = begin;

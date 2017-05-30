@@ -3,7 +3,7 @@ FILE_NAME = jac
 all:
 	@lex $(FILE_NAME).l
 	@yacc -d -v $(FILE_NAME).y
-	@clang-3.8 -o  $(FILE_NAME) -Wtypedef-redefinition lex.yy.c y.tab.c -ll -ly -g
+	@clang-3.8 -Wuninitialized -o  $(FILE_NAME) -Wtypedef-redefinition lex.yy.c y.tab.c -ll -ly -g
 	@zip $(FILE_NAME).zip $(FILE_NAME).l $(FILE_NAME).y structures.h tabelhas.h generate.h
 	@echo "[INFO] Compiled"
 
