@@ -1,7 +1,7 @@
 class zero{
 	public static void main(String[] args){
 		int a;
-		a = -3;
-		System.out.println(a*(-3));
+		a = -3_3_3_3_3_4_5_6;
+		System.out.println(a);
 	}
 }

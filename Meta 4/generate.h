@@ -56,6 +56,7 @@ void findStrLit(Node* raiz){
 
 void generateLLVMFromAST(Node* raiz, Table* tabela){
 	char* nome;
+	char *src, *dest, *aux;
 	symbol type;
 	if (raiz != NULL){
 		switch (raiz->tipo) {
@@ -249,7 +250,44 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 				generateLLVMFromAST(raiz->irmao, tabela);
 			break;
 			case DecLit:
-			case RealLit:
+			//eliminar _ dos numeros
+				src = dest = raiz->token->token;    // both pointers point to the first char of input
+				while(*src != '\0'){ 
+				    if (*src != '_'){
+				        *dest = *src;  // copy the char at source to destination
+				        dest++;        // increment destination pointer
+				    }
+				    src++;             // increment source pointer
+				}
+				*dest = '\0';
+				raiz->result = dest;
+			case RealLit:/*
+				src = aux = dest = raiz->token->token;    // both pointers point to the first char of input
+				while(*src != '\0'){ 
+				    if (*src != '_'){
+				        *dest = *src;  // copy the char at source to destination
+				        dest++;        // increment destination pointer
+				    }
+				    src++;             // increment source pointer
+				}
+				*dest = '\0';
+				//tratar do .3 para 0.3
+				if(dest[0]=='.'){
+					aux[0]='0';
+					while(*dest != '\0'){
+						*aux = *dest;
+						dest++;
+						aux++;
+					}
+					*aux = '\0';
+				}
+				else{
+					*aux=*dest;
+				} 
+				raiz->result = aux;
+				break;
+				*/
+			
 			case BoolLit:
 				raiz->result = raiz->token->token;
 
