@@ -4,10 +4,10 @@
 @.strfalse = private unnamed_addr constant [7 x i8] c"false\0A\00"
 
 define void @zero.main(i32 %args.c, i8** %args.v){
-	%a = alloca i32
-	store i32 -33333456, i32* %a
-	%1 = load i32, i32* %a
-	%call0 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.strint, i32 0, i32 0), i32 %1)
+	%b = alloca double
+	store double 0.444, double* %b
+	%1 = load double, double* %b
+	%call0 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.strdouble, i32 0, i32 0), double %1)
 	ret void
 }
 
