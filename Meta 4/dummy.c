@@ -11,11 +11,7 @@ void main_java(int argc, char** argv){
 
 int main(int argc, char** argv){
 	main_java(argc,argv);
-	printf("\n");
-	printf("\t");
-	printf("\r");
-	printf("\f");
-	printf("\\");
-	printf("\"");
+	printf("\n banana \t maca\ffaca tomate \\Ksd rip   \"crl  pera \ras");
+
 	return 0;
 }

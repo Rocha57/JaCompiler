@@ -47,12 +47,12 @@ char* removeEscape(char* token){
 	int pos = 0;
 	srcmaisum++;
 	//printf("%d PRIINTNT: %c\t %s\n",pos, *src, src);
-	while(*srcmaisum != '\0'){ 
-		printf("0 %c\n", *src);
+	while(*src != '\0'){ 
+		//printf("0 %c\n", *src);
 	    if (*src == '\\' && *srcmaisum == 'n'){
 	    	//printf("bananq\n");
 	    	src++;
-	    	printf("1 %c\n", *src);
+	    	//printf("1 %c\n", *src);
 	        *src = '0';
 	        memmove(src+2, src+1, len - pos -1);
 	        src++;
@@ -63,7 +63,7 @@ char* removeEscape(char* token){
 	    else if (*src == '\\' && *srcmaisum == 't'){
 	    	//		printf("banan2\n");
 	    	src++;
-	    	printf("2 %c\n", *src);
+	    	//printf("2 %c\n", *src);
 	        *src = '0';
 	        memmove(src+2, src+1, len - pos -1);  
 	        src++;
@@ -75,7 +75,7 @@ char* removeEscape(char* token){
 	    else if (*src == '\\' && *srcmaisum == 'r'){
 	    	// 		printf("banan3\n");
 	    	src++;
-	    	printf("3 %c\n", *src);
+	    	//printf("3 %c\n", *src);
 	        *src = '0';
 	        memmove(src+2, src+1, len - pos -1);
 	        src++;
@@ -87,7 +87,7 @@ char* removeEscape(char* token){
 	    else if (*src == '\\' && *srcmaisum == 'f'){
 	    	//		printf("bana4\n");
 	    	src++;
-	    	printf("4 %c\n", *src);
+	    	//printf("4 %c\n", *src);
 	        *src = '0';
 	        memmove(src+2, src+1, len - pos -1);
 	        src++;
@@ -99,7 +99,7 @@ char* removeEscape(char* token){
 	    else if (*src == '\\' && *srcmaisum == '\\'){
 	    	//		printf("banan5\n");
 	    	src++;
-	    	printf("5 %c\n", *src);
+	    	//printf("5 %c\n", *src);
 	        *src = '5'; 
 	        memmove(src+2, src+1, len - pos -1);
 	        src++;
@@ -111,7 +111,7 @@ char* removeEscape(char* token){
 	    else if (*src == '\\' && *srcmaisum == '"'){
 	    	//		printf("banan6\n");
 	    	src++;
-	    	printf("6 %c\n", *src);	    	
+	    	//printf("6 %c\n", *src);	    	
 	        *src = '2';  
 	        memmove(src+2, src+1, len - pos -1);
 	        src++;
@@ -124,7 +124,7 @@ char* removeEscape(char* token){
 		    src++;  //move forward
 		    srcmaisum++;
 		}
-	    printf("%s\n", copia);
+	    //printf("%s\n", copia);
 	}
 	return copia;
 }

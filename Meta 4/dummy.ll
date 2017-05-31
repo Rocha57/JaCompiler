@@ -2,12 +2,7 @@
 target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-unknown-linux-gnu"
 
-@.str = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
-@.str.1 = private unnamed_addr constant [2 x i8] c"\09\00", align 1
-@.str.2 = private unnamed_addr constant [2 x i8] c"\0D\00", align 1
-@.str.3 = private unnamed_addr constant [2 x i8] c"\0C\00", align 1
-@.str.4 = private unnamed_addr constant [2 x i8] c"\5C\00", align 1
-@.str.5 = private unnamed_addr constant [2 x i8] c"\22\00", align 1
+@.str = private unnamed_addr constant [54 x i8] c"\0A banana \09 maca\0Cfaca tomate \5CKsd rip   \22crl  pera \0Das\00", align 1
 @gcd = common global i32 0, align 4
 
 ; Function Attrs: nounwind uwtable
@@ -36,12 +31,7 @@ define i32 @main(i32 %argc, i8** %argv) #0 {
   %4 = load i32, i32* %2, align 4
   %5 = load i8**, i8*** %3, align 8
   call void @main_java(i32 %4, i8** %5)
-  %6 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str, i32 0, i32 0))
-  %7 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.1, i32 0, i32 0))
-  %8 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.2, i32 0, i32 0))
-  %9 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.3, i32 0, i32 0))
-  %10 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.4, i32 0, i32 0))
-  %11 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.5, i32 0, i32 0))
+  %6 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([54 x i8], [54 x i8]* @.str, i32 0, i32 0))
   ret i32 0
 }
 
