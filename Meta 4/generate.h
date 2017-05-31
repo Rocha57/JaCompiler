@@ -36,17 +36,112 @@ void assignVar(Node* raiz, Table* tabela){
 		printf("@%s\n", raiz->filho->token->token);
 }
 
+
+
+char* removeEscape(char* token){
+	char* copia = (char*) malloc(sizeof(token)*2);
+	char* src, *srcmaisum;
+	memcpy(copia,token,strlen(token)+1);
+	int len = strlen(token);
+	srcmaisum = src = copia;
+	int pos = 0;
+	srcmaisum++;
+	//printf("%d PRIINTNT: %c\t %s\n",pos, *src, src);
+	while(*srcmaisum != '\0'){ 
+		printf("0 %c\n", *src);
+	    if (*src == '\\' && *srcmaisum == 'n'){
+	    	//printf("bananq\n");
+	    	src++;
+	    	printf("1 %c\n", *src);
+	        *src = '0';
+	        memmove(src+2, src+1, len - pos -1);
+	        src++;
+	        *src = 'A';
+	        srcmaisum++;
+	        srcmaisum++;
+	    }
+	    else if (*src == '\\' && *srcmaisum == 't'){
+	    	//		printf("banan2\n");
+	    	src++;
+	    	printf("2 %c\n", *src);
+	        *src = '0';
+	        memmove(src+2, src+1, len - pos -1);  
+	        src++;
+	        *src = '9';  
+	        srcmaisum++;
+	        srcmaisum++;
+
+	    }
+	    else if (*src == '\\' && *srcmaisum == 'r'){
+	    	// 		printf("banan3\n");
+	    	src++;
+	    	printf("3 %c\n", *src);
+	        *src = '0';
+	        memmove(src+2, src+1, len - pos -1);
+	        src++;
+	        *src = 'D';  
+	        srcmaisum++;
+	        srcmaisum++;
+
+	    }
+	    else if (*src == '\\' && *srcmaisum == 'f'){
+	    	//		printf("bana4\n");
+	    	src++;
+	    	printf("4 %c\n", *src);
+	        *src = '0';
+	        memmove(src+2, src+1, len - pos -1);
+	        src++;
+	        *src = '9'; 
+	        srcmaisum++; 
+	        srcmaisum++;
+
+	    }
+	    else if (*src == '\\' && *srcmaisum == '\\'){
+	    	//		printf("banan5\n");
+	    	src++;
+	    	printf("5 %c\n", *src);
+	        *src = '5'; 
+	        memmove(src+2, src+1, len - pos -1);
+	        src++;
+	        *src = 'C'; 
+	        srcmaisum++;
+	        srcmaisum++;
+
+	    }
+	    else if (*src == '\\' && *srcmaisum == '"'){
+	    	//		printf("banan6\n");
+	    	src++;
+	    	printf("6 %c\n", *src);	    	
+	        *src = '2';  
+	        memmove(src+2, src+1, len - pos -1);
+	        src++;
+	        *src = '2'; 
+	        srcmaisum++;
+	        srcmaisum++;
+	    }
+	    else{
+		    pos++;  //count position in str
+		    src++;  //move forward
+		    srcmaisum++;
+		}
+	    printf("%s\n", copia);
+	}
+	return copia;
+}
+
+
 void findStrLit(Node* raiz){
-	char* aux;
+	char* aux, *final;
 	if (raiz != NULL){
 		if (raiz->tipo == StrLit){
 			printf("@.str%d = private unnamed_addr constant [%lu x i8]", strings, strlen(raiz->token->token));
 			aux = ++raiz->token->token;
 			aux[strlen(aux)-1] = 0;
-			printf(" c\"%s\\0A\\00\"\n", aux);
+			final = removeEscape(aux);
+			printf(" c\"%s\\0A\\00\"\n", final);
 			raiz->result = strdup("");
 			sprintf(raiz->result,"@.str%d", strings);
-			strings++;
+			strings++; 			
 		}
 
 		findStrLit(raiz->filho);

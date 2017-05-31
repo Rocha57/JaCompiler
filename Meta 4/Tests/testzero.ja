@@ -3,6 +3,6 @@ class zero{
 		double b;
 		//a = .3;
 		b = .4_4_4;
-		System.out.println(b);
+		System.out.println("\n banana \t maca\ffaca tomate \\Ksd %-1 rip   \"crl  pera \ras");
 	}
 }

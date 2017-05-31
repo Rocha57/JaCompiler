@@ -1,44 +1,55 @@
 ; ModuleID = 'dummy.c'
-target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
-target triple = "x86_64-apple-macosx10.12.0"
+target datalayout = "e-m:e-i64:64-f80:128-n8:16:32:64-S128"
+target triple = "x86_64-unknown-linux-gnu"
 
+@.str = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
+@.str.1 = private unnamed_addr constant [2 x i8] c"\09\00", align 1
+@.str.2 = private unnamed_addr constant [2 x i8] c"\0D\00", align 1
+@.str.3 = private unnamed_addr constant [2 x i8] c"\0C\00", align 1
+@.str.4 = private unnamed_addr constant [2 x i8] c"\5C\00", align 1
+@.str.5 = private unnamed_addr constant [2 x i8] c"\22\00", align 1
 @gcd = common global i32 0, align 4
 
-; Function Attrs: nounwind ssp uwtable
+; Function Attrs: nounwind uwtable
 define void @main_java(i32 %argc, i8** %argv) #0 {
-entry:
-  %argc.addr = alloca i32, align 4
-  %argv.addr = alloca i8**, align 8
+  %1 = alloca i32, align 4
+  %2 = alloca i8**, align 8
   %a = alloca i32, align 4
   %b = alloca i32, align 4
-  store i32 %argc, i32* %argc.addr, align 4
-  store i8** %argv, i8*** %argv.addr, align 8
+  store i32 %argc, i32* %1, align 4
+  store i8** %argv, i8*** %2, align 8
   store i32 3, i32* %a, align 4
-  %0 = load i32, i32* %a, align 4
-  %sub = sub nsw i32 0, %0
-  store i32 %sub, i32* %b, align 4
+  %3 = load i32, i32* %a, align 4
+  %4 = sub nsw i32 0, %3
+  store i32 %4, i32* %b, align 4
   ret void
 }
 
-; Function Attrs: nounwind ssp uwtable
+; Function Attrs: nounwind uwtable
 define i32 @main(i32 %argc, i8** %argv) #0 {
-entry:
-  %retval = alloca i32, align 4
-  %argc.addr = alloca i32, align 4
-  %argv.addr = alloca i8**, align 8
-  store i32 0, i32* %retval, align 4
-  store i32 %argc, i32* %argc.addr, align 4
-  store i8** %argv, i8*** %argv.addr, align 8
-  %0 = load i32, i32* %argc.addr, align 4
-  %1 = load i8**, i8*** %argv.addr, align 8
-  call void @main_java(i32 %0, i8** %1)
+  %1 = alloca i32, align 4
+  %2 = alloca i32, align 4
+  %3 = alloca i8**, align 8
+  store i32 0, i32* %1, align 4
+  store i32 %argc, i32* %2, align 4
+  store i8** %argv, i8*** %3, align 8
+  %4 = load i32, i32* %2, align 4
+  %5 = load i8**, i8*** %3, align 8
+  call void @main_java(i32 %4, i8** %5)
+  %6 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str, i32 0, i32 0))
+  %7 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.1, i32 0, i32 0))
+  %8 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.2, i32 0, i32 0))
+  %9 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.3, i32 0, i32 0))
+  %10 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.4, i32 0, i32 0))
+  %11 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @.str.5, i32 0, i32 0))
   ret i32 0
 }
 
-attributes #0 = { nounwind ssp uwtable "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="core2" "target-features"="+cx16,+fxsr,+mmx,+sse,+sse2,+sse3,+ssse3" "unsafe-fp-math"="false" "use-soft-float"="false" }
+declare i32 @printf(i8*, ...) #1
 
-!llvm.module.flags = !{!0}
-!llvm.ident = !{!1}
+attributes #0 = { nounwind uwtable "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #1 = { "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+fxsr,+mmx,+sse,+sse2" "unsafe-fp-math"="false" "use-soft-float"="false" }
 
-!0 = !{i32 1, !"PIC Level", i32 2}
-!1 = !{!"clang version 3.8.1 (tags/RELEASE_381/final)"}
+!llvm.ident = !{!0}
+
+!0 = !{!"clang version 3.8.0-2ubuntu3~trusty4 (tags/RELEASE_380/final)"}
