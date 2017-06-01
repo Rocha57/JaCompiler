@@ -1,8 +1,15 @@
 class zero{
 	public static void main(String[] args){
 		double b;
-		//a = .3;
-		b = .4_4_4;
-		System.out.println("\n banana \t maca\ffaca tomate \\Ksd %-1 rip   \"crl  pera \ras");
+		double a;
+		double c;
+		a = -0;
+		//b = -0.0;
+		//c = 0;
+		System.out.println(a);
+
+
+		
+
 	}
 }

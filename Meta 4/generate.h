@@ -40,12 +40,24 @@ void assignVar(Node* raiz, Table* tabela){
 
 char* removeEscape(char* token){
 	char* copia = (char*) malloc(sizeof(token)*2);
-	char* src, *srcmaisum;
+	char* src, *srcmaisum, *percentage;
 	memcpy(copia,token,strlen(token)+1);
 	int len = strlen(token);
-	srcmaisum = src = copia;
-	int pos = 0;
+	percentage = srcmaisum = src = copia;
 	srcmaisum++;
+	while(*percentage != '\0'){
+			if (*percentage == '%'){
+				memmove(percentage+2, percentage+1, len );
+				percentage++;
+				*percentage = '%';
+				percentage++;
+			}
+			else{
+				percentage++;
+			}
+	}
+
+
 	//printf("%d PRIINTNT: %c\t %s\n",pos, *src, src);
 	while(*src != '\0'){ 
 		//printf("0 %c\n", *src);
@@ -54,7 +66,7 @@ char* removeEscape(char* token){
 	    	src++;
 	    	//printf("1 %c\n", *src);
 	        *src = '0';
-	        memmove(src+2, src+1, len - pos -1);
+	        memmove(src+2, src+1, len );
 	        src++;
 	        *src = 'A';
 	        srcmaisum++;
@@ -65,7 +77,7 @@ char* removeEscape(char* token){
 	    	src++;
 	    	//printf("2 %c\n", *src);
 	        *src = '0';
-	        memmove(src+2, src+1, len - pos -1);  
+	        memmove(src+2, src+1, len );  
 	        src++;
 	        *src = '9';  
 	        srcmaisum++;
@@ -77,7 +89,7 @@ char* removeEscape(char* token){
 	    	src++;
 	    	//printf("3 %c\n", *src);
 	        *src = '0';
-	        memmove(src+2, src+1, len - pos -1);
+	        memmove(src+2, src+1, len );
 	        src++;
 	        *src = 'D';  
 	        srcmaisum++;
@@ -89,7 +101,7 @@ char* removeEscape(char* token){
 	    	src++;
 	    	//printf("4 %c\n", *src);
 	        *src = '0';
-	        memmove(src+2, src+1, len - pos -1);
+	        memmove(src+2, src+1, len );
 	        src++;
 	        *src = '9'; 
 	        srcmaisum++; 
@@ -101,7 +113,7 @@ char* removeEscape(char* token){
 	    	src++;
 	    	//printf("5 %c\n", *src);
 	        *src = '5'; 
-	        memmove(src+2, src+1, len - pos -1);
+	        memmove(src+2, src+1, len );
 	        src++;
 	        *src = 'C'; 
 	        srcmaisum++;
@@ -113,22 +125,20 @@ char* removeEscape(char* token){
 	    	src++;
 	    	//printf("6 %c\n", *src);	    	
 	        *src = '2';  
-	        memmove(src+2, src+1, len - pos -1);
+	        memmove(src+2, src+1, len );
 	        src++;
 	        *src = '2'; 
 	        srcmaisum++;
 	        srcmaisum++;
 	    }
 	    else{
-		    pos++;  //count position in str
 		    src++;  //move forward
 		    srcmaisum++;
 		}
-	    //printf("%s\n", copia);
+	   // printf("%s\n", copia);
 	}
 	return copia;
 }
-
 
 void findStrLit(Node* raiz){
 	char* aux, *final;
@@ -152,6 +162,7 @@ void findStrLit(Node* raiz){
 void generateLLVMFromAST(Node* raiz, Table* tabela){
 	char* nome;
 	char *src, *dest, *aux, *begin = NULL;
+	int entrou = 0;
 	symbol type;
 	if (raiz != NULL){
 		switch (raiz->tipo) {
@@ -374,12 +385,16 @@ void generateLLVMFromAST(Node* raiz, Table* tabela){
 					begin = (char*) malloc(strlen(dest)+1);
 					begin[0]='0';
 					strcat(begin, aux);
-				}
-				else{
-					*begin=*dest;
+					entrou = 1;
 				}
 				
-				raiz->result = begin;
+				if (entrou){
+					raiz->result = begin;	
+					entrou = 0;	
+				}
+				else{
+					raiz->result = raiz->token->token;
+				}
 				generateLLVMFromAST(raiz->filho, tabela);
 				generateLLVMFromAST(raiz->irmao, tabela);
 				break;
